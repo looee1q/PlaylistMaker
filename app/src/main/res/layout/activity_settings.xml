@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/setting_background"
+        android:paddingTop="14dp"
+        android:paddingStart="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/to_main_screen_from_settings"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:src="@drawable/arrow_back_icon"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:text="@string/settings"
+                android:textColor="@color/blackText"
+                android:textSize="22sp"/>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_of_rows_on_settings_screen"
+            android:layout_marginTop="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:text="@string/black_theme"
+                android:textColor="@color/blackText"
+                android:textSize="@dimen/text_on_settings_screen"/>
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="0dp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_of_rows_on_settings_screen">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:text="@string/share_app"
+                android:textColor="@color/blackText"
+                android:textSize="@dimen/text_on_settings_screen"/>
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="18dp"
+                android:layout_gravity="end|center_vertical"
+                android:src="@drawable/share_app_icon"
+                android:layout_marginEnd="16dp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_of_rows_on_settings_screen">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:text="@string/write_to_the_support"
+                android:textColor="@color/blackText"
+                android:textSize="@dimen/text_on_settings_screen"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="18dp"
+                android:layout_gravity="end|center_vertical"
+                android:src="@drawable/write_to_the_support_icon"
+                android:layout_marginEnd="14dp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_of_rows_on_settings_screen">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:text="@string/user_agreement"
+                android:textColor="@color/blackText"
+                android:textSize="@dimen/text_on_settings_screen"/>
+
+            <ImageView
+                android:layout_width="8dp"
+                android:layout_height="14dp"
+                android:layout_gravity="end|center_vertical"
+                android:src="@drawable/user_agreement_icon"
+                android:layout_marginEnd="20dp"/>
+        </FrameLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

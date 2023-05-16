@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="icon_text_padding">10dp</dimen>
+    <dimen name="text_on_settings_screen">16sp</dimen>
+    <dimen name="height_of_rows_on_settings_screen">61dp</dimen>
+</resources>
