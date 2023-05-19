@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -14,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val searchButton = findViewById<Button>(R.id.search_button)
-        val mediatecaButton = findViewById<Button>(R.id.mediateca_button)
+        val musicLibraryButton = findViewById<Button>(R.id.music_library_button)
         val settingsButton = findViewById<Button>(R.id.settings_button)
         val searchButtonClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
@@ -24,9 +23,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         searchButton.setOnClickListener(searchButtonClickListener)
-        mediatecaButton.setOnClickListener {
+        musicLibraryButton.setOnClickListener {
             //Toast.makeText(this, "Вы нажали на кнопку \"Медиатека\"", Toast.LENGTH_SHORT).show()
-            val displayIntent = Intent(this@MainActivity, MediatecaActivity::class.java)
+            val displayIntent = Intent(this@MainActivity, MusicLibraryActivity::class.java)
             startActivity(displayIntent)
         }
         settingsButton.setOnClickListener {

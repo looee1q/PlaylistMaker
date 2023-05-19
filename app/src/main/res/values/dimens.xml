@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="icon_text_padding">10dp</dimen>
-    <dimen name="text_on_settings_screen">16sp</dimen>
+    <dimen name="text_size_on_settings_screen">16sp</dimen>
     <dimen name="height_of_rows_on_settings_screen">61dp</dimen>
+    <dimen name="text_size_on_main_screen">22sp</dimen>
+    <dimen name="corner_radius_of_main_screen_buttons">22sp</dimen>
+    <dimen name="distance_between_main_screen_buttons">16dp</dimen>
 </resources>

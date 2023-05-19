@@ -12,6 +12,7 @@ class SettingsActivity : AppCompatActivity() {
         val backToMainScreen = findViewById<ImageView>(R.id.to_main_screen_from_settings)
         backToMainScreen.setOnClickListener {
             val displayIntent = Intent(this, MainActivity::class.java)
+            finish()
             startActivity(displayIntent)
         }
     }

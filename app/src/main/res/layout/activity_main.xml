@@ -5,31 +5,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/blueYP"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="28dp"
-        android:paddingTop="14dp">
+    tools:context=".MainActivity"
+    android:background="@color/blueYP"
+    android:paddingHorizontal="16dp"
+    android:paddingBottom="28dp"
+    android:paddingTop="14dp">
 
         <TextView
+            android:id="@+id/playlist_maker_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textColor="@color/white"
-            android:textSize="22sp"
-            android:layout_marginBottom="40dp"
-            />
+            android:textSize="@dimen/text_size_on_main_screen"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
 
         <Button
             android:id="@+id/search_button"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:backgroundTint="@color/white"
             app:icon="@drawable/search_icon"
             app:iconTint="@color/blackText"
@@ -38,30 +33,39 @@
             android:text="@string/search_button"
             android:textColor="@color/blackText"
             android:textAllCaps="false"
-            android:textSize="22sp"
-            app:cornerRadius="16dp"/>
+            android:textSize="@dimen/text_size_on_main_screen"
+            app:cornerRadius="@dimen/corner_radius_of_main_screen_buttons"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="@dimen/distance_between_main_screen_buttons"
+            app:layout_constraintTop_toBottomOf="@id/playlist_maker_text_view"
+            app:layout_constraintBottom_toTopOf="@id/music_library_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <Button
-            android:id="@+id/mediateca_button"
-            android:layout_width="match_parent"
+            android:id="@+id/music_library_button"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:backgroundTint="@color/white"
-            app:icon="@drawable/mediateca_icon"
+            app:icon="@drawable/music_library_icon"
             app:iconTint="@color/blackText"
             app:iconGravity="textStart"
             app:iconPadding = "@dimen/icon_text_padding"
-            android:text="@string/mediateca_button"
+            android:text="@string/music_library_button"
             android:textColor="@color/blackText"
             android:textAllCaps="false"
-            android:textSize="22sp"
-            app:cornerRadius="16dp"/>
+            android:textSize="@dimen/text_size_on_main_screen"
+            app:cornerRadius="@dimen/corner_radius_of_main_screen_buttons"
+            android:layout_marginBottom="@dimen/distance_between_main_screen_buttons"
+            app:layout_constraintTop_toBottomOf="@id/search_button"
+            app:layout_constraintBottom_toTopOf="@id/settings_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <Button
             android:id="@+id/settings_button"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:backgroundTint="@color/white"
             app:icon="@drawable/settings_icon"
             app:iconTint="@color/blackText"
@@ -70,17 +74,11 @@
             android:text="@string/setting_button"
             android:textColor="@color/blackText"
             android:textAllCaps="false"
-            android:textSize="22sp"
-            app:cornerRadius="16dp"/>
-
-
-
-
-
-
-
-    </LinearLayout>
-
-
+            android:textSize="@dimen/text_size_on_main_screen"
+            app:cornerRadius="@dimen/corner_radius_of_main_screen_buttons"
+            app:layout_constraintTop_toBottomOf="@id/music_library_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
