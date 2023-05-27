@@ -7,9 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="blueYP">#3772E7</color>
-    <color name="blackText">#1A1B22</color>
-    <color name="setting_background">#F5F5F5</color>
-    <color name="settings_icon_colour">#AEAFB4</color>
-
+    <color name="main_activity_background_color">#3772E7</color>
+    <color name="black_day_white_night">#1A1B22</color>
+    <color name="black_day_black_night">#1A1B22</color>
+    <color name="white_day_black_night">#FFFFFF</color>
+    <color name="grey2_day_black_night">#AEAFB4</color>
+    <color name="grey1_day_white_night">#E6E8EB</color>
+    <color name="settings_activity_background_color">#F5F5F5</color>
+    <color name="settings_activity_icon_color">#AEAFB4</color>
 </resources>
