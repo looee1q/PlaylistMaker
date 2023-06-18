@@ -87,7 +87,7 @@
                 android:layout_width="8dp"
                 android:layout_height="14dp"
                 android:layout_gravity="end|center_vertical"
-                android:src="@drawable/user_agreement_icon"
+                android:src="@drawable/deploy_information_icon"
                 android:layout_marginEnd="20dp"/>
         </FrameLayout>
 
