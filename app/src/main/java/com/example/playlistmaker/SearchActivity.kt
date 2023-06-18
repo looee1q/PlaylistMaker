@@ -26,9 +26,9 @@ class SearchActivity : AppCompatActivity() {
         searchRequest = textEditor.text.toString()
 
         backToMainScreen.setOnClickListener {
-            val displayIntent = Intent(this, MainActivity::class.java)
+            //val displayIntent = Intent(this, MainActivity::class.java)
+            //startActivity(displayIntent)
             finish()
-            startActivity(displayIntent)
         }
 
         clearingCross.setOnClickListener {
@@ -54,10 +54,6 @@ class SearchActivity : AppCompatActivity() {
         textEditor.addTextChangedListener(textWatcher)
     }
 
-    companion object {
-        const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(INPUT_IN_SEARCH_ACTIVITY, searchRequest)
@@ -77,4 +73,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    companion object {
+        const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
+    }
 }

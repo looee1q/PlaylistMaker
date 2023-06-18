@@ -6,4 +6,5 @@
     <dimen name="text_size_on_main_screen">22sp</dimen>
     <dimen name="corner_radius_of_main_screen_buttons">22sp</dimen>
     <dimen name="distance_between_main_screen_buttons">16dp</dimen>
+    <dimen name="start_and_end_paddings_of_activity_search">16dp</dimen>
 </resources>

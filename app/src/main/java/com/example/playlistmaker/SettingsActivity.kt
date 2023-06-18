@@ -20,9 +20,9 @@ class SettingsActivity : AppCompatActivity() {
         val userAgreementIcon = findViewById<ImageView>(R.id.user_agreement_icon)
 
         backToMainScreen.setOnClickListener {
-            val displayIntent = Intent(this, MainActivity::class.java)
+            //val displayIntent = Intent(this, MainActivity::class.java)
+            //startActivity(displayIntent)
             finish()
-            startActivity(displayIntent)
         }
 
         switch.setOnCheckedChangeListener { button, isChecked ->
