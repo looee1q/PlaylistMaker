@@ -11,32 +11,34 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 
+private const val RADIUS_OF_ICON_TRACK_CORNER: Float = 2f
+
 class TrackViewHolder(itemView: View): ViewHolder(itemView) {
 
-    val trackIcon = itemView.findViewById<ImageView>(R.id.track_icon)
-    val trackName = itemView.findViewById<TextView>(R.id.track_name)
-    val artistName = itemView.findViewById<TextView>(R.id.artist_name)
-    val trackDuration = itemView.findViewById<TextView>(R.id.track_time)
+    private val trackIcon = itemView.findViewById<ImageView>(R.id.track_icon)
+    private val trackName = itemView.findViewById<TextView>(R.id.track_name)
+    private val artistName = itemView.findViewById<TextView>(R.id.artist_name)
+    private val trackDuration = itemView.findViewById<TextView>(R.id.track_time)
 
     fun bind(track: Track) {
-
-        fun roundedCorners(radius: Float) = RoundedCorners(
-            applyDimension(
-                COMPLEX_UNIT_DIP,
-                radius,
-                itemView.resources.displayMetrics).toInt()
-        )
 
         Glide.with(itemView)
             .load(track.artworkUrl100)
             .apply(RequestOptions()
                 .placeholder(R.drawable.track_icon_mock))
-            .transform(roundedCorners(2f))
+            .transform(roundedCorners(RADIUS_OF_ICON_TRACK_CORNER))
             .centerCrop()
             .into(trackIcon)
-        
+
         trackName.text = track.trackName
         artistName.text = track.artistName
         trackDuration.text = track.trackTime
     }
+
+    private fun roundedCorners(radius: Float) = RoundedCorners(
+        applyDimension(
+            COMPLEX_UNIT_DIP,
+            radius,
+            itemView.resources.displayMetrics).toInt()
+    )
 }

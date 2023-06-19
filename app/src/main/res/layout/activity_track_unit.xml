@@ -27,8 +27,8 @@
         android:fontFamily="@font/ys_display_regular"
         android:textSize="@dimen/track_name_size"
         android:textColor="@color/true_black_day_true_white_night"
-        app:layout_constraintLeft_toRightOf="@id/track_icon"
-        app:layout_constraintRight_toLeftOf="@id/deploy_track_information"
+        app:layout_constraintStart_toEndOf="@id/track_icon"
+        app:layout_constraintEnd_toStartOf="@id/deploy_track_information"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/artist_name"
         app:layout_constraintVertical_chainStyle="packed"/>
@@ -45,8 +45,8 @@
         android:fontFamily="@font/ys_display_regular"
         android:textSize="@dimen/artist_name_size"
         android:textColor="@color/grey2_day_true_white_night"
-        app:layout_constraintLeft_toLeftOf="@id/track_name"
-        app:layout_constraintRight_toLeftOf="@id/track_dot"
+        app:layout_constraintStart_toStartOf="@id/track_name"
+        app:layout_constraintEnd_toStartOf="@id/track_dot"
         app:layout_constraintTop_toBottomOf="@id/track_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"/>
@@ -58,8 +58,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         app:tint="@color/grey2_day_true_white_night"
-        app:layout_constraintLeft_toRightOf="@id/artist_name"
-        app:layout_constraintRight_toLeftOf="@id/track_time"
+        app:layout_constraintStart_toEndOf="@id/artist_name"
+        app:layout_constraintEnd_toStartOf="@id/track_time"
         app:layout_constraintTop_toTopOf="@id/artist_name"
         app:layout_constraintBottom_toBottomOf="@id/artist_name"/>
 
@@ -72,7 +72,7 @@
         android:fontFamily="@font/ys_display_regular"
         android:textSize="@dimen/artist_name_size"
         android:textColor="@color/grey2_day_true_white_night"
-        app:layout_constraintLeft_toRightOf="@id/track_dot"
+        app:layout_constraintStart_toEndOf="@id/track_dot"
         app:layout_constraintTop_toTopOf="@id/artist_name"
         app:layout_constraintBottom_toBottomOf="@id/artist_name"/>
 

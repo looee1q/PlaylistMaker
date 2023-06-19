@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.random.Random
 
 class SearchActivity : AppCompatActivity() {
-    lateinit var textEditor: EditText
-    lateinit var searchRequest: String
+    private lateinit var textEditor: EditText
+    private lateinit var searchRequest: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -85,7 +85,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        textEditor.setText(savedInstanceState?.getString(INPUT_IN_SEARCH_ACTIVITY))
+        textEditor.setText(savedInstanceState.getString(INPUT_IN_SEARCH_ACTIVITY))
     }
 
     private fun closeKeyboard() {
