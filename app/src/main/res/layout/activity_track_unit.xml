@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="61dp">
+    
+    <ImageView
+        android:id="@+id/track_icon"
+        android:layout_width="@dimen/track_icon_side_size"
+        android:layout_height="@dimen/track_icon_side_size"
+        tools:src="@drawable/track_icon_mock"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/track_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="10dp"
+        tools:text="Incredibly long, full of drunk madness, name of the track"
+        android:lines="1"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_regular"
+        android:textSize="@dimen/track_name_size"
+        android:textColor="@color/true_black_day_true_white_night"
+        app:layout_constraintStart_toEndOf="@id/track_icon"
+        app:layout_constraintEnd_toStartOf="@id/deploy_track_information"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/artist_name"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:layout_width="wrap_content"
+        android:maxWidth="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        tools:text="The Beatles, The Potters, The Gopniks, The Babushkas"
+        android:lines="1"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_regular"
+        android:textSize="@dimen/artist_name_size"
+        android:textColor="@color/grey2_day_true_white_night"
+        app:layout_constraintStart_toStartOf="@id/track_name"
+        app:layout_constraintEnd_toStartOf="@id/track_dot"
+        app:layout_constraintTop_toBottomOf="@id/track_name"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"/>
+    
+    <ImageView
+        android:id="@+id/track_dot"
+        android:src="@drawable/track_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        app:tint="@color/grey2_day_true_white_night"
+        app:layout_constraintStart_toEndOf="@id/artist_name"
+        app:layout_constraintEnd_toStartOf="@id/track_time"
+        app:layout_constraintTop_toTopOf="@id/artist_name"
+        app:layout_constraintBottom_toBottomOf="@id/artist_name"/>
+
+    <TextView
+        android:id="@+id/track_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        tools:text="2:55"
+        android:fontFamily="@font/ys_display_regular"
+        android:textSize="@dimen/artist_name_size"
+        android:textColor="@color/grey2_day_true_white_night"
+        app:layout_constraintStart_toEndOf="@id/track_dot"
+        app:layout_constraintTop_toTopOf="@id/artist_name"
+        app:layout_constraintBottom_toBottomOf="@id/artist_name"/>
+
+    <ImageView
+        android:id="@+id/deploy_track_information"
+        android:src="@drawable/deploy_information_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        app:tint="@color/grey2_day_true_white_night"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
