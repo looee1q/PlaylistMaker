@@ -12,6 +12,9 @@
     <string name="email_default_recipient">valera.sevostyanov@yandex.ru</string>
     <string name="email_default_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="email_default_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="connection_error">Проблема со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="reload">Обновить</string>
 
 
 </resources>
