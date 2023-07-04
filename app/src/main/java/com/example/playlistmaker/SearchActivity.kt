@@ -12,15 +12,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
-import java.util.*
 
 private const val BASE_ITUNES_URL: String = "https://itunes.apple.com"
+private const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
+private const val CODE_200 = 200
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var textEditor: EditText
@@ -111,21 +110,18 @@ class SearchActivity : AppCompatActivity() {
                         call: Call<ITunesServerResponse>,
                         response: Response<ITunesServerResponse>
                     ) {
-                        if (response.code() == 200) {
+                        if (response.code() == CODE_200) {
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 tracks.clear()
                                 Track.convertTrackTimeMillisToTrackTime(response.body()?.results!!)
                                 tracks.addAll(response.body()?.results!!)
                                 adapter.notifyDataSetChanged()
-                                showError("","")
+                                showError(ITunesServerResponseStatus.SUCCESS)
                             } else {
-                                showError(getString(R.string.nothing_found), "")
+                                showError(ITunesServerResponseStatus.NOTHING_FOUND)
                             }
                         } else {
-                            showError(
-                                getString(R.string.connection_error),
-                                response.code().toString()
-                            )
+                            showError(ITunesServerResponseStatus.CONNECTION_ERROR)
                             reloadSearchButton.setOnClickListener {
                                 runSearch()
                             }
@@ -133,7 +129,7 @@ class SearchActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<ITunesServerResponse>, t: Throwable) {
-                        showError(getString(R.string.connection_error), t.message.toString())
+                        showError(ITunesServerResponseStatus.CONNECTION_ERROR)
                         reloadSearchButton.setOnClickListener {
                             runSearch()
                         }
@@ -141,15 +137,15 @@ class SearchActivity : AppCompatActivity() {
                 })
         }
 
-        //if (searchRequest.isNotEmpty()) {
-            textEditor.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
+        textEditor.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (searchRequest.isNotEmpty()) {
                     runSearch()
-                    true
                 }
-                false
+                true
             }
-        //}
+            false
+        }
 
     }
 
@@ -172,36 +168,30 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun showError(message: String, extraInformation: String) {
-        if (message.isNotEmpty()) {
+    private fun showError(iTunesServerResponseStatus: ITunesServerResponseStatus) {
+        fun clearTracksAndSetErrorViews(errorCover: Int, errorText: Int) {
             tracks.clear()
             adapter.notifyDataSetChanged()
             errorImage.visibility = View.VISIBLE
             errorMessage.visibility = View.VISIBLE
-            when (message) {
-                getString(R.string.nothing_found) -> {
-                    errorImage.setImageDrawable(getDrawable(R.drawable.nothing_found_error))
-                    errorMessage.text = getText(R.string.nothing_found)
-                }
-                getString(R.string.connection_error) -> {
-                    errorImage.setImageDrawable(getDrawable(R.drawable.connection_error))
-                    errorMessage.text = getText(R.string.connection_error)
-                    reloadSearchButton.visibility = View.VISIBLE
-                }
-            }
-            if (extraInformation.isNotEmpty()) {
-                Toast.makeText(this, extraInformation, Toast.LENGTH_SHORT).show()
-            }
+            errorImage.setImageDrawable(getDrawable(errorCover))
+            errorMessage.text = getText(errorText)
         }
-        else {
-            errorImage.visibility = View.GONE
-            errorMessage.visibility = View.GONE
-            reloadSearchButton.visibility = View.GONE
-        }
-    }
 
-    companion object {
-        const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
+        when (iTunesServerResponseStatus) {
+            ITunesServerResponseStatus.CONNECTION_ERROR -> {
+                clearTracksAndSetErrorViews(R.drawable.connection_error, R.string.connection_error)
+                reloadSearchButton.visibility = View.VISIBLE
+            }
+            ITunesServerResponseStatus.NOTHING_FOUND -> {
+                clearTracksAndSetErrorViews(R.drawable.nothing_found_error, R.string.nothing_found)
+            }
+            ITunesServerResponseStatus.SUCCESS -> {
+                errorImage.visibility = View.GONE
+                errorMessage.visibility = View.GONE
+                reloadSearchButton.visibility = View.GONE
+            }
+        }
     }
 
 }
