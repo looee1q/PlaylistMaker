@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 
 class SettingsActivity : AppCompatActivity() {
@@ -25,10 +24,12 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        switch.setOnCheckedChangeListener { button, isChecked ->
-            if (isChecked) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        switch.setOnCheckedChangeListener { switcher, isChecked ->
+            (applicationContext as App).changeTheme(isChecked)
+            switcher.isChecked = isChecked
         }
+
+        switch.isChecked = (applicationContext as App).darkTheme
 
         shareAppIcon.setOnClickListener {
             val shareIntent = Intent().apply {
