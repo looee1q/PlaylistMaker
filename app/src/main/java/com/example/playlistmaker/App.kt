@@ -2,9 +2,11 @@ package com.example.playlistmaker
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.content.res.Configuration
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 
-const val NIGHT_MODE_SWITCH = "NIGHT_MODE_SWITCH"
+const val NIGHT_MODE_SWI = "NIGHT_MODE_SWI"
 const val NIGHT_MODE_STATUS = "NIGHT_MODE_STATUS"
 
 class App: Application() {
@@ -14,8 +16,8 @@ class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        sharedReferences = getSharedPreferences(NIGHT_MODE_SWITCH, MODE_PRIVATE)
-        darkTheme = sharedReferences.getBoolean(NIGHT_MODE_STATUS, false)
+        sharedReferences = getSharedPreferences(NIGHT_MODE_SWI, MODE_PRIVATE)
+        darkTheme = sharedReferences.getBoolean(NIGHT_MODE_STATUS, getSystemNightModeStatus())
         changeTheme(darkTheme)
      }
 
@@ -30,6 +32,19 @@ class App: Application() {
         sharedReferences.edit()
             .putBoolean(NIGHT_MODE_STATUS, darkTheme)
             .apply()
+    }
+
+    private fun getSystemNightModeStatus() : Boolean {
+        return when (resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                Log.d("NightMode", "UI_MODE_NIGHT_YES")
+                true
+            }
+            else -> {
+                Log.d("NightMode", "else")
+                false
+            }
+        }
     }
 
 }

@@ -14,10 +14,8 @@ class SearchHistory(val sharedPreferences: SharedPreferences) {
     }
 
     fun getTrackListFromSharedPreferences(): MutableList<Track> {
-        return gson.fromJson(
-            sharedPreferences.getString(HISTORY_TRACK_LIST_KEY, ""),
-            Array<Track>::class.java
-        ).toMutableList()
+        val json = sharedPreferences.getString(HISTORY_TRACK_LIST_KEY, null) ?: return emptyArray<Track>().toMutableList()
+        return gson.fromJson(json, Array<Track>::class.java).toMutableList()
     }
 
     companion object {
