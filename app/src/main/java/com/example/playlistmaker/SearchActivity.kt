@@ -15,6 +15,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,7 +37,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var errorMessage: TextView
     private lateinit var reloadSearchButton: Button
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var historyTrackListLayout: LinearLayout
+    private lateinit var historyTrackListLayout: ConstraintLayout
     private lateinit var historyTrackListRecyclerView: RecyclerView
     private lateinit var clearHistoryButton: Button
 
@@ -66,7 +67,7 @@ class SearchActivity : AppCompatActivity() {
         errorImage = findViewById<ImageView>(R.id.error_image)
         errorMessage = findViewById<TextView>(R.id.error_message)
         reloadSearchButton = findViewById<Button>(R.id.reload_search_button)
-        historyTrackListLayout = findViewById<LinearLayout>(R.id.history_of_tracks_constraint_layout)
+        historyTrackListLayout = findViewById<ConstraintLayout>(R.id.history_of_tracks_constraint_layout)
         historyTrackListRecyclerView = findViewById<RecyclerView>(R.id.history_of_tracks_list_recycler_view)
         clearHistoryButton = findViewById<Button>(R.id.clear_history_button)
 
