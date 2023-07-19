@@ -32,7 +32,7 @@ class TrackViewHolder(itemView: View): ViewHolder(itemView) {
 
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackDuration.text = track.trackTime
+        trackDuration.text = track.getDuration()
     }
 
     private fun roundedCorners(radius: Float) = RoundedCorners(
