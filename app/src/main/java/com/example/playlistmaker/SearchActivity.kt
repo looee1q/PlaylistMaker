@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,6 +29,7 @@ private const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
 private const val CODE_200 = 200
 private const val HISTORY_TRACK_LIST_SIZE = 10
 const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
+const val TRACK = "TRACK"
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var tracksSearchField: EditText
@@ -99,16 +101,22 @@ class SearchActivity : AppCompatActivity() {
 
         trackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        adapter.listener = {track: Track ->
+        val listener: (Track) -> Unit = {track: Track ->
+            val intent = Intent(this, TrackInfoActivity::class.java)
+            intent.putExtra(TRACK, track)
+            startActivity(intent)
+
             fillHistoryTrackListUp(track)
             searchHistory.writeTrackListToSharedPreferences(historyTrackList)
             historyTrackListAdapter.notifyDataSetChanged()
             Log.d("historyTrackList", "${track} with Id ${track.trackId} has been added to historyTrackList")
         }
 
+        adapter.listener = listener
         trackList.adapter = adapter
 
         historyTrackListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        historyTrackListAdapter.listener = listener
         historyTrackListRecyclerView.adapter = historyTrackListAdapter
 
         clearHistoryButton.setOnClickListener {

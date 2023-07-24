@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.util.TypedValue.*
 import android.view.View
@@ -33,12 +34,18 @@ class TrackViewHolder(itemView: View): ViewHolder(itemView) {
         trackName.text = track.trackName
         artistName.text = track.artistName
         trackDuration.text = track.getDuration()
+
+        Log.d("ViewHolder", "Вьюхолдим")
     }
 
-    private fun roundedCorners(radius: Float) = RoundedCorners(
-        applyDimension(
-            COMPLEX_UNIT_DIP,
-            radius,
-            itemView.resources.displayMetrics).toInt()
-    )
+    private fun roundedCorners(radius: Float): RoundedCorners {
+        Log.d("RoundedCorners", "Скругляем углы")
+        return RoundedCorners(
+            applyDimension(
+                COMPLEX_UNIT_DIP,
+                radius,
+                itemView.resources.displayMetrics
+            ).toInt()
+        )
+    }
 }
