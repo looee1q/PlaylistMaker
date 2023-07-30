@@ -14,21 +14,22 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.*
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Collections
 
 private const val BASE_ITUNES_URL: String = "https://itunes.apple.com"
 private const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
 private const val CODE_200 = 200
 private const val HISTORY_TRACK_LIST_SIZE = 10
-const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
+private const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
 const val TRACK = "TRACK"
 
 class SearchActivity : AppCompatActivity() {
@@ -49,9 +50,11 @@ class SearchActivity : AppCompatActivity() {
     private val historyTrackList = mutableListOf<Track>()
     private val historyTrackListAdapter = TrackAdapter(historyTrackList)
 
+    private val contentType = "application/json".toMediaType()
+    private val converterFactory = Json { ignoreUnknownKeys = true }.asConverterFactory(contentType)
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_ITUNES_URL)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(converterFactory)
         .build()
 
     private val iTunesService = retrofit.create<ITunesApi>()
@@ -103,7 +106,7 @@ class SearchActivity : AppCompatActivity() {
 
         val listener: (Track) -> Unit = {track: Track ->
             val intent = Intent(this, TrackInfoActivity::class.java)
-            intent.putExtra(TRACK, track)
+            intent.putExtra(TRACK, Json.encodeToString(track))
             startActivity(intent)
 
             fillHistoryTrackListUp(track)
@@ -168,6 +171,7 @@ class SearchActivity : AppCompatActivity() {
                     ) {
                         if (response.code() == CODE_200) {
                             if (response.body()?.results?.isNotEmpty() == true) {
+                                Log.d("ServerResponseIsSucceed", "${response.body()?.results!![0]}")
                                 tracks.clear()
                                 tracks.addAll(response.body()?.results!!)
                                 adapter.notifyDataSetChanged()
@@ -181,10 +185,12 @@ class SearchActivity : AppCompatActivity() {
                                 runSearch()
                             }
                         }
-                        Log.d("Search", "Ya Iskal")
+                        Log.d("ServerResponse", "Ya Iskal")
+                        Log.d("ServerResponse", "${Track.serializer().descriptor}")
                     }
 
                     override fun onFailure(call: Call<ITunesServerResponse>, t: Throwable) {
+                        Log.d("ServerResponseIsFailed", "${t.message}")
                         showError(ITunesServerResponseStatus.CONNECTION_ERROR)
                         reloadSearchButton.setOnClickListener {
                             runSearch()

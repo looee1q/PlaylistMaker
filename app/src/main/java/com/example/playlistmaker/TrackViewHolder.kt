@@ -27,25 +27,13 @@ class TrackViewHolder(itemView: View): ViewHolder(itemView) {
             .load(track.artworkUrl100)
             .apply(RequestOptions()
                 .placeholder(R.drawable.track_icon_mock))
-            .transform(roundedCorners(RADIUS_OF_ICON_TRACK_CORNER))
             .centerCrop()
+            .transform(roundedCorners(RADIUS_OF_ICON_TRACK_CORNER, itemView.resources))
             .into(trackIcon)
 
         trackName.text = track.trackName
         artistName.text = track.artistName
         trackDuration.text = track.getDuration()
-
-        Log.d("ViewHolder", "Вьюхолдим")
     }
 
-    private fun roundedCorners(radius: Float): RoundedCorners {
-        Log.d("RoundedCorners", "Скругляем углы")
-        return RoundedCorners(
-            applyDimension(
-                COMPLEX_UNIT_DIP,
-                radius,
-                itemView.resources.displayMetrics
-            ).toInt()
-        )
-    }
 }
