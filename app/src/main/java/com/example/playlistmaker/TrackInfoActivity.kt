@@ -14,8 +14,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
 import kotlinx.serialization.json.Json
 
-private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
-
 class TrackInfoActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityTrackInfoBinding
@@ -27,7 +25,7 @@ class TrackInfoActivity: AppCompatActivity() {
         binding = ActivityTrackInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        track = Json.decodeFromString<Track>(intent.extras?.getString(TRACK)!!)
+        track = Json.decodeFromString<Track>(intent.extras?.getString(SearchActivity.TRACK)!!)
         bind(track)
 
         binding.backToSearchActivityButton.setOnClickListener {
@@ -63,6 +61,10 @@ class TrackInfoActivity: AppCompatActivity() {
             trackGenre.text = track.genre
             trackCountry.text = track.country
         }
+    }
+
+    companion object {
+        private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
     }
 
 }

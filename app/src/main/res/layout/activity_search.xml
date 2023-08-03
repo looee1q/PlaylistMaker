@@ -16,7 +16,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/to_main_screen_from_search"
+            android:id="@+id/back_to_main_screen"
             style="@style/ArrowToMainActivity"/>
 
         <TextView
@@ -40,7 +40,7 @@
             app:tint="@color/grey2_day_black_night"/>
 
         <EditText
-            android:id="@+id/searchEditTextInSettingsActivity"
+            android:id="@+id/tracks_search_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
@@ -60,7 +60,7 @@
             android:singleLine="true"/>
 
         <ImageView
-            android:id="@+id/clearingCrossInSettingActivity"
+            android:id="@+id/clearing_history_cross"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_marginEnd="13dp"
@@ -71,7 +71,7 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/history_of_tracks_constraint_layout"
+        android:id="@+id/history_track_list_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -88,12 +88,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/history_of_tracks_list_recycler_view"
+            app:layout_constraintBottom_toTopOf="@id/history_track_list_recycler_view"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintVertical_bias="0"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/history_of_tracks_list_recycler_view"
+            android:id="@+id/history_track_list_recycler_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -110,7 +110,7 @@
             android:layout_marginBottom="14dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/history_of_tracks_list_recycler_view"
+            app:layout_constraintTop_toBottomOf="@id/history_track_list_recycler_view"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

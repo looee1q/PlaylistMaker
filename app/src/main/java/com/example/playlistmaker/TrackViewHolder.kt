@@ -11,15 +11,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.example.playlistmaker.databinding.ActivityTrackUnitBinding
 
-private const val RADIUS_OF_ICON_TRACK_CORNER: Float = 2f
-
-class TrackViewHolder(itemView: View): ViewHolder(itemView) {
-
-    private val trackIcon = itemView.findViewById<ImageView>(R.id.track_icon)
-    private val trackName = itemView.findViewById<TextView>(R.id.track_name)
-    private val artistName = itemView.findViewById<TextView>(R.id.artist_name)
-    private val trackDuration = itemView.findViewById<TextView>(R.id.track_time)
+class TrackViewHolder(private val binding: ActivityTrackUnitBinding): ViewHolder(binding.root) {
 
     fun bind(track: Track) {
 
@@ -29,11 +23,14 @@ class TrackViewHolder(itemView: View): ViewHolder(itemView) {
                 .placeholder(R.drawable.track_icon_mock))
             .centerCrop()
             .transform(roundedCorners(RADIUS_OF_ICON_TRACK_CORNER, itemView.resources))
-            .into(trackIcon)
+            .into(binding.trackIcon)
 
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        trackDuration.text = track.getDuration()
+        binding.trackName.text = track.trackName
+        binding.artistName.text = track.artistName
+        binding.trackDuration.text = track.getDuration()
     }
 
+    companion object {
+        private const val RADIUS_OF_ICON_TRACK_CORNER: Float = 2f
+    }
 }

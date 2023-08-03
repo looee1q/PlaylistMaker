@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class SearchHistory(val sharedPreferences: SharedPreferences) {
+class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
     fun writeTrackListToSharedPreferences(trackList: MutableList<Track>) {
         sharedPreferences.edit()

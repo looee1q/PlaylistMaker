@@ -4,15 +4,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.databinding.ActivityTrackUnitBinding
 
-class TrackAdapter(val trackList: MutableList<Track>): RecyclerView.Adapter<TrackViewHolder>() {
+class TrackAdapter(private val trackList: MutableList<Track>): RecyclerView.Adapter<TrackViewHolder>() {
 
     var listener: (Track) -> Unit = {Log.d("Listener", "Пустышка")}
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.activity_track_unit, parent, false)
-        return TrackViewHolder(view)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ActivityTrackUnitBinding.inflate(layoutInflater, parent, false)
+        return TrackViewHolder(binding)
     }
 
     override fun getItemCount() = trackList.size

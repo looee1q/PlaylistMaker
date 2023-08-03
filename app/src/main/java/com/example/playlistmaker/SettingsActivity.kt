@@ -6,32 +6,29 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.widget.SwitchCompat
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
 
-        val backToMainScreen = findViewById<ImageView>(R.id.to_main_screen_from_settings)
-        val switch = findViewById<SwitchCompat>(R.id.night_mode_switch)
-        val shareAppIcon = findViewById<ImageView>(R.id.share_app_icon)
-        val writeToTheSupportIcon = findViewById<ImageView>(R.id.write_to_the_support_icon)
-        val userAgreementIcon = findViewById<ImageView>(R.id.user_agreement_icon)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        backToMainScreen.setOnClickListener {
-            //val displayIntent = Intent(this, MainActivity::class.java)
-            //startActivity(displayIntent)
+        binding.backToMainScreenFromSettings.setOnClickListener {
             finish()
         }
 
-        switch.setOnCheckedChangeListener { switcher, isChecked ->
+        binding.nightModeSwitch.setOnCheckedChangeListener { switcher, isChecked ->
             (applicationContext as App).changeTheme(isChecked)
             switcher.isChecked = isChecked
         }
 
-        switch.isChecked = (applicationContext as App).darkTheme
+        binding.nightModeSwitch.isChecked = (applicationContext as App).darkTheme
 
-        shareAppIcon.setOnClickListener {
+        binding.shareAppIcon.setOnClickListener {
             val shareIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 type = "text/plain"
@@ -41,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(chooser)
         }
 
-        writeToTheSupportIcon.setOnClickListener {
+        binding.writeToTheSupportIcon.setOnClickListener {
             val sendIntent = Intent().apply {
                 action = Intent.ACTION_SENDTO
                 data = Uri.parse("mailto:")
@@ -52,7 +49,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(sendIntent)
         }
 
-        userAgreementIcon.setOnClickListener {
+        binding.userAgreementIcon.setOnClickListener {
             val sendIntent = Intent().apply {
                 action = Intent.ACTION_VIEW
                 data = Uri.parse(getString(R.string.link_to_offer))
