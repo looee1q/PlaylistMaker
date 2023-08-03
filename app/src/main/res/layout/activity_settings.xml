@@ -15,7 +15,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/to_main_screen_from_settings"
+                android:id="@+id/back_to_main_screen_from_settings"
                 style="@style/ArrowToMainActivity"/>
 
             <TextView

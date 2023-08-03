@@ -6,9 +6,6 @@ import android.content.res.Configuration
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 
-const val NIGHT_MODE_SWI = "NIGHT_MODE_SWI"
-const val NIGHT_MODE_STATUS = "NIGHT_MODE_STATUS"
-
 class App: Application() {
 
     var darkTheme = false
@@ -16,7 +13,7 @@ class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        sharedReferences = getSharedPreferences(NIGHT_MODE_SWI, MODE_PRIVATE)
+        sharedReferences = getSharedPreferences(NIGHT_MODE_SWITCH, MODE_PRIVATE)
         darkTheme = sharedReferences.getBoolean(NIGHT_MODE_STATUS, getSystemNightModeStatus())
         changeTheme(darkTheme)
      }
@@ -45,6 +42,11 @@ class App: Application() {
                 false
             }
         }
+    }
+
+    companion object {
+        const val NIGHT_MODE_SWITCH = "NIGHT_MODE_SWITCH"
+        const val NIGHT_MODE_STATUS = "NIGHT_MODE_STATUS"
     }
 
 }

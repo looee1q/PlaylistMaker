@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,36 +11,23 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.*
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Collections
 
-private const val BASE_ITUNES_URL: String = "https://itunes.apple.com"
-private const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
-private const val CODE_200 = 200
-private const val HISTORY_TRACK_LIST_SIZE = 10
-const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
-
 class SearchActivity : AppCompatActivity() {
-    private lateinit var tracksSearchField: EditText
-    private lateinit var trackList: RecyclerView
+
+    private lateinit var binding: ActivitySearchBinding
+
     private lateinit var searchRequest: String
-    private lateinit var errorImage: ImageView
-    private lateinit var errorMessage: TextView
-    private lateinit var reloadSearchButton: Button
+
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var historyTrackListLayout: ConstraintLayout
-    private lateinit var historyTrackListRecyclerView: RecyclerView
-    private lateinit var clearHistoryButton: Button
 
     private val tracks = mutableListOf<Track>()
     private val adapter = TrackAdapter(tracks)
@@ -47,46 +35,36 @@ class SearchActivity : AppCompatActivity() {
     private val historyTrackList = mutableListOf<Track>()
     private val historyTrackListAdapter = TrackAdapter(historyTrackList)
 
+    private val contentType = "application/json".toMediaType()
+    private val converterFactory = Json { ignoreUnknownKeys = true }.asConverterFactory(contentType)
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_ITUNES_URL)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(converterFactory)
         .build()
 
     private val iTunesService = retrofit.create<ITunesApi>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         sharedPreferences = getSharedPreferences(HISTORY_OF_TRACKS, MODE_PRIVATE)
-
-        val backToMainScreen = findViewById<ImageView>(R.id.to_main_screen_from_search)
-        val clearingCross = findViewById<ImageView>(R.id.clearingCrossInSettingActivity)
-        tracksSearchField = findViewById<EditText>(R.id.searchEditTextInSettingsActivity)
-        trackList = findViewById<RecyclerView>(R.id.track_list_recycler_view)
-        errorImage = findViewById<ImageView>(R.id.error_image)
-        errorMessage = findViewById<TextView>(R.id.error_message)
-        reloadSearchButton = findViewById<Button>(R.id.reload_search_button)
-        historyTrackListLayout = findViewById<ConstraintLayout>(R.id.history_of_tracks_constraint_layout)
-        historyTrackListRecyclerView = findViewById<RecyclerView>(R.id.history_of_tracks_list_recycler_view)
-        clearHistoryButton = findViewById<Button>(R.id.clear_history_button)
-
         val searchHistory = SearchHistory(sharedPreferences)
 
-        searchRequest = tracksSearchField.text.toString()
+        searchRequest = binding.tracksSearchField.text.toString()
 
-        backToMainScreen.setOnClickListener {
-            //val displayIntent = Intent(this, MainActivity::class.java)
-            //startActivity(displayIntent)
+        binding.backToMainScreen.setOnClickListener {
             finish()
         }
 
-        clearingCross.setOnClickListener {
-            tracksSearchField.setText("")
+        binding.clearingHistoryCross.setOnClickListener {
+            binding.tracksSearchField.setText("")
             tracks.clear()
             adapter.notifyDataSetChanged()
             closeKeyboard()
-            if (historyTrackList.isNotEmpty()) historyTrackListLayout.visibility = View.VISIBLE
+            if (historyTrackList.isNotEmpty()) binding.historyTrackListLayout.visibility = View.VISIBLE
         }
 
         historyTrackList.addAll(
@@ -94,56 +72,59 @@ class SearchActivity : AppCompatActivity() {
         )
 
         if (historyTrackList.isNullOrEmpty()) {
-            historyTrackListLayout.visibility = View.GONE
+            binding.historyTrackListLayout.visibility = View.GONE
         }
 
-        trackList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val listener: (Track) -> Unit = {track: Track ->
+            val intent = Intent(this, TrackInfoActivity::class.java)
+            intent.putExtra(TRACK, Json.encodeToString(track))
+            startActivity(intent)
 
-        adapter.listener = {track: Track ->
             fillHistoryTrackListUp(track)
             searchHistory.writeTrackListToSharedPreferences(historyTrackList)
             historyTrackListAdapter.notifyDataSetChanged()
             Log.d("historyTrackList", "${track} with Id ${track.trackId} has been added to historyTrackList")
         }
 
-        trackList.adapter = adapter
+        binding.trackListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        adapter.listener = listener
+        binding.trackListRecyclerView.adapter = adapter
 
-        historyTrackListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
-        historyTrackListRecyclerView.adapter = historyTrackListAdapter
+        binding.historyTrackListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        historyTrackListAdapter.listener = listener
+        binding.historyTrackListRecyclerView.adapter = historyTrackListAdapter
 
-        clearHistoryButton.setOnClickListener {
+        binding.clearHistoryButton.setOnClickListener {
             historyTrackList.clear()
             searchHistory.writeTrackListToSharedPreferences(historyTrackList)
             historyTrackListAdapter.notifyDataSetChanged()
-            historyTrackListLayout.visibility = View.GONE
+            binding.historyTrackListLayout.visibility = View.GONE
         }
 
         val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
 
             override fun onTextChanged(input: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (tracksSearchField.hasFocus() && input.isNullOrEmpty() && historyTrackList.isNotEmpty()) {
-                    historyTrackListLayout.visibility = View.VISIBLE
+                if (binding.tracksSearchField.hasFocus() && input.isNullOrEmpty() && historyTrackList.isNotEmpty()) {
+                    binding.historyTrackListLayout.visibility = View.VISIBLE
                 } else {
-                    historyTrackListLayout.visibility = View.GONE
+                    binding.historyTrackListLayout.visibility = View.GONE
                 }
 
-                if (input.isNullOrEmpty()) clearingCross.visibility = View.GONE
-                else clearingCross.visibility = View.VISIBLE
+                if (input.isNullOrEmpty()) binding.clearingHistoryCross.visibility = View.GONE
+                else binding.clearingHistoryCross.visibility = View.VISIBLE
                 searchRequest = input.toString()
             }
 
-            override fun afterTextChanged(p0: Editable?) {
-            }
+            override fun afterTextChanged(p0: Editable?) { }
 
         }
 
-        tracksSearchField.addTextChangedListener(textWatcher)
+        binding.tracksSearchField.addTextChangedListener(textWatcher)
 
-        tracksSearchField.setOnFocusChangeListener { view, hasFocus ->
-            historyTrackListLayout.visibility = if (hasFocus
-                && tracksSearchField.text.isEmpty()
+        binding.tracksSearchField.setOnFocusChangeListener { view, hasFocus ->
+            binding.historyTrackListLayout.visibility = if (hasFocus
+                && binding.tracksSearchField.text.isEmpty()
                 && historyTrackList.isNotEmpty()) {
                 View.VISIBLE
             } else {
@@ -160,6 +141,7 @@ class SearchActivity : AppCompatActivity() {
                     ) {
                         if (response.code() == CODE_200) {
                             if (response.body()?.results?.isNotEmpty() == true) {
+                                Log.d("ServerResponseIsSucceed", "${response.body()?.results!![0]}")
                                 tracks.clear()
                                 tracks.addAll(response.body()?.results!!)
                                 adapter.notifyDataSetChanged()
@@ -169,26 +151,27 @@ class SearchActivity : AppCompatActivity() {
                             }
                         } else {
                             showError(ITunesServerResponseStatus.CONNECTION_ERROR)
-                            reloadSearchButton.setOnClickListener {
+                            binding.reloadSearchButton.setOnClickListener {
                                 runSearch()
                             }
                         }
-                        Log.d("Search", "Ya Iskal")
+                        Log.d("ServerResponse", "Ya Iskal")
                     }
 
                     override fun onFailure(call: Call<ITunesServerResponse>, t: Throwable) {
+                        Log.d("ServerResponseIsFailed", "${t.message}")
                         showError(ITunesServerResponseStatus.CONNECTION_ERROR)
-                        reloadSearchButton.setOnClickListener {
+                        binding.reloadSearchButton.setOnClickListener {
                             runSearch()
                         }
                     }
                 })
         }
 
-        tracksSearchField.setOnEditorActionListener { _, actionId, _ ->
+        binding.tracksSearchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (searchRequest.isNotEmpty()) {
-                    historyTrackListLayout.visibility = View.GONE
+                    binding.historyTrackListLayout.visibility = View.GONE
                     runSearch()
                 }
                 true
@@ -220,7 +203,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        tracksSearchField.setText(savedInstanceState.getString(INPUT_IN_SEARCH_ACTIVITY))
+        binding.tracksSearchField.setText(savedInstanceState.getString(INPUT_IN_SEARCH_ACTIVITY))
     }
 
     private fun closeKeyboard() {
@@ -236,26 +219,35 @@ class SearchActivity : AppCompatActivity() {
         fun clearTracksAndSetErrorViews(errorCover: Int, errorText: Int) {
             tracks.clear()
             adapter.notifyDataSetChanged()
-            errorImage.visibility = View.VISIBLE
-            errorMessage.visibility = View.VISIBLE
-            errorImage.setImageDrawable(getDrawable(errorCover))
-            errorMessage.text = getText(errorText)
+            binding.errorImage.visibility = View.VISIBLE
+            binding.errorMessage.visibility = View.VISIBLE
+            binding.errorImage.setImageDrawable(getDrawable(errorCover))
+            binding.errorMessage.text = getText(errorText)
         }
 
         when (iTunesServerResponseStatus) {
             ITunesServerResponseStatus.CONNECTION_ERROR -> {
                 clearTracksAndSetErrorViews(R.drawable.connection_error, R.string.connection_error)
-                reloadSearchButton.visibility = View.VISIBLE
+                binding.reloadSearchButton.visibility = View.VISIBLE
             }
             ITunesServerResponseStatus.NOTHING_FOUND -> {
                 clearTracksAndSetErrorViews(R.drawable.nothing_found_error, R.string.nothing_found)
             }
             ITunesServerResponseStatus.SUCCESS -> {
-                errorImage.visibility = View.GONE
-                errorMessage.visibility = View.GONE
-                reloadSearchButton.visibility = View.GONE
+                binding.errorImage.visibility = View.GONE
+                binding.errorMessage.visibility = View.GONE
+                binding.reloadSearchButton.visibility = View.GONE
             }
         }
+    }
+
+    companion object {
+        private const val BASE_ITUNES_URL: String = "https://itunes.apple.com"
+        private const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
+        private const val CODE_200 = 200
+        private const val HISTORY_TRACK_LIST_SIZE = 10
+        private const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
+        const val TRACK = "TRACK"
     }
 
 }
