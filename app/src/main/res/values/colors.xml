@@ -18,4 +18,5 @@
     <color name="settings_activity_icon_color">#AEAFB4</color>
     <color name="true_black_day_true_white_night">#000000</color>
     <color name="grey2_day_true_white_night">#AEAFB4</color>
+    <color name="progress_bar_tint">#6200EE</color>
 </resources>
