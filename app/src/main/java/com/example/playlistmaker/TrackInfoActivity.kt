@@ -5,14 +5,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
 import kotlinx.serialization.json.Json
@@ -25,8 +20,8 @@ class TrackInfoActivity: AppCompatActivity() {
     private lateinit var track: Track
 
     private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
-    private var currentTimePlaying = 0
+    private var playerState = PlayerState.DEFAULT
+    private var currentTimePlayingMillis = 0
 
     private var handlerInMainThread = Handler(Looper.getMainLooper())
     private lateinit var updateTrackTimeRunnable: Runnable
@@ -48,17 +43,18 @@ class TrackInfoActivity: AppCompatActivity() {
 
         updateTrackTimeRunnable = object : Runnable {
             override fun run() {
-                currentTimePlaying = mediaPlayer.currentPosition
-                Log.d("CURRENT_TIME", "$currentTimePlaying")
-                binding.playingProgressTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTimePlaying)
+                currentTimePlayingMillis = mediaPlayer.currentPosition
+                Log.d("CURRENT_TIME", "$currentTimePlayingMillis")
+                binding.playingProgressTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTimePlayingMillis)
                 when (playerState) {
-                    STATE_PLAYING -> handlerInMainThread.postDelayed(this, TIME_OF_TRACK_TIME_UPDATE)
-                    STATE_PAUSED -> handlerInMainThread.removeCallbacks(this)
-                    STATE_PREPARED -> {
+                    PlayerState.PLAYING -> handlerInMainThread.postDelayed(this, TRACK_TIME_UPDATE_FREQUENCY_MILLIS)
+                    PlayerState.PAUSED -> handlerInMainThread.removeCallbacks(this)
+                    PlayerState.PREPARED -> {
                         handlerInMainThread.removeCallbacks(this)
                         binding.playingProgressTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
                         binding.playButton.setImageDrawable(getDrawable(R.drawable.play_button_icon))
                     }
+                    PlayerState.DEFAULT -> {}
                 }
             }
         }
@@ -113,10 +109,10 @@ class TrackInfoActivity: AppCompatActivity() {
             setDataSource(track.previewUrl)
             prepareAsync()
             setOnPreparedListener {
-                playerState = STATE_PREPARED
+                playerState = PlayerState.PREPARED
             }
             setOnCompletionListener {
-                playerState = STATE_PREPARED
+                playerState = PlayerState.PREPARED
             }
         }
     }
@@ -125,32 +121,35 @@ class TrackInfoActivity: AppCompatActivity() {
         mediaPlayer.start()
         Log.d("PLAYER_STATE", "Начато (продолжено) воспроизведение трека")
         binding.playButton.setImageDrawable(getDrawable(R.drawable.pause_button_icon))
-        playerState = STATE_PLAYING
+        playerState = PlayerState.PLAYING
     }
 
     private fun pause() {
         mediaPlayer.pause()
         Log.d("PLAYER_STATE", "Воспроизведение трека приостановлено")
         binding.playButton.setImageDrawable(getDrawable(R.drawable.play_button_icon))
-        playerState = STATE_PAUSED
+        playerState = PlayerState.PAUSED
     }
 
     private fun playbackControl() {
         when (playerState) {
-            STATE_PLAYING -> pause()
-            STATE_PAUSED, STATE_PREPARED -> start()
+            PlayerState.PLAYING -> pause()
+            PlayerState.PAUSED, PlayerState.PREPARED -> start()
+            PlayerState.DEFAULT -> {}
         }
     }
 
     companion object {
         private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
 
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-        private const val TIME_OF_TRACK_TIME_UPDATE = 500L
+        private const val TRACK_TIME_UPDATE_FREQUENCY_MILLIS = 500L
+    }
+    
+    enum class PlayerState {
+        DEFAULT,
+        PREPARED,
+        PLAYING,
+        PAUSED
     }
 
 }

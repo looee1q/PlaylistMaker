@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -114,37 +115,28 @@ class SearchActivity : AppCompatActivity() {
 
         val searchRunnable = Runnable { runSearch() }
 
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-
-            override fun onTextChanged(input: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (binding.tracksSearchField.hasFocus() && input.isNullOrEmpty() && historyTrackList.isNotEmpty()) {
-                    binding.historyTrackListLayout.visibility = View.VISIBLE
-                } else {
-                    binding.historyTrackListLayout.visibility = View.GONE
-                }
-
-                if (input.isNullOrEmpty()) binding.clearingHistoryCross.visibility = View.GONE
-                else binding.clearingHistoryCross.visibility = View.VISIBLE
-
-                searchRequest = input.toString()
-
-                if (searchRequest.isBlank()) {
-                    tracks.clear()
-                    hideErrorsButtons()
-                } else {
-                    handlerInMainThread.removeCallbacks(searchRunnable)
-                    handlerInMainThread.postDelayed(searchRunnable, MAKE_REQUEST_DELAY)
-                    binding.progressBar.visibility = View.VISIBLE
-                    hideErrorsButtons()
-                }
+        binding.tracksSearchField.doOnTextChanged { input, start, before, count ->
+            if (binding.tracksSearchField.hasFocus() && input.isNullOrEmpty() && historyTrackList.isNotEmpty()) {
+                binding.historyTrackListLayout.visibility = View.VISIBLE
+            } else {
+                binding.historyTrackListLayout.visibility = View.GONE
             }
 
-            override fun afterTextChanged(p0: Editable?) { }
+            if (input.isNullOrEmpty()) binding.clearingHistoryCross.visibility = View.GONE
+            else binding.clearingHistoryCross.visibility = View.VISIBLE
 
+            searchRequest = input.toString()
+
+            if (searchRequest.isBlank()) {
+                tracks.clear()
+                hideErrorsButtons()
+            } else {
+                handlerInMainThread.removeCallbacks(searchRunnable)
+                handlerInMainThread.postDelayed(searchRunnable, MAKE_REQUEST_DELAY_MILLIS)
+                binding.progressBar.visibility = View.VISIBLE
+                hideErrorsButtons()
+            }
         }
-
-        binding.tracksSearchField.addTextChangedListener(textWatcher)
 
         binding.tracksSearchField.setOnFocusChangeListener { view, hasFocus ->
             binding.historyTrackListLayout.visibility = if (hasFocus
@@ -212,7 +204,7 @@ class SearchActivity : AppCompatActivity() {
     private fun clickOnTrackDebounce() {
         if (isClickOnTrackAllowed) {
             isClickOnTrackAllowed = false
-            handlerInMainThread.postDelayed({ isClickOnTrackAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            handlerInMainThread.postDelayed({ isClickOnTrackAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
         }
     }
     private fun fillHistoryTrackListUp(track: Track) {
@@ -283,8 +275,8 @@ class SearchActivity : AppCompatActivity() {
         private const val BASE_ITUNES_URL: String = "https://itunes.apple.com"
         private const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
         private const val CODE_200 = 200
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val MAKE_REQUEST_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
+        private const val MAKE_REQUEST_DELAY_MILLIS = 2000L
         private const val HISTORY_TRACK_LIST_SIZE = 10
         private const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
         const val TRACK = "TRACK"
