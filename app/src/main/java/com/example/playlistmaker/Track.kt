@@ -10,6 +10,7 @@ data class Track(
     val trackName: String,
     val artistName: String,
     @SerialName("trackTimeMillis") val trackTime: Long,
+    val previewUrl: String,
     val artworkUrl100: String,
     val collectionName: String?,
     val releaseDate: String,

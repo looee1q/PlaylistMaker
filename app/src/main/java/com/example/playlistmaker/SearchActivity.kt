@@ -5,13 +5,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -35,6 +37,8 @@ class SearchActivity : AppCompatActivity() {
     private val historyTrackList = mutableListOf<Track>()
     private val historyTrackListAdapter = TrackAdapter(historyTrackList)
 
+    private var isClickOnTrackAllowed = true
+
     private val contentType = "application/json".toMediaType()
     private val converterFactory = Json { ignoreUnknownKeys = true }.asConverterFactory(contentType)
     private val retrofit = Retrofit.Builder()
@@ -43,6 +47,8 @@ class SearchActivity : AppCompatActivity() {
         .build()
 
     private val iTunesService = retrofit.create<ITunesApi>()
+
+    private val handlerInMainThread = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,14 +82,20 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val listener: (Track) -> Unit = {track: Track ->
-            val intent = Intent(this, TrackInfoActivity::class.java)
-            intent.putExtra(TRACK, Json.encodeToString(track))
-            startActivity(intent)
+            if (isClickOnTrackAllowed) {
+                clickOnTrackDebounce()
+                val intent = Intent(this, TrackInfoActivity::class.java)
+                intent.putExtra(TRACK, Json.encodeToString(track))
+                startActivity(intent)
 
-            fillHistoryTrackListUp(track)
-            searchHistory.writeTrackListToSharedPreferences(historyTrackList)
-            historyTrackListAdapter.notifyDataSetChanged()
-            Log.d("historyTrackList", "${track} with Id ${track.trackId} has been added to historyTrackList")
+                fillHistoryTrackListUp(track)
+                searchHistory.writeTrackListToSharedPreferences(historyTrackList)
+                historyTrackListAdapter.notifyDataSetChanged()
+                Log.d(
+                    "historyTrackList",
+                    "${track} with Id ${track.trackId} has been added to historyTrackList"
+                )
+            }
         }
 
         binding.trackListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -101,26 +113,30 @@ class SearchActivity : AppCompatActivity() {
             binding.historyTrackListLayout.visibility = View.GONE
         }
 
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
+        val searchRunnable = Runnable { runSearch() }
 
-            override fun onTextChanged(input: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (binding.tracksSearchField.hasFocus() && input.isNullOrEmpty() && historyTrackList.isNotEmpty()) {
-                    binding.historyTrackListLayout.visibility = View.VISIBLE
-                } else {
-                    binding.historyTrackListLayout.visibility = View.GONE
-                }
-
-                if (input.isNullOrEmpty()) binding.clearingHistoryCross.visibility = View.GONE
-                else binding.clearingHistoryCross.visibility = View.VISIBLE
-                searchRequest = input.toString()
+        binding.tracksSearchField.doOnTextChanged { input, start, before, count ->
+            if (binding.tracksSearchField.hasFocus() && input.isNullOrEmpty() && historyTrackList.isNotEmpty()) {
+                binding.historyTrackListLayout.visibility = View.VISIBLE
+            } else {
+                binding.historyTrackListLayout.visibility = View.GONE
             }
 
-            override fun afterTextChanged(p0: Editable?) { }
+            if (input.isNullOrEmpty()) binding.clearingHistoryCross.visibility = View.GONE
+            else binding.clearingHistoryCross.visibility = View.VISIBLE
 
+            searchRequest = input.toString()
+
+            if (searchRequest.isBlank()) {
+                tracks.clear()
+                hideErrorsButtons()
+            } else {
+                handlerInMainThread.removeCallbacks(searchRunnable)
+                handlerInMainThread.postDelayed(searchRunnable, MAKE_REQUEST_DELAY_MILLIS)
+                binding.progressBar.visibility = View.VISIBLE
+                hideErrorsButtons()
+            }
         }
-
-        binding.tracksSearchField.addTextChangedListener(textWatcher)
 
         binding.tracksSearchField.setOnFocusChangeListener { view, hasFocus ->
             binding.historyTrackListLayout.visibility = if (hasFocus
@@ -132,46 +148,10 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        fun runSearch() {
-            iTunesService.search(searchRequest)
-                .enqueue(object : Callback<ITunesServerResponse> {
-                    override fun onResponse(
-                        call: Call<ITunesServerResponse>,
-                        response: Response<ITunesServerResponse>
-                    ) {
-                        if (response.code() == CODE_200) {
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                Log.d("ServerResponseIsSucceed", "${response.body()?.results!![0]}")
-                                tracks.clear()
-                                tracks.addAll(response.body()?.results!!)
-                                adapter.notifyDataSetChanged()
-                                showError(ITunesServerResponseStatus.SUCCESS)
-                            } else {
-                                showError(ITunesServerResponseStatus.NOTHING_FOUND)
-                            }
-                        } else {
-                            showError(ITunesServerResponseStatus.CONNECTION_ERROR)
-                            binding.reloadSearchButton.setOnClickListener {
-                                runSearch()
-                            }
-                        }
-                        Log.d("ServerResponse", "Ya Iskal")
-                    }
-
-                    override fun onFailure(call: Call<ITunesServerResponse>, t: Throwable) {
-                        Log.d("ServerResponseIsFailed", "${t.message}")
-                        showError(ITunesServerResponseStatus.CONNECTION_ERROR)
-                        binding.reloadSearchButton.setOnClickListener {
-                            runSearch()
-                        }
-                    }
-                })
-        }
-
         binding.tracksSearchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (searchRequest.isNotEmpty()) {
-                    binding.historyTrackListLayout.visibility = View.GONE
+                if (searchRequest.isNotBlank()) {
+                    handlerInMainThread.removeCallbacks(searchRunnable)
                     runSearch()
                 }
                 true
@@ -181,6 +161,52 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+    private fun runSearch() {
+        iTunesService.search(searchRequest)
+            .enqueue(object : Callback<ITunesServerResponse> {
+                override fun onResponse(
+                    call: Call<ITunesServerResponse>,
+                    response: Response<ITunesServerResponse>
+                ) {
+                    binding.progressBar.visibility = View.GONE
+                    if (response.code() == CODE_200) {
+                        if (response.body()?.results?.isNotEmpty() == true) {
+                            Log.d("ServerResponseIsSucceed", "${response.body()?.results!![0]}")
+                            tracks.clear()
+                            tracks.addAll(response.body()?.results!!)
+                            adapter.notifyDataSetChanged()
+                            showError(ITunesServerResponseStatus.SUCCESS)
+                        } else {
+                            if (searchRequest.isNotBlank()) {
+                                showError(ITunesServerResponseStatus.NOTHING_FOUND)
+                            }
+                        }
+                    } else {
+                        showError(ITunesServerResponseStatus.CONNECTION_ERROR)
+                        binding.reloadSearchButton.setOnClickListener {
+                            runSearch()
+                        }
+                    }
+                    Log.d("ServerResponse", "Ya Iskal")
+                }
+
+                override fun onFailure(call: Call<ITunesServerResponse>, t: Throwable) {
+                    binding.progressBar.visibility = View.GONE
+                    Log.d("ServerResponseIsFailed", "${t.message}")
+                    showError(ITunesServerResponseStatus.CONNECTION_ERROR)
+                    binding.reloadSearchButton.setOnClickListener {
+                        runSearch()
+                    }
+                }
+            })
+    }
+
+    private fun clickOnTrackDebounce() {
+        if (isClickOnTrackAllowed) {
+            isClickOnTrackAllowed = false
+            handlerInMainThread.postDelayed({ isClickOnTrackAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
+        }
+    }
     private fun fillHistoryTrackListUp(track: Track) {
         val trackIndex = historyTrackList.indexOfFirst { it.trackId == track.trackId }
         if (trackIndex != -1) {
@@ -234,17 +260,23 @@ class SearchActivity : AppCompatActivity() {
                 clearTracksAndSetErrorViews(R.drawable.nothing_found_error, R.string.nothing_found)
             }
             ITunesServerResponseStatus.SUCCESS -> {
-                binding.errorImage.visibility = View.GONE
-                binding.errorMessage.visibility = View.GONE
-                binding.reloadSearchButton.visibility = View.GONE
+                hideErrorsButtons()
             }
         }
+    }
+
+    private fun hideErrorsButtons() {
+        binding.errorImage.visibility = View.GONE
+        binding.errorMessage.visibility = View.GONE
+        binding.reloadSearchButton.visibility = View.GONE
     }
 
     companion object {
         private const val BASE_ITUNES_URL: String = "https://itunes.apple.com"
         private const val INPUT_IN_SEARCH_ACTIVITY = "INPUT_IN_SEARCH_ACTIVITY"
         private const val CODE_200 = 200
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
+        private const val MAKE_REQUEST_DELAY_MILLIS = 2000L
         private const val HISTORY_TRACK_LIST_SIZE = 10
         private const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
         const val TRACK = "TRACK"
