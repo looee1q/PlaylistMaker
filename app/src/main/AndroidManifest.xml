@@ -25,8 +25,11 @@
             android:name=".SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".TrackInfoActivity"
+            android:name=".TrackInfoA"
             android:exported="false" />
+<!--        <activity
+            android:name=".TrackInfoActivity"
+            android:exported="false" />-->
         <activity
             android:name=".MainActivity"
             android:exported="true">

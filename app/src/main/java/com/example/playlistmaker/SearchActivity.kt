@@ -84,7 +84,7 @@ class SearchActivity : AppCompatActivity() {
         val listener: (Track) -> Unit = {track: Track ->
             if (isClickOnTrackAllowed) {
                 clickOnTrackDebounce()
-                val intent = Intent(this, TrackInfoActivity::class.java)
+                val intent = Intent(this, TrackInfoA::class.java)
                 intent.putExtra(TRACK, Json.encodeToString(track))
                 startActivity(intent)
 

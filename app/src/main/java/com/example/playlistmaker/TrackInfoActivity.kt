@@ -1,3 +1,4 @@
+/*
 package com.example.playlistmaker
 
 import android.media.MediaPlayer
@@ -19,8 +20,8 @@ class TrackInfoActivity: AppCompatActivity() {
     private lateinit var binding: ActivityTrackInfoBinding
     private lateinit var track: Track
 
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = PlayerState.DEFAULT
+    private var mediaPlayer = MediaPlayer() //data
+    private var playerState = PlayerState.DEFAULT //data
     private var currentTimePlayingMillis = 0
 
     private var handlerInMainThread = Handler(Looper.getMainLooper())
@@ -152,4 +153,4 @@ class TrackInfoActivity: AppCompatActivity() {
         PAUSED
     }
 
-}
+}*/
