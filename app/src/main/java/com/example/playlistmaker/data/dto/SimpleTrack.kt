@@ -1,7 +1,7 @@
-package com.example.playlistmaker.presentation.models
+package com.example.playlistmaker.data.dto
 
 @kotlinx.serialization.Serializable
-data class TrackActivity(
+data class SimpleTrack(
     val trackId: Long,
     val trackName: String,
     val artistName: String,
@@ -12,7 +12,4 @@ data class TrackActivity(
     val releaseYear: String,
     val country: String,
     val genre: String
-) {
-    val artworkUrl512: String
-        get() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-}
+)

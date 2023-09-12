@@ -1,3 +1,4 @@
+/*
 package com.example.playlistmaker
 
 import android.os.Bundle
@@ -14,7 +15,7 @@ import com.example.playlistmaker.data.TrackPlayerRepositoryImpl
 import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
 import com.example.playlistmaker.domain.*
-import com.example.playlistmaker.presentation.ui.SearchActivity
+import com.example.playlistmaker.presentation.ui.tracks_searcher.SearchActivity
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
@@ -124,4 +125,4 @@ class TrackInfoA: AppCompatActivity() {
         private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
     }
 
-}
+}*/

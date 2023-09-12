@@ -2,7 +2,7 @@ package com.example.playlistmaker.data.network
 
 import android.util.Log
 import com.example.playlistmaker.data.dto.ITunesServerResponse
-import com.example.playlistmaker.data.mapper.TrackToTrackDtoMapper
+import com.example.playlistmaker.data.mapper.Mapper
 import com.example.playlistmaker.domain.api.ApiResponse
 import com.example.playlistmaker.domain.api.MusicApi
 import com.example.playlistmaker.domain.model.Track
@@ -19,7 +19,7 @@ class RetrofitMusicApi : MusicApi {
                     if (responseBody.results.isEmpty()) {
                         ApiResponse.EmptyResponse<List<Track>>()
                     } else {
-                        ApiResponse.Success<List<Track>>(TrackToTrackDtoMapper.map(responseBody))
+                        ApiResponse.Success<List<Track>>(Mapper.mapITunesServerResponseToListOfTracks(responseBody))
                     }
                 }
 

@@ -7,7 +7,7 @@ import com.example.playlistmaker.domain.consumer.ConsumerData
 import com.example.playlistmaker.domain.model.Track
 import java.util.concurrent.Executors
 
-class GetTracksByApiRequestUseCase(val musicApi: MusicApi) {
+class GetTracksByApiRequestUseCase(private val musicApi: MusicApi) {
     private val executor = Executors.newCachedThreadPool()
 
     fun execute(request: String, consumer: Consumer<List<Track>>) {

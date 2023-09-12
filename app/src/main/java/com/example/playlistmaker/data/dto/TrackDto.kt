@@ -17,8 +17,6 @@ data class TrackDto(
     val country: String,
     @SerialName("primaryGenreName") val genre: String
 ) {
-    val artworkUrl512: String
-        get() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     fun getDuration(): String = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTime)
 
     fun getYear(): String = releaseDate.substringBefore('-')

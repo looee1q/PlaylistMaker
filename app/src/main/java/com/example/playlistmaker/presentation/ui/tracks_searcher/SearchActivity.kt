@@ -1,8 +1,7 @@
-package com.example.playlistmaker.presentation.ui
+package com.example.playlistmaker.presentation.ui.tracks_searcher
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -15,15 +14,14 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.ITunesServerResponseStatus
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SearchHistory
-import com.example.playlistmaker.TrackInfoA
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.consumer.Consumer
 import com.example.playlistmaker.domain.consumer.ConsumerData
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.presentation.mapper.TrackToTrackActivityMapper
+import com.example.playlistmaker.presentation.mapper.Mapper
 import com.example.playlistmaker.presentation.models.TrackActivity
+import com.example.playlistmaker.presentation.ui.player.TrackInfoActivity
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.util.Collections
@@ -34,7 +32,16 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var searchRequest: String
 
-    private lateinit var sharedPreferences: SharedPreferences
+    private val writeHistoryTrackListToStorageUseCase by lazy {
+        Creator.provideWriteHistoryTrackListToStorageUseCase(
+            this
+        )
+    }
+    private val getHistoryTrackListFromStorageUseCase by lazy {
+        Creator.provideGetHistoryTrackListFromStorageUseCase(
+            this
+        )
+    }
 
     private val tracks = mutableListOf<TrackActivity>()
     private val adapter = TrackAdapter(tracks)
@@ -55,9 +62,6 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedPreferences = getSharedPreferences(HISTORY_OF_TRACKS, MODE_PRIVATE)
-        val searchHistory = SearchHistory(sharedPreferences)
-
         searchRequest = binding.tracksSearchField.text.toString()
 
         binding.backToMainScreen.setOnClickListener {
@@ -73,7 +77,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         historyTrackList.addAll(
-            searchHistory.getTrackListFromSharedPreferences()
+            getHistoryTrackListFromStorageUseCase.execute().map { Mapper.mapTrackToTrackActivity(it) }
         )
 
         if (historyTrackList.isNullOrEmpty()) {
@@ -83,12 +87,12 @@ class SearchActivity : AppCompatActivity() {
         val listener: (TrackActivity) -> Unit = { track: TrackActivity ->
             if (isClickOnTrackAllowed) {
                 clickOnTrackDebounce()
-                val intent = Intent(this, TrackInfoA::class.java)
+                val intent = Intent(this, TrackInfoActivity::class.java)
                 intent.putExtra(TRACK, Json.encodeToString(track))
                 startActivity(intent)
 
                 fillHistoryTrackListUp(track)
-                searchHistory.writeTrackListToSharedPreferences(historyTrackList)
+                writeHistoryTrackListToStorageUseCase.execute(historyTrackList.map { Mapper.mapTrackActivityToTrack(it) })
                 historyTrackListAdapter.notifyDataSetChanged()
                 Log.d(
                     "historyTrackList",
@@ -107,7 +111,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.clearHistoryButton.setOnClickListener {
             historyTrackList.clear()
-            searchHistory.writeTrackListToSharedPreferences(historyTrackList)
+            writeHistoryTrackListToStorageUseCase.execute(historyTrackList.map { Mapper.mapTrackActivityToTrack(it) })
             historyTrackListAdapter.notifyDataSetChanged()
             binding.historyTrackListLayout.visibility = View.GONE
         }
@@ -169,7 +173,7 @@ class SearchActivity : AppCompatActivity() {
                         when (data) {
                             is ConsumerData.Data -> {
                                 tracks.clear()
-                                tracks.addAll(data.data.map { TrackToTrackActivityMapper.map(it) })
+                                tracks.addAll(data.data.map { Mapper.mapTrackToTrackActivity(it) })
                                 adapter.notifyDataSetChanged()
                                 showError(ITunesServerResponseStatus.SUCCESS)
                             }

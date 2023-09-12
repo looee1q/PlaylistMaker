@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation.ui
+package com.example.playlistmaker.presentation.ui.tracks_searcher
 
 import android.util.Log
 import android.view.LayoutInflater

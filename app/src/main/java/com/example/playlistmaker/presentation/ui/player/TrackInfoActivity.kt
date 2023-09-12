@@ -1,5 +1,4 @@
-/*
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.player
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -10,7 +9,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
+import com.example.playlistmaker.presentation.models.TrackActivity
+import com.example.playlistmaker.presentation.ui.tracks_searcher.SearchActivity
+import com.example.playlistmaker.roundedCorners
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,7 +21,7 @@ import java.util.*
 class TrackInfoActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityTrackInfoBinding
-    private lateinit var track: Track
+    private lateinit var track: TrackActivity
 
     private var mediaPlayer = MediaPlayer() //data
     private var playerState = PlayerState.DEFAULT //data
@@ -33,7 +36,7 @@ class TrackInfoActivity: AppCompatActivity() {
         binding = ActivityTrackInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        track = Json.decodeFromString<Track>(intent.extras?.getString(SearchActivity.TRACK)!!)
+        track = Json.decodeFromString<TrackActivity>(intent.extras?.getString(SearchActivity.TRACK)!!)
         bind(track)
 
         binding.backToSearchActivityButton.setOnClickListener {
@@ -77,7 +80,7 @@ class TrackInfoActivity: AppCompatActivity() {
         mediaPlayer.release()
     }
 
-    private fun bind(track: Track) {
+    private fun bind(track: TrackActivity) {
 
         with(binding) {
             Glide.with(this@TrackInfoActivity)
@@ -91,7 +94,7 @@ class TrackInfoActivity: AppCompatActivity() {
 
             trackNameTitle.text = track.trackName
             artistNameTitle.text = track.artistName
-            trackDuration.text = track.getDuration()
+            trackDuration.text = track.trackTime
 
             if (track.collectionName != null) {
                 trackAlbum.text = track.collectionName
@@ -99,7 +102,7 @@ class TrackInfoActivity: AppCompatActivity() {
                 trackAlbum.visibility = View.GONE
                 albumSection.visibility = View.GONE
             }
-            trackYear.text = track.getYear()
+            trackYear.text = track.releaseYear
             trackGenre.text = track.genre
             trackCountry.text = track.country
         }
@@ -153,4 +156,4 @@ class TrackInfoActivity: AppCompatActivity() {
         PAUSED
     }
 
-}*/
+}
