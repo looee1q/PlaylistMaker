@@ -1,20 +1,21 @@
 package com.example.playlistmaker
 
 import android.content.SharedPreferences
+import com.example.playlistmaker.presentation.models.TrackActivity
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
-    fun writeTrackListToSharedPreferences(trackList: MutableList<Track>) {
+    fun writeTrackListToSharedPreferences(trackList: MutableList<TrackActivity>) {
         sharedPreferences.edit()
             .putString(HISTORY_TRACK_LIST_KEY, Json.encodeToString(trackList))
             .apply()
     }
 
-    fun getTrackListFromSharedPreferences(): MutableList<Track> {
-        val json = sharedPreferences.getString(HISTORY_TRACK_LIST_KEY, null) ?: return emptyArray<Track>().toMutableList()
-        return Json.decodeFromString<ArrayList<Track>>(json)
+    fun getTrackListFromSharedPreferences(): MutableList<TrackActivity> {
+        val json = sharedPreferences.getString(HISTORY_TRACK_LIST_KEY, null) ?: return emptyArray<TrackActivity>().toMutableList()
+        return Json.decodeFromString<ArrayList<TrackActivity>>(json)
     }
 
     companion object {

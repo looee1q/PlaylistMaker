@@ -1,19 +1,19 @@
 package com.example.playlistmaker.data
 
-import com.example.playlistmaker.Track
+import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.domain.TrackPlayerRepository
 
 class TrackPlayerRepositoryImpl(val mediaPlayer: Player) : TrackPlayerRepository {
 
-    override fun playTrack(track: Track) {
+    override fun playTrack(track: TrackDto) {
         mediaPlayer.start()
     }
 
-    override fun pauseTrack(track: Track) {
+    override fun pauseTrack(track: TrackDto) {
         mediaPlayer.pause()
     }
 
-    override fun playbackControl(track: Track) {
+    override fun playbackControl(track: TrackDto) {
         mediaPlayer.playbackControl()
     }
 
@@ -25,7 +25,7 @@ class TrackPlayerRepositoryImpl(val mediaPlayer: Player) : TrackPlayerRepository
         mediaPlayer.destroy()
     }
 
-    override fun updateTrackTime(track: Track) {
+    override fun updateTrackTime(track: TrackDto) {
         mediaPlayer.updateTrackTime()
     }
 }

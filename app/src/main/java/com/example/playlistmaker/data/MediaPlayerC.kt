@@ -3,9 +3,9 @@ package com.example.playlistmaker.data
 import android.media.MediaPlayer
 import android.util.Log
 import com.example.playlistmaker.R
-import com.example.playlistmaker.Track
+import com.example.playlistmaker.data.dto.TrackDto
 
-class MediaPlayerC(val track: Track, val uiInteractor: UIInteractor, val androidInteractor: AndroidInteractor) : Player {
+class MediaPlayerC(val track: TrackDto, val uiInteractor: UIInteractor, val androidInteractor: AndroidInteractor) : Player {
 
     private var mediaPlayer = MediaPlayer()
     override var state = PlayerCState.DEFAULT

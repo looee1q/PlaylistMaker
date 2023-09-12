@@ -11,8 +11,10 @@ import com.example.playlistmaker.data.AndroidInteractor
 import com.example.playlistmaker.data.MediaPlayerC
 import com.example.playlistmaker.data.UIInteractor
 import com.example.playlistmaker.data.TrackPlayerRepositoryImpl
+import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
 import com.example.playlistmaker.domain.*
+import com.example.playlistmaker.presentation.ui.SearchActivity
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,7 +22,7 @@ import java.util.*
 class TrackInfoA: AppCompatActivity() {
 
     private lateinit var binding: ActivityTrackInfoBinding
-    private lateinit var track: Track
+    private lateinit var track: TrackDto
 
     private lateinit var playTrackUseCase: PlayTrackUseCase
     private lateinit var pauseTrackUseCase: PauseTrackUseCase
@@ -55,7 +57,7 @@ class TrackInfoA: AppCompatActivity() {
         binding = ActivityTrackInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        track = Json.decodeFromString<Track>(intent.extras?.getString(SearchActivity.TRACK)!!)
+        track = Json.decodeFromString<TrackDto>(intent.extras?.getString(SearchActivity.TRACK)!!)
         bind(track)
 
         val mediaPlayerC = MediaPlayerC(track = track, uiInteractor = uiInteractor, androidInteractor = androidInteractor)
@@ -90,7 +92,7 @@ class TrackInfoA: AppCompatActivity() {
         destroyMediaPlayerUseCase.execute()
     }
 
-    private fun bind(track: Track) {
+    private fun bind(track: TrackDto) {
 
         with(binding) {
             Glide.with(this@TrackInfoA)

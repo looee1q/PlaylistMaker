@@ -1,12 +1,12 @@
 package com.example.playlistmaker.domain
 
-import com.example.playlistmaker.Track
+import com.example.playlistmaker.data.dto.TrackDto
 
 interface TrackPlayerRepository {
-    fun playTrack(track: Track)
-    fun pauseTrack(track: Track)
-    fun playbackControl(track: Track)
+    fun playTrack(track: TrackDto)
+    fun pauseTrack(track: TrackDto)
+    fun playbackControl(track: TrackDto)
     fun preparePlayer()
     fun destroy()
-    fun updateTrackTime(track: Track)
+    fun updateTrackTime(track: TrackDto)
 }

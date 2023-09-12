@@ -1,11 +1,11 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.dto
 
 import kotlinx.serialization.SerialName
 import java.text.SimpleDateFormat
 import java.util.*
 
 @kotlinx.serialization.Serializable
-data class Track(
+data class TrackDto(
     val trackId: Long,
     val trackName: String,
     val artistName: String,
