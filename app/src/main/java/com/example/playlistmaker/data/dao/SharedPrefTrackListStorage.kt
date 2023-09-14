@@ -23,7 +23,5 @@ class SharedPrefTrackListStorage(context: Context) : TrackListStorage {
     companion object {
         private const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
         private const val HISTORY_TRACK_LIST_KEY = "HISTORY_TRACK_LIST_KEY"
-        private const val HISTORY_TRACK_LIST_SIZE = 10
-
     }
 }

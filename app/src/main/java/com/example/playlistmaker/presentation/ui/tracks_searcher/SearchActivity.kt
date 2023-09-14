@@ -12,7 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.ITunesServerResponseStatus
+import com.example.playlistmaker.presentation.models.ITunesServerResponseStatus
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
@@ -50,7 +50,6 @@ class SearchActivity : AppCompatActivity() {
     private val historyTrackListAdapter = TrackAdapter(historyTrackList)
 
     private val getTracksByApiRequestUseCase = Creator.provideGetTracksByApiRequestUseCase()
-    private var currentConsumeRunnable: Runnable? = null
 
     private val handlerInMainThread = Handler(Looper.getMainLooper())
 
@@ -193,8 +192,6 @@ class SearchActivity : AppCompatActivity() {
                         }
                     }
 
-                    currentConsumeRunnable = consumeRunnable
-
                     handlerInMainThread.post(consumeRunnable)
                 }
 
@@ -282,7 +279,6 @@ class SearchActivity : AppCompatActivity() {
         private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
         private const val MAKE_REQUEST_DELAY_MILLIS = 2000L
         private const val HISTORY_TRACK_LIST_SIZE = 10
-        private const val HISTORY_OF_TRACKS = "HISTORY_OF_TRACKS"
         const val TRACK = "TRACK"
     }
 

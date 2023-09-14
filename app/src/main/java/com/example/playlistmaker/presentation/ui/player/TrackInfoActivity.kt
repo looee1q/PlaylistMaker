@@ -1,6 +1,5 @@
 package com.example.playlistmaker.presentation.ui.player
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,7 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
+import com.example.playlistmaker.domain.player.PlayerState
+import com.example.playlistmaker.presentation.mapper.Mapper
 import com.example.playlistmaker.presentation.models.TrackActivity
 import com.example.playlistmaker.presentation.ui.tracks_searcher.SearchActivity
 import com.example.playlistmaker.roundedCorners
@@ -23,8 +25,17 @@ class TrackInfoActivity: AppCompatActivity() {
     private lateinit var binding: ActivityTrackInfoBinding
     private lateinit var track: TrackActivity
 
-    private var mediaPlayer = MediaPlayer() //data
-    private var playerState = PlayerState.DEFAULT //data
+    private val mediaPlayerImpl by lazy { Creator.provideMediaPlayerImpl(Mapper.mapTrackActivityToTrack(track)) }
+
+    private val preparePlayerUseCase by lazy { Creator.providePreparePlayerUseCase(mediaPlayerImpl) }
+    private val pauseTrackUseCase by lazy { Creator.providePauseTrackUseCase(mediaPlayerImpl) }
+    private val playTrackUseCase by lazy { Creator.providePlayTrackUseCase(mediaPlayerImpl) }
+    private val playbackControlUseCase by lazy { Creator.providePlaybackControlUseCase(mediaPlayerImpl) }
+    private val getPlayingTrackTimeUseCase by lazy { Creator.provideGetPlayingTrackTimeUseCase(mediaPlayerImpl) }
+    private val getPlayerStateUseCase by lazy { Creator.provideGetPlayerStateUseCase(mediaPlayerImpl) }
+    private val destroyPlayerUseCase by lazy { Creator.provideDestroyPlayerUseCase(mediaPlayerImpl) }
+
+    lateinit var playerState : PlayerState
     private var currentTimePlayingMillis = 0
 
     private var handlerInMainThread = Handler(Looper.getMainLooper())
@@ -43,25 +54,9 @@ class TrackInfoActivity: AppCompatActivity() {
             finish()
         }
 
-        preparePlayer()
+        playerState = preparePlayerUseCase.execute()
 
-        updateTrackTimeRunnable = object : Runnable {
-            override fun run() {
-                currentTimePlayingMillis = mediaPlayer.currentPosition
-                Log.d("CURRENT_TIME", "$currentTimePlayingMillis")
-                binding.playingProgressTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTimePlayingMillis)
-                when (playerState) {
-                    PlayerState.PLAYING -> handlerInMainThread.postDelayed(this, TRACK_TIME_UPDATE_FREQUENCY_MILLIS)
-                    PlayerState.PAUSED -> handlerInMainThread.removeCallbacks(this)
-                    PlayerState.PREPARED -> {
-                        handlerInMainThread.removeCallbacks(this)
-                        binding.playingProgressTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
-                        binding.playButton.setImageDrawable(getDrawable(R.drawable.play_button_icon))
-                    }
-                    PlayerState.DEFAULT -> {}
-                }
-            }
-        }
+        updateTrackTimeRunnable = createTimeUpdaterRunnable()
 
         binding.playButton.setOnClickListener {
             playbackControl()
@@ -77,7 +72,7 @@ class TrackInfoActivity: AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        destroyPlayerUseCase.execute()
     }
 
     private fun bind(track: TrackActivity) {
@@ -108,38 +103,45 @@ class TrackInfoActivity: AppCompatActivity() {
         }
     }
 
-    private fun preparePlayer() {
-        mediaPlayer.apply {
-            setDataSource(track.previewUrl)
-            prepareAsync()
-            setOnPreparedListener {
-                playerState = PlayerState.PREPARED
-            }
-            setOnCompletionListener {
-                playerState = PlayerState.PREPARED
-            }
+    private fun start() {
+        playerState = playTrackUseCase.execute {
+            Log.d("PLAYER_STATE", "Начато (продолжено) воспроизведение трека")
+            binding.playButton.setImageDrawable(getDrawable(R.drawable.pause_button_icon))
         }
     }
 
-    private fun start() {
-        mediaPlayer.start()
-        Log.d("PLAYER_STATE", "Начато (продолжено) воспроизведение трека")
-        binding.playButton.setImageDrawable(getDrawable(R.drawable.pause_button_icon))
-        playerState = PlayerState.PLAYING
-    }
-
     private fun pause() {
-        mediaPlayer.pause()
-        Log.d("PLAYER_STATE", "Воспроизведение трека приостановлено")
-        binding.playButton.setImageDrawable(getDrawable(R.drawable.play_button_icon))
-        playerState = PlayerState.PAUSED
+        playerState = pauseTrackUseCase.execute {
+            Log.d("PLAYER_STATE", "Воспроизведение трека приостановлено")
+            binding.playButton.setImageDrawable(getDrawable(R.drawable.play_button_icon))
+        }
     }
 
     private fun playbackControl() {
-        when (playerState) {
-            PlayerState.PLAYING -> pause()
-            PlayerState.PAUSED, PlayerState.PREPARED -> start()
-            PlayerState.DEFAULT -> {}
+        playerState = playbackControlUseCase.execute(
+            doSmthWhileOnPause = { pause() }, doSmthWhilePlaying = { start() }
+        )
+    }
+
+    fun createTimeUpdaterRunnable() : Runnable {
+        return object : Runnable {
+            override fun run() {
+                currentTimePlayingMillis = getPlayingTrackTimeUseCase.execute()
+                playerState = getPlayerStateUseCase.execute()
+                Log.d("PlayerState","$playerState")
+                Log.d("CURRENT_TIME", "$currentTimePlayingMillis")
+                binding.playingProgressTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTimePlayingMillis)
+                when (playerState) {
+                    PlayerState.PLAYING -> handlerInMainThread.postDelayed(this, TRACK_TIME_UPDATE_FREQUENCY_MILLIS)
+                    PlayerState.PAUSED -> handlerInMainThread.removeCallbacks(this)
+                    PlayerState.PREPARED -> {
+                        handlerInMainThread.removeCallbacks(this)
+                        binding.playingProgressTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
+                        binding.playButton.setImageDrawable(getDrawable(R.drawable.play_button_icon))
+                    }
+                    PlayerState.DEFAULT -> {}
+                }
+            }
         }
     }
 
@@ -147,13 +149,6 @@ class TrackInfoActivity: AppCompatActivity() {
         private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
 
         private const val TRACK_TIME_UPDATE_FREQUENCY_MILLIS = 500L
-    }
-    
-    enum class PlayerState {
-        DEFAULT,
-        PREPARED,
-        PLAYING,
-        PAUSED
     }
 
 }
