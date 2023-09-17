@@ -6,11 +6,11 @@ import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.Pla
 
 class PlaybackControlUseCaseImpl(private val playerRepository: PlayerRepository) :
     PlaybackControlUseCase {
-    override fun execute(doSmthWhilePlaying : () -> Unit, doSmthWhileOnPause : () -> Unit) : PlayerState {
+    override fun execute(doActionWhilePlaying : () -> Unit, doActionWhileOnPause : () -> Unit) : PlayerState {
         val playerState = playerRepository.getPlayerState()
         return when (playerState) {
-            PlayerState.PLAYING -> PauseTrackUseCaseImpl(playerRepository).execute(doSmthWhileOnPause)
-            PlayerState.PAUSED, PlayerState.PREPARED -> PlayTrackUseCaseImpl(playerRepository).execute(doSmthWhilePlaying)
+            PlayerState.PLAYING -> PauseTrackUseCaseImpl(playerRepository).execute(doActionWhileOnPause)
+            PlayerState.PAUSED, PlayerState.PREPARED -> PlayTrackUseCaseImpl(playerRepository).execute(doActionWhilePlaying)
             PlayerState.DEFAULT -> PlayerState.DEFAULT
         }
     }

@@ -33,14 +33,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchRequest: String
 
     private val writeHistoryTrackListToStorageUseCase by lazy {
-        Creator.provideWriteHistoryTrackListToStorageUseCase(
-            this
-        )
+        Creator.provideWriteHistoryTrackListToStorageUseCase()
     }
     private val getHistoryTrackListFromStorageUseCase by lazy {
-        Creator.provideGetHistoryTrackListFromStorageUseCase(
-            this
-        )
+        Creator.provideGetHistoryTrackListFromStorageUseCase()
     }
 
     private val tracks = mutableListOf<TrackActivity>()

@@ -1,5 +1,6 @@
 package com.example.playlistmaker.creator
 
+import android.app.Application
 import android.content.Context
 import com.example.playlistmaker.data.dao.HistoryTrackListDAOImpl
 import com.example.playlistmaker.data.dao.SharedPrefTrackListStorage
@@ -9,24 +10,46 @@ import com.example.playlistmaker.domain.api.MusicApi
 import com.example.playlistmaker.domain.dao.HistoryTrackListDAO
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.player.PlayerRepository
-import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.implementations.*
-import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.interfaces.*
-import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.*
-import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.*
+import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.DestroyPlayerUseCaseImpl
+import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.GetPlayerStateUseCaseImpl
+import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
+import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.PauseTrackUseCaseImpl
+import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.PlaybackControlUseCaseImpl
+import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.PlayTrackUseCaseImpl
+import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.PreparePlayerUseCaseImpl
+import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.DestroyPlayerUseCase
+import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.GetPlayerStateUseCase
+import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.GetPlayingTrackTimeUseCase
+import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.PauseTrackUseCase
+import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.PlaybackControlUseCase
+import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.PlayTrackUseCase
+import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.PreparePlayerUseCase
+import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.implementations.GetHistoryTrackListFromStorageUseCaseImpl
+import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.implementations.GetTracksByApiRequestUseCaseImpl
+import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.implementations.WriteHistoryTrackListToStorageUseCaseImpl
+import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.interfaces.GetHistoryTrackListFromStorageUseCase
+import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.interfaces.GetTracksByApiRequestUseCase
+import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.interfaces.WriteHistoryTrackListToStorageUseCase
 
 object Creator {
+
+    lateinit var application: Application
+
+    fun registryApplication(application: Application) {
+        this.application = application
+    }
 
     //UseCases экрана поиска SearchActivity
     fun provideGetTracksByApiRequestUseCase() : GetTracksByApiRequestUseCase {
         return GetTracksByApiRequestUseCaseImpl(provideMusicApi())
     }
 
-    fun provideGetHistoryTrackListFromStorageUseCase(context: Context) : GetHistoryTrackListFromStorageUseCase {
-        return GetHistoryTrackListFromStorageUseCaseImpl(provideHistoryTrackListDao(context))
+    fun provideGetHistoryTrackListFromStorageUseCase() : GetHistoryTrackListFromStorageUseCase {
+        return GetHistoryTrackListFromStorageUseCaseImpl(provideHistoryTrackListDao())
     }
 
-    fun provideWriteHistoryTrackListToStorageUseCase(context: Context) : WriteHistoryTrackListToStorageUseCase {
-        return WriteHistoryTrackListToStorageUseCaseImpl(provideHistoryTrackListDao(context))
+    fun provideWriteHistoryTrackListToStorageUseCase() : WriteHistoryTrackListToStorageUseCase {
+        return WriteHistoryTrackListToStorageUseCaseImpl(provideHistoryTrackListDao())
     }
 
     //UseCases экрана плеера TrackInfoActivity
@@ -63,8 +86,8 @@ object Creator {
         return RetrofitMusicApi()
     }
 
-    private fun provideHistoryTrackListDao(context: Context): HistoryTrackListDAO {
-        return HistoryTrackListDAOImpl(SharedPrefTrackListStorage(context))
+    private fun provideHistoryTrackListDao(): HistoryTrackListDAO {
+        return HistoryTrackListDAOImpl(SharedPrefTrackListStorage(application))
     }
 
     //data-имплементатор интерфейса domain слоя, используемых UseCase(ами) TrackInfoActivity

@@ -119,7 +119,7 @@ class TrackInfoActivity: AppCompatActivity() {
 
     private fun playbackControl() {
         playerState = playbackControlUseCase.execute(
-            doSmthWhileOnPause = { pause() }, doSmthWhilePlaying = { start() }
+            doActionWhileOnPause = { pause() }, doActionWhilePlaying = { start() }
         )
     }
 
