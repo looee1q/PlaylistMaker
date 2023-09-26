@@ -25,7 +25,6 @@ class MediaPlayerImpl(val track: Track) : PlayerRepository {
             setOnCompletionListener {
                 state = PlayerState.PREPARED
             }
-            state = PlayerState.PREPARED
             Log.d("PreparePlayerMediaPlayerImpl", "$state")
         }
     }

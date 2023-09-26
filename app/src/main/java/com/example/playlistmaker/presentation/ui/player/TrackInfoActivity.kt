@@ -25,15 +25,15 @@ class TrackInfoActivity: AppCompatActivity() {
     private lateinit var binding: ActivityTrackInfoBinding
     private lateinit var track: TrackActivity
 
-    private val mediaPlayerImpl by lazy { Creator.provideMediaPlayerImpl(Mapper.mapTrackActivityToTrack(track)) }
+    private val trackFactory by lazy { Creator.getFactoryForTrack(Mapper.mapTrackActivityToTrack(track)) }
 
-    private val preparePlayerUseCase by lazy { Creator.providePreparePlayerUseCase(mediaPlayerImpl) }
-    private val pauseTrackUseCase by lazy { Creator.providePauseTrackUseCase(mediaPlayerImpl) }
-    private val playTrackUseCase by lazy { Creator.providePlayTrackUseCase(mediaPlayerImpl) }
-    private val playbackControlUseCase by lazy { Creator.providePlaybackControlUseCase(mediaPlayerImpl) }
-    private val getPlayingTrackTimeUseCase by lazy { Creator.provideGetPlayingTrackTimeUseCase(mediaPlayerImpl) }
-    private val getPlayerStateUseCase by lazy { Creator.provideGetPlayerStateUseCase(mediaPlayerImpl) }
-    private val destroyPlayerUseCase by lazy { Creator.provideDestroyPlayerUseCase(mediaPlayerImpl) }
+    private val preparePlayerUseCase by lazy { trackFactory.providePreparePlayerUseCase() }
+    private val pauseTrackUseCase by lazy { trackFactory.providePauseTrackUseCase() }
+    private val playTrackUseCase by lazy { trackFactory.providePlayTrackUseCase() }
+    private val playbackControlUseCase by lazy { trackFactory.providePlaybackControlUseCase() }
+    private val getPlayingTrackTimeUseCase by lazy { trackFactory.provideGetPlayingTrackTimeUseCase() }
+    private val getPlayerStateUseCase by lazy { trackFactory.provideGetPlayerStateUseCase() }
+    private val destroyPlayerUseCase by lazy { trackFactory.provideDestroyPlayerUseCase() }
 
     lateinit var playerState : PlayerState
     private var currentTimePlayingMillis = 0
