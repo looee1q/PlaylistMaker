@@ -1,11 +1,11 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.dto
 
 import kotlinx.serialization.SerialName
 import java.text.SimpleDateFormat
 import java.util.*
 
 @kotlinx.serialization.Serializable
-data class Track(
+data class TrackDto(
     val trackId: Long,
     val trackName: String,
     val artistName: String,
@@ -17,8 +17,6 @@ data class Track(
     val country: String,
     @SerialName("primaryGenreName") val genre: String
 ) {
-    val artworkUrl512: String
-        get() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     fun getDuration(): String = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTime)
 
     fun getYear(): String = releaseDate.substringBefore('-')

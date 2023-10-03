@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.creator.Creator
 
 class App: Application() {
 
@@ -13,6 +14,7 @@ class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Creator.registryApplication(this)
         sharedReferences = getSharedPreferences(NIGHT_MODE_SWITCH, MODE_PRIVATE)
         darkTheme = sharedReferences.getBoolean(NIGHT_MODE_STATUS, getSystemNightModeStatus())
         changeTheme(darkTheme)

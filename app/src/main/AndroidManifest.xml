@@ -18,14 +18,14 @@
             android:name=".MusicLibraryActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchActivity"
+            android:name=".presentation.ui.tracks_searcher.SearchActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".TrackInfoActivity"
+            android:name=".presentation.ui.player.TrackInfoActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
