@@ -1,8 +1,8 @@
 package com.example.playlistmaker.data.mapper
 
-import com.example.playlistmaker.data.dto.ITunesServerResponse
-import com.example.playlistmaker.data.dto.SimpleTrack
-import com.example.playlistmaker.data.dto.TrackDto
+import com.example.playlistmaker.data.search.dto.ITunesServerResponse
+import com.example.playlistmaker.data.search.dto.SimpleTrack
+import com.example.playlistmaker.data.search.dto.TrackDto
 import com.example.playlistmaker.domain.model.Track
 
 object Mapper {
