@@ -1,6 +1,6 @@
 package com.example.playlistmaker.data.search.dao
 
-import com.example.playlistmaker.data.mapper.Mapper
+import com.example.playlistmaker.data.search.mapper.Mapper
 import com.example.playlistmaker.domain.search.dao.HistoryTrackListDAO
 import com.example.playlistmaker.domain.model.Track
 

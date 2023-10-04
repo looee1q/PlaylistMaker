@@ -6,6 +6,7 @@ import com.example.playlistmaker.data.search.dao.SharedPrefTrackListStorage
 import com.example.playlistmaker.data.search.network.RetrofitMusicApi
 import com.example.playlistmaker.data.settings.ThemeRepositoryImpl
 import com.example.playlistmaker.data.settings.SharedPrefThemeStorage
+import com.example.playlistmaker.data.sharing.ExternalNavigatorImpl
 import com.example.playlistmaker.domain.search.api.MusicApi
 import com.example.playlistmaker.domain.search.dao.HistoryTrackListDAO
 import com.example.playlistmaker.domain.model.Track
@@ -22,6 +23,13 @@ import com.example.playlistmaker.domain.settings.use_cases.implementations.SetNe
 import com.example.playlistmaker.domain.settings.use_cases.interfaces.SaveThemeUseCase
 import com.example.playlistmaker.domain.settings.use_cases.interfaces.GetLastSavedThemeUseCase
 import com.example.playlistmaker.domain.settings.use_cases.interfaces.SetNewThemeUseCase
+import com.example.playlistmaker.domain.sharing.repository.ExternalNavigator
+import com.example.playlistmaker.domain.sharing.use_cases.implementations.OpenTermsUseCaseImpl
+import com.example.playlistmaker.domain.sharing.use_cases.implementations.ShareAppUseCaseImpl
+import com.example.playlistmaker.domain.sharing.use_cases.implementations.WriteToSupportUseCaseImpl
+import com.example.playlistmaker.domain.sharing.use_cases.interfaces.OpenTermsUseCase
+import com.example.playlistmaker.domain.sharing.use_cases.interfaces.ShareAppUseCase
+import com.example.playlistmaker.domain.sharing.use_cases.interfaces.WriteToSupportUseCase
 
 object Creator {
 
@@ -48,8 +56,24 @@ object Creator {
         return GetLastSavedThemeUseCaseImpl(provideThemeRepository())
     }
 
+    fun provideShareAppUseCase(): ShareAppUseCase {
+        return ShareAppUseCaseImpl(provideExternalNavigator())
+    }
+
+    fun provideWriteToSupportUseCase(): WriteToSupportUseCase {
+        return WriteToSupportUseCaseImpl(provideExternalNavigator())
+    }
+
+    fun provideOpenTermsUseCase(): OpenTermsUseCase {
+        return OpenTermsUseCaseImpl(provideExternalNavigator())
+    }
+
     private fun provideThemeRepository(): ThemeRepository {
         return ThemeRepositoryImpl(SharedPrefThemeStorage(application))
+    }
+
+    private fun provideExternalNavigator(): ExternalNavigator {
+        return ExternalNavigatorImpl(application)
     }
 
     //UseCases экрана поиска SearchActivity

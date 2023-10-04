@@ -2,7 +2,7 @@ package com.example.playlistmaker.data.search.network
 
 import android.util.Log
 import com.example.playlistmaker.data.search.dto.ITunesServerResponse
-import com.example.playlistmaker.data.mapper.Mapper
+import com.example.playlistmaker.data.search.mapper.Mapper
 import com.example.playlistmaker.domain.search.api.ApiResponse
 import com.example.playlistmaker.domain.search.api.MusicApi
 import com.example.playlistmaker.domain.model.Track

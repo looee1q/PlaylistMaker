@@ -2,11 +2,9 @@ package com.example.playlistmaker.data.player
 
 import android.media.MediaPlayer
 import android.util.Log
-import com.example.playlistmaker.data.search.dto.SimpleTrack
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.player.PlayerRepository
 import com.example.playlistmaker.domain.player.PlayerState
-import okhttp3.internal.wait
 
 class MediaPlayerImpl(val track: Track) : PlayerRepository {
 
