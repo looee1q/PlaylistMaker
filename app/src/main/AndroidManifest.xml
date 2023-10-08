@@ -25,7 +25,7 @@
             android:name=".ui.settings.activity.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.player.TrackInfoActivity"
+            android:name=".ui.player.activity.PlayerActivity"
             android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"

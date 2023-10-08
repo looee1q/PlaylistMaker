@@ -21,7 +21,7 @@ import com.example.playlistmaker.domain.search.consumer.ConsumerData
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.models.TrackActivity
-import com.example.playlistmaker.ui.player.TrackInfoActivity
+import com.example.playlistmaker.ui.player.activity.PlayerActivity
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.util.Collections
@@ -82,7 +82,7 @@ class SearchActivity : AppCompatActivity() {
         val listener: (TrackActivity) -> Unit = { track: TrackActivity ->
             if (isClickOnTrackAllowed) {
                 clickOnTrackDebounce()
-                val intent = Intent(this, TrackInfoActivity::class.java)
+                val intent = Intent(this, PlayerActivity::class.java)
                 intent.putExtra(TRACK, Json.encodeToString(track))
                 startActivity(intent)
 

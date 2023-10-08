@@ -1,29 +1,31 @@
 package com.example.playlistmaker.data.player
 
 import android.media.MediaPlayer
-import android.util.Log
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.player.PlayerRepository
 import com.example.playlistmaker.domain.player.PlayerState
 
-class MediaPlayerImpl(val track: Track) : PlayerRepository {
+class MediaPlayerImpl(private val track: Track) : PlayerRepository {
 
     private var mediaPlayer = MediaPlayer()
 
-    var state = PlayerState.DEFAULT
+    private var state = PlayerState.DEFAULT
 
-    override fun preparePlayer() {
+    override fun preparePlayer(setPlayerState: () -> Unit) {
         mediaPlayer.apply {
             setDataSource(track.previewUrl)
             prepareAsync()
             setOnPreparedListener {
-                state = PlayerState.PREPARED
-                Log.d("InsidePreparedListener", "$state")
-            }
-            setOnCompletionListener {
+                setPlayerState.invoke()
                 state = PlayerState.PREPARED
             }
-            Log.d("PreparePlayerMediaPlayerImpl", "$state")
+        }
+    }
+
+    override fun setOnCompletionListener(setPlayerState: () -> Unit) {
+        mediaPlayer.setOnCompletionListener {
+            setPlayerState.invoke()
+            state = PlayerState.PREPARED
         }
     }
 
@@ -33,8 +35,10 @@ class MediaPlayerImpl(val track: Track) : PlayerRepository {
     }
 
     override fun pause() {
-        mediaPlayer.pause()
-        state = PlayerState.PAUSED
+        if (state == PlayerState.PLAYING) {
+            mediaPlayer.pause()
+            state = PlayerState.PAUSED
+        }
     }
 
     override fun destroyPlayer() {

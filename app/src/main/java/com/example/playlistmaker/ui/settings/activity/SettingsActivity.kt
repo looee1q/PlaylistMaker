@@ -2,21 +2,21 @@ package com.example.playlistmaker.ui.settings.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.playlistmaker.creator.Creator
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.domain.settings.model.Theme
+import com.example.playlistmaker.ui.settings.view_model.settings.SettingsViewModel
+import com.example.playlistmaker.ui.settings.view_model.settings.SettingsViewModelFactory
+import com.example.playlistmaker.ui.settings.view_model.sharing.SharingViewModel
+import com.example.playlistmaker.ui.settings.view_model.sharing.SharingViewModelFactory
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
 
-    private val saveThemeUseCase by lazy { Creator.provideSaveThemeUseCase() }
-    private val getLastSavedThemeUseCase by lazy { Creator.provideGetLastSavedThemeUseCase() }
-    private val setNewThemeUseCase by lazy { Creator.provideSetNewThemeUseCase() }
+    private lateinit var settingsViewModel: SettingsViewModel
 
-    private val shareAppUseCase by lazy { Creator.provideShareAppUseCase() }
-    private val writeToSupportUseCase by lazy { Creator.provideWriteToSupportUseCase() }
-    private val openTermsUseCase by lazy { Creator.provideOpenTermsUseCase() }
+    private lateinit var sharingViewModel: SharingViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,29 +27,37 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.nightModeSwitch.setOnCheckedChangeListener { switcher, isChecked ->
-            val theme = if (isChecked) Theme.DarkTheme() else Theme.DayTheme()
-            setNewThemeUseCase.execute(theme)
-            saveThemeUseCase.execute(theme)
+        settingsViewModel =
+            ViewModelProvider(this, SettingsViewModelFactory()).get(SettingsViewModel::class.java)
 
-            switcher.isChecked = isChecked
+        sharingViewModel =
+            ViewModelProvider(this, SharingViewModelFactory()).get(SharingViewModel::class.java)
+
+        settingsViewModel.liveData.observe(this) {
+            binding.nightModeSwitch.isChecked = when (it) {
+                is Theme.DarkTheme -> true
+                is Theme.DayTheme -> false
+            }
         }
 
-        binding.nightModeSwitch.isChecked = when (getLastSavedThemeUseCase.execute()) {
-            is Theme.DarkTheme -> true
-            is Theme.DayTheme -> false
+        settingsViewModel.getLastSavedTheme()
+
+        binding.nightModeSwitch.setOnCheckedChangeListener { switcher, isChecked ->
+            val theme = if (isChecked) Theme.DarkTheme() else Theme.DayTheme()
+            settingsViewModel.saveAndSetNewTheme(theme)
+
         }
 
         binding.shareAppIcon.setOnClickListener {
-            shareAppUseCase.execute()
+            sharingViewModel.shareApp()
         }
 
         binding.writeToTheSupportIcon.setOnClickListener {
-            writeToSupportUseCase.execute()
+            sharingViewModel.writeToSupport()
         }
 
         binding.userAgreementIcon.setOnClickListener {
-            openTermsUseCase.execute()
+            sharingViewModel.getUserAgreement()
         }
 
     }
