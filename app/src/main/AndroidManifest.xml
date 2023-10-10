@@ -18,7 +18,7 @@
             android:name=".ui.MusicLibraryActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.search.SearchActivity"
+            android:name=".ui.search.activity.SearchActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity

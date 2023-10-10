@@ -1,12 +1,10 @@
-package com.example.playlistmaker.ui.player
+package com.example.playlistmaker.ui.player.view_model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.models.TrackActivity
-import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 
 class PlayerViewModelFactory(track: TrackActivity) : ViewModelProvider.Factory {
 

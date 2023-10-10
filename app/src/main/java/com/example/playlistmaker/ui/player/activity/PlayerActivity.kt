@@ -11,9 +11,9 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.ui.models.TrackActivity
-import com.example.playlistmaker.ui.search.SearchActivity
+import com.example.playlistmaker.ui.search.activity.SearchActivity
 import com.example.playlistmaker.roundedCorners
-import com.example.playlistmaker.ui.player.PlayerViewModelFactory
+import com.example.playlistmaker.ui.player.view_model.PlayerViewModelFactory
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
