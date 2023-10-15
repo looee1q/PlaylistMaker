@@ -2,21 +2,19 @@ package com.example.playlistmaker.ui.settings.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.domain.settings.model.Theme
 import com.example.playlistmaker.ui.settings.view_model.settings.SettingsViewModel
-import com.example.playlistmaker.ui.settings.view_model.settings.SettingsViewModelFactory
 import com.example.playlistmaker.ui.settings.view_model.sharing.SharingViewModel
-import com.example.playlistmaker.ui.settings.view_model.sharing.SharingViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
 
-    private lateinit var settingsViewModel: SettingsViewModel
+    private val settingsViewModel: SettingsViewModel by viewModel()
 
-    private lateinit var sharingViewModel: SharingViewModel
+    private val sharingViewModel: SharingViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -26,12 +24,6 @@ class SettingsActivity : AppCompatActivity() {
         binding.backToMainScreenFromSettings.setOnClickListener {
             finish()
         }
-
-        settingsViewModel =
-            ViewModelProvider(this, SettingsViewModelFactory()).get(SettingsViewModel::class.java)
-
-        sharingViewModel =
-            ViewModelProvider(this, SharingViewModelFactory()).get(SharingViewModel::class.java)
 
         settingsViewModel.liveData.observe(this) {
             binding.nightModeSwitch.isChecked = when (it) {

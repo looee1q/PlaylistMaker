@@ -44,7 +44,7 @@ object Creator {
     }
 
     //UseCases экрана настроек SettingsActivity
-    fun provideSaveThemeUseCase(): SaveThemeUseCase {
+/*    fun provideSaveThemeUseCase(): SaveThemeUseCase {
         return SaveThemeUseCaseImpl(provideThemeRepository())
     }
 
@@ -74,10 +74,10 @@ object Creator {
 
     private fun provideExternalNavigator(): ExternalNavigator {
         return ExternalNavigatorImpl(application)
-    }
+    }*/
 
     //UseCases экрана поиска SearchActivity
-    fun provideGetTracksByApiRequestUseCase(): GetTracksByApiRequestUseCase {
+/*    fun provideGetTracksByApiRequestUseCase(): GetTracksByApiRequestUseCase {
         return GetTracksByApiRequestUseCaseImpl(provideMusicApi())
     }
 
@@ -87,14 +87,14 @@ object Creator {
 
     fun provideWriteHistoryTrackListToStorageUseCase(): WriteHistoryTrackListToStorageUseCase {
         return WriteHistoryTrackListToStorageUseCaseImpl(provideHistoryTrackListDao())
-    }
+    }*/
 
     //data-имплементаторы интерфейсов domain слоя, используемых UseCase(ами) SearchActivity
-    private fun provideMusicApi(): MusicApi {
+/*    private fun provideMusicApi(): MusicApi {
         return RetrofitMusicApi()
     }
 
     private fun provideHistoryTrackListDao(): HistoryTrackListDAO {
         return HistoryTrackListDAOImpl(SharedPrefTrackListStorage(application))
-    }
+    }*/
 }

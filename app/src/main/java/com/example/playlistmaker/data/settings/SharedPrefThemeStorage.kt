@@ -1,11 +1,10 @@
 package com.example.playlistmaker.data.settings
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.example.playlistmaker.domain.settings.model.Theme
 
-class SharedPrefThemeStorage(private val context: Context) : ThemeStorage {
-
-    private val sharedReferences = context.getSharedPreferences(NIGHT_MODE_SWITCH, Context.MODE_PRIVATE)
+class SharedPrefThemeStorage(private val sharedReferences: SharedPreferences, private val context: Context) : ThemeStorage {
 
     override fun saveTheme(theme : Theme) {
 
