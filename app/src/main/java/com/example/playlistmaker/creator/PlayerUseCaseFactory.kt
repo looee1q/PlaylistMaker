@@ -2,52 +2,58 @@ package com.example.playlistmaker.creator
 
 import com.example.playlistmaker.data.player.MediaPlayerImpl
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.DestroyPlayerUseCaseImpl
-import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.GetPlayerStateUseCaseImpl
-import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
-import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.PauseTrackUseCaseImpl
-import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.PlaybackControlUseCaseImpl
-import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.PlayTrackUseCaseImpl
-import com.example.playlistmaker.domain.use_case.player_use_cases.implementations.PreparePlayerUseCaseImpl
-import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.DestroyPlayerUseCase
-import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.GetPlayerStateUseCase
-import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.GetPlayingTrackTimeUseCase
-import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.PauseTrackUseCase
-import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.PlaybackControlUseCase
-import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.PlayTrackUseCase
-import com.example.playlistmaker.domain.use_case.player_use_cases.interfaces.PreparePlayerUseCase
+import com.example.playlistmaker.domain.player.use_cases.implementations.DestroyPlayerUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayerStateUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.PauseTrackUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.PlaybackControlUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.PlayTrackUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.PreparePlayerUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.SetOnCompletionListenerUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.interfaces.DestroyPlayerUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayerStateUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayingTrackTimeUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.PauseTrackUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.PlaybackControlUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.PlayTrackUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.PreparePlayerUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.SetOnCompletionListenerUseCase
 
-class PlayerUseCaseFactory(val track: Track) {
+class PlayerUseCaseFactory(track: Track) {
 
     private val mediaPlayer = MediaPlayerImpl(track)
 
     //UseCases экрана плеера TrackInfoActivity
-    fun provideDestroyPlayerUseCase() : DestroyPlayerUseCase {
+    fun provideDestroyPlayerUseCase(): DestroyPlayerUseCase {
         return DestroyPlayerUseCaseImpl(mediaPlayer)
     }
 
-    fun provideGetPlayerStateUseCase() : GetPlayerStateUseCase {
+    fun provideGetPlayerStateUseCase(): GetPlayerStateUseCase {
         return GetPlayerStateUseCaseImpl(mediaPlayer)
     }
 
-    fun provideGetPlayingTrackTimeUseCase() : GetPlayingTrackTimeUseCase {
+    fun provideGetPlayingTrackTimeUseCase(): GetPlayingTrackTimeUseCase {
         return GetPlayingTrackTimeUseCaseImpl(mediaPlayer)
     }
 
-    fun providePauseTrackUseCase() : PauseTrackUseCase {
+    fun providePauseTrackUseCase(): PauseTrackUseCase {
         return PauseTrackUseCaseImpl(mediaPlayer)
     }
 
-    fun providePlaybackControlUseCase() : PlaybackControlUseCase {
+    fun providePlaybackControlUseCase(): PlaybackControlUseCase {
         return PlaybackControlUseCaseImpl(mediaPlayer)
     }
 
-    fun providePlayTrackUseCase() : PlayTrackUseCase {
+    fun providePlayTrackUseCase(): PlayTrackUseCase {
         return PlayTrackUseCaseImpl(mediaPlayer)
     }
 
-    fun providePreparePlayerUseCase() : PreparePlayerUseCase {
+    fun providePreparePlayerUseCase(): PreparePlayerUseCase {
         return PreparePlayerUseCaseImpl(mediaPlayer)
+    }
+
+    fun provideSetOnCompletionListenerUseCase(): SetOnCompletionListenerUseCase {
+        return SetOnCompletionListenerUseCaseImpl(mediaPlayer)
     }
 
 }

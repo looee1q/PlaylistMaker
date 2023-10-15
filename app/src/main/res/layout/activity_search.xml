@@ -60,7 +60,7 @@
             android:singleLine="true"/>
 
         <ImageView
-            android:id="@+id/clearing_history_cross"
+            android:id="@+id/clearing_request_cross"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_marginEnd="13dp"
@@ -101,10 +101,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/you_searched"
-            app:layout_constraintBottom_toTopOf="@id/clear_history_button"/>
+            app:layout_constraintBottom_toTopOf="@id/clear_history_track_list_button"/>
 
         <Button
-            android:id="@+id/clear_history_button"
+            android:id="@+id/clear_history_track_list_button"
             style="@style/SearchActivityClearHistoryAndReloadSearchButtons"
             android:text="@string/clear_history"
             android:layout_marginBottom="14dp"
