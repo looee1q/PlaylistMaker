@@ -1,5 +1,21 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.domain.player.use_cases.implementations.DestroyPlayerUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayerStateUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.PauseTrackUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.PlaybackControlUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.PlayTrackUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.PreparePlayerUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.implementations.SetOnCompletionListenerUseCaseImpl
+import com.example.playlistmaker.domain.player.use_cases.interfaces.DestroyPlayerUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayerStateUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayingTrackTimeUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.PauseTrackUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.PlaybackControlUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.PlayTrackUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.PreparePlayerUseCase
+import com.example.playlistmaker.domain.player.use_cases.interfaces.SetOnCompletionListenerUseCase
 import com.example.playlistmaker.domain.search.use_cases.implementations.GetHistoryTrackListFromStorageUseCaseImpl
 import com.example.playlistmaker.domain.search.use_cases.interfaces.GetHistoryTrackListFromStorageUseCase
 import com.example.playlistmaker.domain.search.use_cases.interfaces.GetTracksByApiRequestUseCase
@@ -16,8 +32,8 @@ import com.example.playlistmaker.domain.sharing.use_cases.implementations.WriteT
 import com.example.playlistmaker.domain.sharing.use_cases.interfaces.OpenTermsUseCase
 import com.example.playlistmaker.domain.sharing.use_cases.interfaces.ShareAppUseCase
 import com.example.playlistmaker.domain.sharing.use_cases.interfaces.WriteToSupportUseCase
-import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.implementations.GetTracksByApiRequestUseCaseImpl
-import com.example.playlistmaker.domain.use_case.search_tracks_use_cases.implementations.WriteHistoryTrackListToStorageUseCaseImpl
+import com.example.playlistmaker.domain.search.use_cases.implementations.GetTracksByApiRequestUseCaseImpl
+import com.example.playlistmaker.domain.search.use_cases.implementations.WriteHistoryTrackListToStorageUseCaseImpl
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -59,6 +75,40 @@ val domainModule = module {
 
     single<WriteHistoryTrackListToStorageUseCase> {
         WriteHistoryTrackListToStorageUseCaseImpl(get())
+    }
+
+    // modules for player
+
+    factory<DestroyPlayerUseCase> {
+        DestroyPlayerUseCaseImpl(get())
+    }
+
+    factory<GetPlayerStateUseCase> {
+        GetPlayerStateUseCaseImpl(get())
+    }
+
+    factory<GetPlayingTrackTimeUseCase> {
+        GetPlayingTrackTimeUseCaseImpl(get())
+    }
+
+    factory<PauseTrackUseCase> {
+        PauseTrackUseCaseImpl(get())
+    }
+
+    factory<PlaybackControlUseCase> {
+        PlaybackControlUseCaseImpl(get())
+    }
+
+    factory<PlayTrackUseCase> {
+        PlayTrackUseCaseImpl(get())
+    }
+
+    factory<PreparePlayerUseCase> {
+        PreparePlayerUseCaseImpl(get())
+    }
+
+    factory<SetOnCompletionListenerUseCase> {
+        SetOnCompletionListenerUseCaseImpl(get())
     }
 
 }

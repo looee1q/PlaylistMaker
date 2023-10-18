@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
@@ -13,9 +12,10 @@ import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.ui.models.TrackActivity
 import com.example.playlistmaker.ui.search.activity.SearchActivity
 import com.example.playlistmaker.roundedCorners
-import com.example.playlistmaker.ui.player.view_model.PlayerViewModelFactory
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 import kotlinx.serialization.json.Json
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,7 +24,7 @@ class PlayerActivity: AppCompatActivity() {
     private lateinit var binding: ActivityTrackInfoBinding
     private lateinit var track: TrackActivity
 
-    private lateinit var playerViewModel: PlayerViewModel
+    private val playerViewModel: PlayerViewModel by viewModel { parametersOf(track) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +39,6 @@ class PlayerActivity: AppCompatActivity() {
             finish()
         }
 
-        playerViewModel =
-            ViewModelProvider(this, PlayerViewModelFactory(track)).get(PlayerViewModel::class.java)
-
         playerViewModel.liveDataPlayerState.observe(this) {
             playerStateRender(it)
             Log.d("StateInsideObserver", "State inside observer is ${it}")
@@ -50,8 +47,6 @@ class PlayerActivity: AppCompatActivity() {
         playerViewModel.liveDataTrackPlaybackProgress.observe(this) {
             playbackTimeRender(it)
         }
-
-        Log.d("State", "state is ${playerViewModel.liveDataPlayerState.value}")
 
         binding.playButton.setOnClickListener {
             playerViewModel.playbackControl()
