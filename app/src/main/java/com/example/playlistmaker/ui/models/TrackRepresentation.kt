@@ -1,7 +1,7 @@
 package com.example.playlistmaker.ui.models
 
 @kotlinx.serialization.Serializable
-data class TrackActivity(
+data class TrackRepresentation(
     val trackId: Long,
     val trackName: String,
     val artistName: String,

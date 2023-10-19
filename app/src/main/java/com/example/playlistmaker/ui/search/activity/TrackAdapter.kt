@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.ActivityTrackUnitBinding
-import com.example.playlistmaker.ui.models.TrackActivity
+import com.example.playlistmaker.ui.models.TrackRepresentation
 
-class TrackAdapter(private val trackList: MutableList<TrackActivity>): RecyclerView.Adapter<TrackViewHolder>() {
+class TrackAdapter(private val trackList: MutableList<TrackRepresentation>): RecyclerView.Adapter<TrackViewHolder>() {
 
-    var listener: (TrackActivity) -> Unit = {Log.d("Listener", "Пустышка")}
+    var listener: (TrackRepresentation) -> Unit = {Log.d("Listener", "Пустышка")}
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = ActivityTrackUnitBinding.inflate(layoutInflater, parent, false)

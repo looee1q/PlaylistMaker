@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.ui.models.ITunesServerResponseStatus
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.ui.models.TrackActivity
+import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.ui.player.activity.PlayerActivity
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import kotlinx.serialization.encodeToString
@@ -113,8 +113,8 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
-    private fun createAdapterListener(): (TrackActivity) -> Unit {
-        return { track: TrackActivity ->
+    private fun createAdapterListener(): (TrackRepresentation) -> Unit {
+        return { track: TrackRepresentation ->
             if (viewModel.liveDataIsClickOnTrackAllowed.value!!) {
                 viewModel.clickOnTrackDebounce()
                 val intent = Intent(this, PlayerActivity::class.java)

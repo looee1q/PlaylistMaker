@@ -14,7 +14,7 @@ import com.example.playlistmaker.domain.search.use_cases.interfaces.GetTracksByA
 import com.example.playlistmaker.domain.search.use_cases.interfaces.WriteHistoryTrackListToStorageUseCase
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.models.ITunesServerResponseStatus
-import com.example.playlistmaker.ui.models.TrackActivity
+import com.example.playlistmaker.ui.models.TrackRepresentation
 import java.util.Collections
 
 class SearchViewModel(
@@ -29,13 +29,13 @@ class SearchViewModel(
     private val mutableLiveDataStatus = MutableLiveData<ITunesServerResponseStatus>()
     val liveDataStatus: LiveData<ITunesServerResponseStatus> = mutableLiveDataStatus
 
-    private val tracks = mutableListOf<TrackActivity>()
-    private val mutableLiveDataTracks = MutableLiveData<MutableList<TrackActivity>>(tracks)
-    val liveDataTracks: LiveData<MutableList<TrackActivity>> = mutableLiveDataTracks
+    private val tracks = mutableListOf<TrackRepresentation>()
+    private val mutableLiveDataTracks = MutableLiveData<MutableList<TrackRepresentation>>(tracks)
+    val liveDataTracks: LiveData<MutableList<TrackRepresentation>> = mutableLiveDataTracks
 
-    private val historyTrackList = getHistoryTrackListFromStorageUseCase.execute().map { Mapper.mapTrackToTrackActivity(it) }.toMutableList()
-    private val mutableLiveDataHistoryTrackList = MutableLiveData<MutableList<TrackActivity>>(historyTrackList)
-    val liveDataHistoryTrackList: LiveData<MutableList<TrackActivity>> = mutableLiveDataHistoryTrackList
+    private val historyTrackList = getHistoryTrackListFromStorageUseCase.execute().map { Mapper.mapTrackToTrackRepresentation(it) }.toMutableList()
+    private val mutableLiveDataHistoryTrackList = MutableLiveData<MutableList<TrackRepresentation>>(historyTrackList)
+    val liveDataHistoryTrackList: LiveData<MutableList<TrackRepresentation>> = mutableLiveDataHistoryTrackList
 
     private val mutableLiveDataSearchRequest = MutableLiveData<String>()
     val liveDataSearchRequest: LiveData<String> = mutableLiveDataSearchRequest
@@ -60,7 +60,7 @@ class SearchViewModel(
                         when (data) {
                             is ConsumerData.Data -> {
                                 tracks.clear()
-                                tracks.addAll(data.data.map { Mapper.mapTrackToTrackActivity(it) })
+                                tracks.addAll(data.data.map { Mapper.mapTrackToTrackRepresentation(it) })
                                 mutableLiveDataStatus.value = ITunesServerResponseStatus.SUCCESS
                             }
                             is ConsumerData.EmptyData -> {
@@ -116,13 +116,13 @@ class SearchViewModel(
 
     fun writeHistoryTrackListToStorage() {
         writeHistoryTrackListToStorageUseCase.execute(historyTrackList.map {
-            Mapper.mapTrackActivityToTrack(
+            Mapper.mapTrackRepresentationToTrack(
                 it
             )
         })
     }
 
-    fun fillHistoryTrackListUp(track: TrackActivity) {
+    fun fillHistoryTrackListUp(track: TrackRepresentation) {
         val trackIndex = historyTrackList.indexOfFirst { it.trackId == track.trackId }
         if (trackIndex != -1) {
             Collections.swap(historyTrackList, trackIndex, historyTrackList.size-1)

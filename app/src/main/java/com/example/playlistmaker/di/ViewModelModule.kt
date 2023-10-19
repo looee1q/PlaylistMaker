@@ -1,6 +1,6 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.ui.models.TrackActivity
+import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.ui.settings.view_model.settings.SettingsViewModel
@@ -28,7 +28,7 @@ val viewModelModule = module {
 
     // viewModels for PlayerActivity
 
-    viewModel<PlayerViewModel> { (track: TrackActivity) ->
+    viewModel<PlayerViewModel> { (track: TrackRepresentation) ->
         PlayerViewModel(
             track = track,
             preparePlayerUseCase = get(),

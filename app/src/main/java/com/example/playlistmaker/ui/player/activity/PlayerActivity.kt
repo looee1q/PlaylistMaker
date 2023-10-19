@@ -9,7 +9,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
 import com.example.playlistmaker.domain.player.PlayerState
-import com.example.playlistmaker.ui.models.TrackActivity
+import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.ui.search.activity.SearchActivity
 import com.example.playlistmaker.roundedCorners
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
@@ -22,7 +22,7 @@ import java.util.*
 class PlayerActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityTrackInfoBinding
-    private lateinit var track: TrackActivity
+    private lateinit var track: TrackRepresentation
 
     private val playerViewModel: PlayerViewModel by viewModel { parametersOf(track) }
 
@@ -32,7 +32,7 @@ class PlayerActivity: AppCompatActivity() {
         binding = ActivityTrackInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        track = Json.decodeFromString<TrackActivity>(intent.extras?.getString(SearchActivity.TRACK)!!)
+        track = Json.decodeFromString<TrackRepresentation>(intent.extras?.getString(SearchActivity.TRACK)!!)
         bind(track)
 
         binding.backToSearchActivityButton.setOnClickListener {
@@ -60,7 +60,7 @@ class PlayerActivity: AppCompatActivity() {
         playerViewModel.pausePlayer()
     }
 
-    private fun bind(track: TrackActivity) {
+    private fun bind(track: TrackRepresentation) {
 
         with(binding) {
             Glide.with(this@PlayerActivity)
