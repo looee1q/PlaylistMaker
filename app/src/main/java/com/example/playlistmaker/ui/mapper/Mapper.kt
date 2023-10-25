@@ -1,11 +1,11 @@
 package com.example.playlistmaker.ui.mapper
 
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.ui.models.TrackActivity
+import com.example.playlistmaker.ui.models.TrackRepresentation
 
 object Mapper {
-    fun mapTrackToTrackActivity(track: Track) : TrackActivity {
-        return TrackActivity(
+    fun mapTrackToTrackRepresentation(track: Track) : TrackRepresentation {
+        return TrackRepresentation(
             trackId = track.trackId,
             trackName = track.trackName,
             artistName = track.artistName,
@@ -18,18 +18,18 @@ object Mapper {
             genre = track.genre
         )
     }
-    fun mapTrackActivityToTrack(trackActivity: TrackActivity) : Track {
+    fun mapTrackRepresentationToTrack(trackRepresentation: TrackRepresentation) : Track {
         return Track(
-            trackId = trackActivity.trackId,
-            trackName = trackActivity.trackName,
-            artistName = trackActivity.artistName,
-            trackTime = trackActivity.trackTime,
-            previewUrl = trackActivity.previewUrl,
-            artworkUrl100 = trackActivity.artworkUrl100,
-            collectionName = trackActivity.collectionName,
-            releaseYear = trackActivity.releaseYear,
-            country = trackActivity.country,
-            genre = trackActivity.genre
+            trackId = trackRepresentation.trackId,
+            trackName = trackRepresentation.trackName,
+            artistName = trackRepresentation.artistName,
+            trackTime = trackRepresentation.trackTime,
+            previewUrl = trackRepresentation.previewUrl,
+            artworkUrl100 = trackRepresentation.artworkUrl100,
+            collectionName = trackRepresentation.collectionName,
+            releaseYear = trackRepresentation.releaseYear,
+            country = trackRepresentation.country,
+            genre = trackRepresentation.genre
         )
     }
 }

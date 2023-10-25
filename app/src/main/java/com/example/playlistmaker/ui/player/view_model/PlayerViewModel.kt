@@ -15,8 +15,11 @@ import com.example.playlistmaker.domain.player.use_cases.interfaces.PlaybackCont
 import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayingTrackTimeUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayerStateUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.DestroyPlayerUseCase
+import com.example.playlistmaker.ui.mapper.Mapper
+import com.example.playlistmaker.ui.models.TrackRepresentation
 
 class PlayerViewModel(
+    private val track: TrackRepresentation,
     private val preparePlayerUseCase: PreparePlayerUseCase,
     private val setOnCompletionListenerUseCase: SetOnCompletionListenerUseCase,
     private val pauseTrackUseCase: PauseTrackUseCase,
@@ -38,7 +41,7 @@ class PlayerViewModel(
     val liveDataTrackPlaybackProgress: LiveData<Int> = mutableLiveDataTrackPlaybackProgress
 
     init {
-        preparePlayerUseCase.execute {
+        preparePlayerUseCase.execute(track = Mapper.mapTrackRepresentationToTrack(track)) {
             mutableLiveDataPlayerState.postValue(PlayerState.PREPARED)
         }
         setOnCompletionListenerUseCase.execute {

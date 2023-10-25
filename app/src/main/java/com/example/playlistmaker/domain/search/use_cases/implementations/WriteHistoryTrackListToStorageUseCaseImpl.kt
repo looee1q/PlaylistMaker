@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain.use_case.search_tracks_use_cases.implementations
+package com.example.playlistmaker.domain.search.use_cases.implementations
 
 import com.example.playlistmaker.domain.search.dao.HistoryTrackListDAO
 import com.example.playlistmaker.domain.model.Track
