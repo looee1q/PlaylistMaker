@@ -20,7 +20,7 @@
 
             <TextView
                 android:text="@string/settings"
-                style="@style/SearchAndSettingsActivityHeader"/>
+                style="@style/ActivityHeader"/>
         </LinearLayout>
 
         <FrameLayout

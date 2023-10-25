@@ -3,7 +3,7 @@ package com.example.playlistmaker.ui.main
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.playlistmaker.ui.MusicLibraryActivity
+import com.example.playlistmaker.ui.mediateca.activity.MediatecaActivity
 import com.example.playlistmaker.ui.settings.activity.SettingsActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
 import com.example.playlistmaker.ui.search.activity.SearchActivity
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.musicLibraryButton.setOnClickListener {
-            val displayIntent = Intent(this@MainActivity, MusicLibraryActivity::class.java)
+            val displayIntent = Intent(this@MainActivity, MediatecaActivity::class.java)
             startActivity(displayIntent)
         }
 
