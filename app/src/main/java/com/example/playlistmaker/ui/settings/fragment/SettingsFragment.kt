@@ -32,10 +32,6 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.backToMainScreenFromSettings.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
         settingsViewModel.liveData.observe(this) {
             binding.nightModeSwitch.isChecked = when (it) {
                 is Theme.DarkTheme -> true

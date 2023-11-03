@@ -12,18 +12,9 @@
     android:paddingEnd="@dimen/start_and_end_paddings_of_activity_search"
     tools:context="com.example.playlistmaker.ui.search.fragment.SearchFragment">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/back_to_main_screen"
-            style="@style/ArrowToMainActivity"/>
-
-        <TextView
-            android:text="@string/search"
-            style="@style/ActivityHeader"/>
-    </LinearLayout>
+    <TextView
+        android:text="@string/search"
+        style="@style/ActivityHeader"/>
 
     <LinearLayout
         android:layout_width="match_parent"

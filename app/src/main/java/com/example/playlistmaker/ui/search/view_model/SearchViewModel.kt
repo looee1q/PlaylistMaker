@@ -141,10 +141,17 @@ class SearchViewModel(
         liveDataHistoryTrackList.value!!.clear()
     }
 
+    fun cancelSearch() {
+        Log.d("SearchViewModel","Удаляем callback")
+        handlerInMainThread.removeCallbacks(searchRunnable)
+        mutableLiveDataSearchRequest.value = EMPTY_SEARCH
+    }
+
     companion object {
         private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
         private const val MAKE_REQUEST_DELAY_MILLIS = 2000L
         private const val HISTORY_TRACK_LIST_SIZE = 10
+        private const val EMPTY_SEARCH = ""
     }
 
 }

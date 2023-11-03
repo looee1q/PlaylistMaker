@@ -56,10 +56,6 @@ class SearchFragment : Fragment() {
         val historyTrackList = viewModel.liveDataHistoryTrackList.value!!
         historyTrackListAdapter = TrackAdapter(historyTrackList)
 
-        binding.backToMainScreen.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
         binding.tracksSearchField.setText(viewModel.liveDataSearchRequest.value)
 
         binding.clearingRequestCross.setOnClickListener {
@@ -120,6 +116,12 @@ class SearchFragment : Fragment() {
                 View.GONE
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("SearchFragment", "onPause in SearchFragment")
+        viewModel.cancelSearch()
     }
 
     private fun createAdapterListener(): (TrackRepresentation) -> Unit {

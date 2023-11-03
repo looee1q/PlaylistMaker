@@ -28,7 +28,7 @@ class MediatecaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.viewPager.adapter = ViewPagerAdapter(parentFragmentManager, lifecycle)
+        binding.viewPager.adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
 
         tabLayoutMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) {
                 tab, position ->
@@ -40,9 +40,11 @@ class MediatecaFragment : Fragment() {
         }
         tabLayoutMediator.attach()
 
-        binding.backToMainScreen.setOnClickListener {
-            findNavController().navigateUp()
-        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        tabLayoutMediator.detach()
     }
 
 }
