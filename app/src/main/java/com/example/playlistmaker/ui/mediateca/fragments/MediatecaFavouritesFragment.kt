@@ -11,7 +11,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediatecaFavouritesFragment : Fragment() {
 
-    private lateinit var binding: FragmentMediatecaFavouritesBinding
+    private var _binding: FragmentMediatecaFavouritesBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: FavouritesViewModel by viewModel()
 
@@ -20,8 +21,13 @@ class MediatecaFavouritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMediatecaFavouritesBinding.inflate(inflater, container, false)
+        _binding = FragmentMediatecaFavouritesBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

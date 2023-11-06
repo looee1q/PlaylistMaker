@@ -24,7 +24,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
 
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: SearchViewModel by viewModel()
 
@@ -37,7 +38,7 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         Log.d("SearchFragment", "onCreateView in SearchFragment")
         return binding.root
     }
@@ -122,6 +123,11 @@ class SearchFragment : Fragment() {
         super.onPause()
         Log.d("SearchFragment", "onPause in SearchFragment")
         viewModel.cancelSearch()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun createAdapterListener(): (TrackRepresentation) -> Unit {

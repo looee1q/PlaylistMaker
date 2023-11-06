@@ -12,7 +12,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MediatecaFragment : Fragment() {
 
-    private lateinit var binding: FragmentMediatecaBinding
+    private var _binding: FragmentMediatecaBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var tabLayoutMediator: TabLayoutMediator
 
@@ -21,7 +22,7 @@ class MediatecaFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMediatecaBinding.inflate(inflater, container, false)
+        _binding = FragmentMediatecaBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -45,6 +46,7 @@ class MediatecaFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         tabLayoutMediator.detach()
+        _binding = null
     }
 
 }

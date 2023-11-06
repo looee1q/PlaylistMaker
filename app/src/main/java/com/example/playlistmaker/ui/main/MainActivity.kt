@@ -20,15 +20,6 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.root_fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
 
-/*        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            binding.bottomNavigationView.isVisible = when (destination.id) {
-                R.id.mediatecaFragment,
-                R.id.settingsFragment,
-                R.id.searchFragment -> true
-                else -> false
-            }
-        }*/
-
         binding.bottomNavigationView.setupWithNavController(navController)
     }
 }
