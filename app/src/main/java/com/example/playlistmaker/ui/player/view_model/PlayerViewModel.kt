@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.domain.player.use_cases.interfaces.PreparePlayerUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.SetOnCompletionListenerUseCase
@@ -17,6 +18,8 @@ import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayerSta
 import com.example.playlistmaker.domain.player.use_cases.interfaces.DestroyPlayerUseCase
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.models.TrackRepresentation
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val track: TrackRepresentation,
@@ -64,31 +67,19 @@ class PlayerViewModel(
         ))
     }
 
-    private var handlerInMainThread = Handler(Looper.getMainLooper())
-
-    private fun createTimeUpdaterRunnable(): Runnable {
-        return object : Runnable {
-            override fun run() {
+    fun startTimeUpdater() {
+        Log.d("PlayerState","${getPlayerStateUseCase.execute()}")
+        viewModelScope.launch {
+            while (getPlayerStateUseCase.execute() == PlayerState.PLAYING) {
+                delay(TRACK_TIME_UPDATE_FREQUENCY_MILLIS)
                 mutableLiveDataTrackPlaybackProgress.value = getPlayingTrackTimeUseCase.execute()
-                val playerState = getPlayerStateUseCase.execute()
-                Log.d("PlayerState","$playerState")
                 Log.d("CURRENT_TIME", "${mutableLiveDataTrackPlaybackProgress.value}")
-                when (playerState) {
-                    PlayerState.PLAYING -> handlerInMainThread.postDelayed(this, TRACK_TIME_UPDATE_FREQUENCY_MILLIS)
-                    PlayerState.PAUSED -> handlerInMainThread.removeCallbacks(this)
-                    PlayerState.PREPARED -> handlerInMainThread.removeCallbacks(this)
-                    PlayerState.DEFAULT -> {}
-                }
             }
         }
     }
 
-    fun startTimeUpdaterRunnable() {
-        handlerInMainThread.post(createTimeUpdaterRunnable())
-    }
-
     companion object {
-        private const val TRACK_TIME_UPDATE_FREQUENCY_MILLIS = 500L
+        private const val TRACK_TIME_UPDATE_FREQUENCY_MILLIS = 300L
     }
 
 }
