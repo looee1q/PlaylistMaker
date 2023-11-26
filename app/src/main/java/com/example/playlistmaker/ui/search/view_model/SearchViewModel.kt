@@ -55,26 +55,22 @@ class SearchViewModel(
             request = searchRequest,
             consumer = object : Consumer<List<Track>> {
                 override fun consume(data: ConsumerData<List<Track>>) {
-                    val consumeRunnable = Runnable {
-                        Log.d("CONSUME_RUNNABLE", "inside consume runnable in ${Thread.currentThread().name}")
-                        when (data) {
-                            is ConsumerData.Data -> {
-                                tracks.clear()
-                                tracks.addAll(data.data.map { Mapper.mapTrackToTrackRepresentation(it) })
-                                mutableLiveDataStatus.value = ITunesServerResponseStatus.SUCCESS
-                            }
-                            is ConsumerData.EmptyData -> {
-                                tracks.clear()
-                                mutableLiveDataStatus.value = ITunesServerResponseStatus.NOTHING_FOUND
-                            }
-                            is ConsumerData.Error -> {
-                                tracks.clear()
-                                mutableLiveDataStatus.value = ITunesServerResponseStatus.CONNECTION_ERROR
-                            }
+                    Log.d("CONSUME_RUNNABLE", "inside consume runnable in ${Thread.currentThread().name}")
+                    when (data) {
+                        is ConsumerData.Data -> {
+                            tracks.clear()
+                            tracks.addAll(data.data.map { Mapper.mapTrackToTrackRepresentation(it) })
+                            mutableLiveDataStatus.postValue(ITunesServerResponseStatus.SUCCESS)
+                        }
+                        is ConsumerData.EmptyData -> {
+                            tracks.clear()
+                            mutableLiveDataStatus.postValue(ITunesServerResponseStatus.NOTHING_FOUND)
+                        }
+                        is ConsumerData.Error -> {
+                            tracks.clear()
+                            mutableLiveDataStatus.postValue(ITunesServerResponseStatus.CONNECTION_ERROR)
                         }
                     }
-
-                    handlerInMainThread.post(consumeRunnable)
                 }
 
             }
@@ -141,10 +137,17 @@ class SearchViewModel(
         liveDataHistoryTrackList.value!!.clear()
     }
 
+    fun cancelSearch() {
+        Log.d("SearchViewModel","Удаляем callback")
+        handlerInMainThread.removeCallbacks(searchRunnable)
+        mutableLiveDataSearchRequest.value = EMPTY_SEARCH
+    }
+
     companion object {
         private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
         private const val MAKE_REQUEST_DELAY_MILLIS = 2000L
         private const val HISTORY_TRACK_LIST_SIZE = 10
+        private const val EMPTY_SEARCH = ""
     }
 
 }

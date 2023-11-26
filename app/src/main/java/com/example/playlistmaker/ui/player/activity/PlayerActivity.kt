@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityTrackInfoBinding
+import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.ui.models.TrackRepresentation
-import com.example.playlistmaker.ui.search.activity.SearchActivity
 import com.example.playlistmaker.roundedCorners
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 import kotlinx.serialization.json.Json
@@ -21,7 +21,7 @@ import java.util.*
 
 class PlayerActivity: AppCompatActivity() {
 
-    private lateinit var binding: ActivityTrackInfoBinding
+    private lateinit var binding: ActivityPlayerBinding
     private lateinit var track: TrackRepresentation
 
     private val playerViewModel: PlayerViewModel by viewModel { parametersOf(track) }
@@ -29,10 +29,10 @@ class PlayerActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityTrackInfoBinding.inflate(layoutInflater)
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        track = Json.decodeFromString<TrackRepresentation>(intent.extras?.getString(SearchActivity.TRACK)!!)
+        track = Json.decodeFromString<TrackRepresentation>(intent.extras?.getString(TRACK)!!)
         bind(track)
 
         binding.backToSearchActivityButton.setOnClickListener {
@@ -111,7 +111,14 @@ class PlayerActivity: AppCompatActivity() {
     }
 
     companion object {
+
         private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
+
+        const val TRACK = "TRACK"
+
+        fun createArgs(encodedTrack: String) : Bundle {
+            return bundleOf(TRACK to encodedTrack)
+        }
     }
 
 }

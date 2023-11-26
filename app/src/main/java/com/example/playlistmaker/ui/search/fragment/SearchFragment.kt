@@ -1,18 +1,20 @@
-package com.example.playlistmaker.ui.search.activity
+package com.example.playlistmaker.ui.search.fragment
 
 import android.content.Context
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.ui.models.ITunesServerResponseStatus
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.ui.player.activity.PlayerActivity
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
@@ -20,9 +22,10 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    private lateinit var binding: ActivitySearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: SearchViewModel by viewModel()
 
@@ -30,25 +33,29 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var historyTrackListAdapter: TrackAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        Log.d("SearchFragment", "onCreateView in SearchFragment")
+        return binding.root
+    }
 
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d("SearchFragment", "onViewCreated in SearchFragment")
 
-        viewModel.liveDataStatus.observe(this) {
-            Log.d("CURRENT_STATUS", "$it")
-            showError(it)
+        viewModel.liveDataStatus.observe(viewLifecycleOwner) {
+            Log.d("CURRENT_STATUS", "$it in SearchFragment")
+            render(it)
         }
 
         adapter = TrackAdapter(viewModel.liveDataTracks.value!!)
 
         val historyTrackList = viewModel.liveDataHistoryTrackList.value!!
         historyTrackListAdapter = TrackAdapter(historyTrackList)
-
-        binding.backToMainScreen.setOnClickListener {
-            finish()
-        }
 
         binding.tracksSearchField.setText(viewModel.liveDataSearchRequest.value)
 
@@ -64,11 +71,11 @@ class SearchActivity : AppCompatActivity() {
             binding.historyTrackListLayout.visibility = View.GONE
         }
 
-        binding.trackListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.trackListRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         adapter.listener = createAdapterListener()
         binding.trackListRecyclerView.adapter = adapter
 
-        binding.historyTrackListRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        binding.historyTrackListRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
         historyTrackListAdapter.listener = createAdapterListener()
         binding.historyTrackListRecyclerView.adapter = historyTrackListAdapter
 
@@ -110,16 +117,27 @@ class SearchActivity : AppCompatActivity() {
                 View.GONE
             }
         }
+    }
 
+    override fun onPause() {
+        super.onPause()
+        Log.d("SearchFragment", "onPause in SearchFragment")
+        viewModel.cancelSearch()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun createAdapterListener(): (TrackRepresentation) -> Unit {
         return { track: TrackRepresentation ->
             if (viewModel.liveDataIsClickOnTrackAllowed.value!!) {
                 viewModel.clickOnTrackDebounce()
-                val intent = Intent(this, PlayerActivity::class.java)
-                intent.putExtra(TRACK, Json.encodeToString(track))
-                startActivity(intent)
+                findNavController().navigate(
+                    R.id.action_searchFragment_to_playerActivity,
+                    PlayerActivity.createArgs(Json.encodeToString(track))
+                )
 
                 viewModel.fillHistoryTrackListUp(track)
                 viewModel.writeHistoryTrackListToStorage()
@@ -130,15 +148,15 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun closeKeyboard() {
-        val currentView = this.currentFocus
+        val currentView = requireActivity().currentFocus
         if (currentView != null) {
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(`currentView`.windowToken, 0)
         }
     }
 
-    private fun showError(iTunesServerResponseStatus: ITunesServerResponseStatus) {
+    private fun render(iTunesServerResponseStatus: ITunesServerResponseStatus) {
 
         when (iTunesServerResponseStatus) {
             ITunesServerResponseStatus.CONNECTION_ERROR -> {
@@ -147,7 +165,7 @@ class SearchActivity : AppCompatActivity() {
                 binding.progressBar.visibility = View.GONE
                 binding.errorImage.visibility = View.VISIBLE
                 binding.errorMessage.visibility = View.VISIBLE
-                binding.errorImage.setImageDrawable(getDrawable(R.drawable.connection_error))
+                binding.errorImage.setImageDrawable(requireContext().getDrawable(R.drawable.connection_error))
                 binding.errorMessage.text = getText(R.string.connection_error)
                 binding.reloadSearchButton.visibility = View.VISIBLE
 
@@ -161,7 +179,7 @@ class SearchActivity : AppCompatActivity() {
                 binding.progressBar.visibility = View.GONE
                 binding.errorImage.visibility = View.VISIBLE
                 binding.errorMessage.visibility = View.VISIBLE
-                binding.errorImage.setImageDrawable(getDrawable(R.drawable.nothing_found_error))
+                binding.errorImage.setImageDrawable(requireContext().getDrawable(R.drawable.nothing_found_error))
                 binding.errorMessage.text = getText(R.string.nothing_found)
             }
             ITunesServerResponseStatus.SUCCESS -> {
@@ -187,8 +205,6 @@ class SearchActivity : AppCompatActivity() {
         binding.reloadSearchButton.visibility = View.GONE
     }
 
-    companion object {
-        const val TRACK = "TRACK"
-    }
+
 
 }
