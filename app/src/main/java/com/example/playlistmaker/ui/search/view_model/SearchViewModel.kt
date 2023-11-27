@@ -6,15 +6,20 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.search.consumer.Consumer
 import com.example.playlistmaker.domain.search.consumer.ConsumerData
 import com.example.playlistmaker.domain.search.use_cases.interfaces.GetHistoryTrackListFromStorageUseCase
 import com.example.playlistmaker.domain.search.use_cases.interfaces.GetTracksByApiRequestUseCase
 import com.example.playlistmaker.domain.search.use_cases.interfaces.WriteHistoryTrackListToStorageUseCase
+import com.example.playlistmaker.ui.debounce
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.models.ITunesServerResponseStatus
 import com.example.playlistmaker.ui.models.TrackRepresentation
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Collections
 
 class SearchViewModel(
@@ -43,7 +48,7 @@ class SearchViewModel(
     private val mutableLiveDataIsClickOnTrackAllowed = MutableLiveData<Boolean>(true)
     val liveDataIsClickOnTrackAllowed: LiveData<Boolean> = mutableLiveDataIsClickOnTrackAllowed
 
-    private var searchRunnable = Runnable{ }
+    private var searchJob: Job? = null
 
     fun clearTracks() {
         tracks.clear()
@@ -82,11 +87,11 @@ class SearchViewModel(
             tracks.clear()
             mutableLiveDataStatus.value = ITunesServerResponseStatus.EMPTY_REQUEST
         } else {
-            handlerInMainThread.removeCallbacks(searchRunnable)
-            searchRunnable = Runnable { runSearch(searchRequest) }
-            handlerInMainThread.postDelayed(searchRunnable,
-                MAKE_REQUEST_DELAY_MILLIS
-            )
+            searchJob?.cancel()
+            searchJob = viewModelScope.launch {
+                delay(MAKE_REQUEST_DELAY_MILLIS)
+                runSearch(searchRequest)
+            }
             mutableLiveDataStatus.value = ITunesServerResponseStatus.LOADING
         }
         mutableLiveDataSearchRequest.value = searchRequest
@@ -97,7 +102,7 @@ class SearchViewModel(
             tracks.clear()
             mutableLiveDataStatus.value = ITunesServerResponseStatus.EMPTY_REQUEST
         } else {
-            handlerInMainThread.removeCallbacks(searchRunnable)
+            searchJob?.cancel()
             runSearch(searchRequest)
         }
         mutableLiveDataSearchRequest.value = searchRequest
@@ -137,17 +142,10 @@ class SearchViewModel(
         liveDataHistoryTrackList.value!!.clear()
     }
 
-    fun cancelSearch() {
-        Log.d("SearchViewModel","Удаляем callback")
-        handlerInMainThread.removeCallbacks(searchRunnable)
-        mutableLiveDataSearchRequest.value = EMPTY_SEARCH
-    }
-
     companion object {
         private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
         private const val MAKE_REQUEST_DELAY_MILLIS = 2000L
         private const val HISTORY_TRACK_LIST_SIZE = 10
-        private const val EMPTY_SEARCH = ""
     }
 
 }
