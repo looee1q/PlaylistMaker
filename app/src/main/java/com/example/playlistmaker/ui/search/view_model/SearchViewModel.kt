@@ -1,19 +1,15 @@
 package com.example.playlistmaker.ui.search.view_model
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.domain.search.consumer.Consumer
-import com.example.playlistmaker.domain.search.consumer.ConsumerData
+import com.example.playlistmaker.domain.search.api.ApiResponse
 import com.example.playlistmaker.domain.search.use_cases.interfaces.GetHistoryTrackListFromStorageUseCase
 import com.example.playlistmaker.domain.search.use_cases.interfaces.GetTracksByApiRequestUseCase
 import com.example.playlistmaker.domain.search.use_cases.interfaces.WriteHistoryTrackListToStorageUseCase
-import com.example.playlistmaker.ui.debounce
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.models.ITunesServerResponseStatus
 import com.example.playlistmaker.ui.models.TrackRepresentation
@@ -27,9 +23,6 @@ class SearchViewModel(
     private val getHistoryTrackListFromStorageUseCase: GetHistoryTrackListFromStorageUseCase,
     private val getTracksByApiRequestUseCase: GetTracksByApiRequestUseCase
 ) : ViewModel() {
-
-
-    private val handlerInMainThread = Handler(Looper.getMainLooper())
 
     private val mutableLiveDataStatus = MutableLiveData<ITunesServerResponseStatus>()
     val liveDataStatus: LiveData<ITunesServerResponseStatus> = mutableLiveDataStatus
@@ -54,32 +47,32 @@ class SearchViewModel(
         tracks.clear()
     }
 
-    private fun runSearch(searchRequest: String) {
-        Log.d("MAKE_NEW_REQUEST", "MAKE_NEW_REQUEST_TO_THE_APPLE_MUSIC")
-        getTracksByApiRequestUseCase.execute(
-            request = searchRequest,
-            consumer = object : Consumer<List<Track>> {
-                override fun consume(data: ConsumerData<List<Track>>) {
-                    Log.d("CONSUME_RUNNABLE", "inside consume runnable in ${Thread.currentThread().name}")
-                    when (data) {
-                        is ConsumerData.Data -> {
-                            tracks.clear()
-                            tracks.addAll(data.data.map { Mapper.mapTrackToTrackRepresentation(it) })
-                            mutableLiveDataStatus.postValue(ITunesServerResponseStatus.SUCCESS)
-                        }
-                        is ConsumerData.EmptyData -> {
-                            tracks.clear()
-                            mutableLiveDataStatus.postValue(ITunesServerResponseStatus.NOTHING_FOUND)
-                        }
-                        is ConsumerData.Error -> {
-                            tracks.clear()
-                            mutableLiveDataStatus.postValue(ITunesServerResponseStatus.CONNECTION_ERROR)
-                        }
-                    }
-                }
-
+    private fun processSearchedData(data: ApiResponse<List<Track>>) {
+        when (data) {
+            is ApiResponse.Success -> {
+                tracks.clear()
+                tracks.addAll(data.data.map { Mapper.mapTrackToTrackRepresentation(it) })
+                mutableLiveDataStatus.postValue(ITunesServerResponseStatus.SUCCESS)
             }
-        )
+            is ApiResponse.EmptyResponse -> {
+                tracks.clear()
+                mutableLiveDataStatus.postValue(ITunesServerResponseStatus.NOTHING_FOUND)
+            }
+            is ApiResponse.Error -> {
+                tracks.clear()
+                mutableLiveDataStatus.postValue(ITunesServerResponseStatus.CONNECTION_ERROR)
+            }
+        }
+    }
+
+    private fun runSearch(searchRequest: String) {
+        viewModelScope.launch {
+            Log.d("MAKE_NEW_REQUEST", "MAKE_NEW_REQUEST_TO_THE_APPLE_MUSIC in ${Thread.currentThread().name}")
+            getTracksByApiRequestUseCase.execute(searchRequest).collect {
+                processSearchedData(it)
+            }
+
+        }
     }
 
     fun runSearchWithDelay(searchRequest: String) {
