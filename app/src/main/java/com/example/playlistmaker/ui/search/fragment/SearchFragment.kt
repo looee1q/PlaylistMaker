@@ -133,6 +133,7 @@ class SearchFragment : Fragment() {
         return { track: TrackRepresentation ->
             if (viewModel.liveDataIsClickOnTrackAllowed.value!!) {
                 viewModel.clickOnTrackDebounce()
+                Log.d("SearchFragment", "Зафиксировано нажатие на Track!")
                 findNavController().navigate(
                     R.id.action_searchFragment_to_playerActivity,
                     PlayerActivity.createArgs(Json.encodeToString(track))

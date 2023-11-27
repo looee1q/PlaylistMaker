@@ -111,7 +111,10 @@ class SearchViewModel(
     fun clickOnTrackDebounce() {
         if (liveDataIsClickOnTrackAllowed.value!!) {
             mutableLiveDataIsClickOnTrackAllowed.value = false
-            handlerInMainThread.postDelayed({ mutableLiveDataIsClickOnTrackAllowed.value = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY_MILLIS)
+                mutableLiveDataIsClickOnTrackAllowed.value = true
+            }
         }
     }
 
