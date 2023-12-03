@@ -40,14 +40,19 @@ val viewModelModule = module {
             playbackControlUseCase = get(),
             getPlayingTrackTimeUseCase = get(),
             getPlayerStateUseCase = get(),
-            destroyPlayerUseCase = get()
+            destroyPlayerUseCase = get(),
+            addTrackToDBUseCase = get(),
+            removeTrackFromDBUseCase = get(),
+            getTracksIDsFromDBUseCase = get()
         )
     }
 
     //viewModels for MediatecaActivity
 
     viewModel<FavouritesViewModel> {
-        FavouritesViewModel()
+        FavouritesViewModel(
+            showAllTracksFromDBUseCase = get()
+        )
     }
 
     viewModel<PlaylistsViewModel> {

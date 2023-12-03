@@ -53,6 +53,14 @@ class PlayerActivity: AppCompatActivity() {
             playerViewModel.startTimeUpdater()
         }
 
+        playerViewModel.liveDataIsTrackFavorite.observe(this) {
+            setLikeButtonState(it)
+        }
+
+        binding.likeButton.setOnClickListener {
+            playerViewModel.changeTrackFavoriteStatus()
+        }
+
     }
 
     override fun onPause() {
@@ -107,6 +115,14 @@ class PlayerActivity: AppCompatActivity() {
                 binding.playingProgressTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
             }
             PlayerState.DEFAULT, null -> {}
+        }
+    }
+
+    private fun setLikeButtonState(isTrackFavorite: Boolean?) {
+        if (isTrackFavorite == true) {
+            binding.likeButton.setImageDrawable(getDrawable(R.drawable.like_button_favorite))
+        } else {
+            binding.likeButton.setImageDrawable(getDrawable(R.drawable.like_button_icon))
         }
     }
 

@@ -1,5 +1,13 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.domain.db.use_cases.implementations.AddTrackToDBUseCaseImpl
+import com.example.playlistmaker.domain.db.use_cases.implementations.GetTracksIDsFromDBUseCaseImpl
+import com.example.playlistmaker.domain.db.use_cases.implementations.RemoveTrackFromDBUseCaseImpl
+import com.example.playlistmaker.domain.db.use_cases.implementations.ShowAllTracksFromDBUseCaseImpl
+import com.example.playlistmaker.domain.db.use_cases.interfaces.AddTrackToDBUseCase
+import com.example.playlistmaker.domain.db.use_cases.interfaces.GetTracksIDsFromDBUseCase
+import com.example.playlistmaker.domain.db.use_cases.interfaces.RemoveTrackFromDBUseCase
+import com.example.playlistmaker.domain.db.use_cases.interfaces.ShowAllTracksFromDBUseCase
 import com.example.playlistmaker.domain.player.use_cases.implementations.DestroyPlayerUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayerStateUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
@@ -109,6 +117,24 @@ val domainModule = module {
 
     factory<SetOnCompletionListenerUseCase> {
         SetOnCompletionListenerUseCaseImpl(get())
+    }
+
+    // modules for UseCases which are interacted with DB
+
+    factory<AddTrackToDBUseCase> {
+        AddTrackToDBUseCaseImpl(get())
+    }
+
+    factory<RemoveTrackFromDBUseCase> {
+        RemoveTrackFromDBUseCaseImpl(get())
+    }
+
+    factory<ShowAllTracksFromDBUseCase> {
+        ShowAllTracksFromDBUseCaseImpl(get())
+    }
+
+    factory<GetTracksIDsFromDBUseCase> {
+        GetTracksIDsFromDBUseCaseImpl(get())
     }
 
 }
