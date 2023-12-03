@@ -67,7 +67,7 @@ class SearchFragment : Fragment() {
             if (historyTrackList.isNotEmpty()) binding.historyTrackListLayout.visibility = View.VISIBLE
         }
 
-        if (historyTrackList.isEmpty()) {
+        if (historyTrackList.isEmpty() || viewModel?.liveDataTracks?.value?.isEmpty() == false) {
             binding.historyTrackListLayout.visibility = View.GONE
         }
 
@@ -122,7 +122,6 @@ class SearchFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         Log.d("SearchFragment", "onPause in SearchFragment")
-        viewModel.cancelSearch()
     }
 
     override fun onDestroyView() {
@@ -134,6 +133,7 @@ class SearchFragment : Fragment() {
         return { track: TrackRepresentation ->
             if (viewModel.liveDataIsClickOnTrackAllowed.value!!) {
                 viewModel.clickOnTrackDebounce()
+                Log.d("SearchFragment", "Зафиксировано нажатие на Track!")
                 findNavController().navigate(
                     R.id.action_searchFragment_to_playerActivity,
                     PlayerActivity.createArgs(Json.encodeToString(track))

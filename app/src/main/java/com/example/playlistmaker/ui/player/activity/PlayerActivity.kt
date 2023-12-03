@@ -50,7 +50,7 @@ class PlayerActivity: AppCompatActivity() {
 
         binding.playButton.setOnClickListener {
             playerViewModel.playbackControl()
-            playerViewModel.startTimeUpdaterRunnable()
+            playerViewModel.startTimeUpdater()
         }
 
     }
