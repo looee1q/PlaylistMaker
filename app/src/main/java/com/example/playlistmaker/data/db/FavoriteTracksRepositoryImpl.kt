@@ -1,18 +1,18 @@
 package com.example.playlistmaker.data.db
 
-import com.example.playlistmaker.domain.db.FavoriteTracksRepository
+import com.example.playlistmaker.domain.favorites.FavoriteTracksRepository
 import com.example.playlistmaker.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class FavoriteTracksRepositoryImpl(private val favoriteTracksDB: FavoriteTracksDB) : FavoriteTracksRepository {
-    override suspend fun addTrackToDB(track: Track) {
+    override suspend fun addTrackToFavorites(track: Track) {
         favoriteTracksDB.favoriteTracksDAO().addTrackToDB(
             TrackDBConvertor.convertTrackToTrackEntity(track)
         )
     }
 
-    override suspend fun removeTrackFromDB(track: Track) {
+    override suspend fun removeTrackFromFavorites(track: Track) {
         favoriteTracksDB.favoriteTracksDAO().removeTrackFromDB(
             TrackDBConvertor.convertTrackToTrackEntity(track)
         )

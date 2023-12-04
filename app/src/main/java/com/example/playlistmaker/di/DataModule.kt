@@ -14,7 +14,7 @@ import com.example.playlistmaker.data.settings.SharedPrefThemeStorage
 import com.example.playlistmaker.data.settings.ThemeRepositoryImpl
 import com.example.playlistmaker.data.settings.ThemeStorage
 import com.example.playlistmaker.data.sharing.ExternalNavigatorImpl
-import com.example.playlistmaker.domain.db.FavoriteTracksRepository
+import com.example.playlistmaker.domain.favorites.FavoriteTracksRepository
 import com.example.playlistmaker.domain.player.PlayerRepository
 import com.example.playlistmaker.domain.search.api.MusicApi
 import com.example.playlistmaker.domain.search.dao.HistoryTrackListDAO

@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.domain.db.use_cases.interfaces.ShowAllTracksFromDBUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.ShowAllFavoritesUseCase
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.mediateca.model.FavoriteStatus
 import com.example.playlistmaker.ui.models.TrackRepresentation
@@ -14,15 +14,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class FavouritesViewModel(
-    private val showAllTracksFromDBUseCase: ShowAllTracksFromDBUseCase
+    private val showAllTracksFromDBUseCase: ShowAllFavoritesUseCase
 ) : ViewModel() {
 
     private val tracks = mutableListOf<TrackRepresentation>()
 
-    private val mutableLiveDataFavoriteTracks = MutableLiveData<MutableList<TrackRepresentation>>(tracks)
-    val liveDataFavoriteTracks: LiveData<MutableList<TrackRepresentation>> = mutableLiveDataFavoriteTracks
+    private val mutableLiveDataFavoriteTracks = MutableLiveData<List<TrackRepresentation>>(tracks)
+    val liveDataFavoriteTracks: LiveData<List<TrackRepresentation>> = mutableLiveDataFavoriteTracks
 
-    private val mutableLiveDataFavoritesStatus = MutableLiveData<FavoriteStatus>()
+    private val mutableLiveDataFavoritesStatus = MutableLiveData<FavoriteStatus>(FavoriteStatus.Empty(tracks))
     val liveDataFavoritesStatus: LiveData<FavoriteStatus> = mutableLiveDataFavoritesStatus
 
     private val mutableLiveDataIsClickOnTrackAllowed = MutableLiveData<Boolean>(true)
@@ -36,10 +36,10 @@ class FavouritesViewModel(
                     it.map { Mapper.mapTrackToTrackRepresentation(it) }
                 )
                 if (tracks.isEmpty()) {
-                    mutableLiveDataFavoritesStatus.postValue(FavoriteStatus.Empty)
+                    mutableLiveDataFavoritesStatus.postValue(FavoriteStatus.Empty(tracks))
                 } else {
                     mutableLiveDataFavoritesStatus.postValue(FavoriteStatus.Content(tracks))
-                    mutableLiveDataFavoriteTracks.postValue(tracks)
+                    //mutableLiveDataFavoriteTracks.postValue(tracks)
                 }
                 Log.d("FavoritesViewModel", "Favorites tracks are ${it.map { it.trackName }}")
             }

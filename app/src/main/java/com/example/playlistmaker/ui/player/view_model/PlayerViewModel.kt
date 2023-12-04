@@ -5,10 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.domain.db.use_cases.interfaces.AddTrackToDBUseCase
-import com.example.playlistmaker.domain.db.use_cases.interfaces.GetTracksIDsFromDBUseCase
-import com.example.playlistmaker.domain.db.use_cases.interfaces.RemoveTrackFromDBUseCase
-import com.example.playlistmaker.domain.db.use_cases.interfaces.ShowAllTracksFromDBUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.domain.player.use_cases.interfaces.PreparePlayerUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.SetOnCompletionListenerUseCase
@@ -35,9 +34,9 @@ class PlayerViewModel(
     private val getPlayingTrackTimeUseCase: GetPlayingTrackTimeUseCase,
     private val getPlayerStateUseCase: GetPlayerStateUseCase,
     private val destroyPlayerUseCase: DestroyPlayerUseCase,
-    private val addTrackToDBUseCase: AddTrackToDBUseCase,
-    private val removeTrackFromDBUseCase: RemoveTrackFromDBUseCase,
-    private val getTracksIDsFromDBUseCase: GetTracksIDsFromDBUseCase
+    private val addTrackToFavoritesUseCase: AddTrackToFavoritesUseCase,
+    private val removeTrackFromFavoritesUseCase: RemoveTrackFromFavoritesUseCase,
+    private val getTracksIDsFromDBUseCase: GetFavoritesIDsUseCase
 ) : ViewModel() {
 
     private val mutableLiveDataPlayerState = MutableLiveData<PlayerState>().also {
@@ -97,13 +96,13 @@ class PlayerViewModel(
             if (mutableLiveDataIsTrackFavorite.value == true) {
                 Log.d("PlayerViewModel", "Removing the track from the DB in thread ${Thread.currentThread().name}")
                 mutableLiveDataIsTrackFavorite.postValue(false)
-                removeTrackFromDBUseCase.execute(
+                removeTrackFromFavoritesUseCase.execute(
                     track = Mapper.mapTrackRepresentationToTrack(track)
                 )
             } else {
                 mutableLiveDataIsTrackFavorite.postValue(true)
                 Log.d("PlayerViewModel", "Adding the track to the DB in thread ${Thread.currentThread().name}")
-                addTrackToDBUseCase.execute(
+                addTrackToFavoritesUseCase.execute(
                     track = Mapper.mapTrackRepresentationToTrack(track)
                 )
             }

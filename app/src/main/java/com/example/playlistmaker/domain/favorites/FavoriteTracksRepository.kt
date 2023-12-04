@@ -1,13 +1,13 @@
-package com.example.playlistmaker.domain.db
+package com.example.playlistmaker.domain.favorites
 
 import com.example.playlistmaker.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 interface FavoriteTracksRepository {
 
-    suspend fun addTrackToDB(track: Track)
+    suspend fun addTrackToFavorites(track: Track)
 
-    suspend fun removeTrackFromDB(track: Track)
+    suspend fun removeTrackFromFavorites(track: Track)
 
     fun showFavoriteTracks() : Flow<List<Track>>
 

@@ -12,7 +12,7 @@ object TrackDBConvertor {
             trackTime = track.trackTime,
             previewUrl = track.previewUrl,
             artworkUrl100 = track.artworkUrl100,
-            collectionName = track.collectionName ?: "",
+            collectionName = track.collectionName.orEmpty(),
             releaseYear = track.releaseYear,
             country = track.country,
             genre = track.genre

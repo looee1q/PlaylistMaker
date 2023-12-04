@@ -119,11 +119,8 @@ class PlayerActivity: AppCompatActivity() {
     }
 
     private fun setLikeButtonState(isTrackFavorite: Boolean?) {
-        if (isTrackFavorite == true) {
-            binding.likeButton.setImageDrawable(getDrawable(R.drawable.like_button_favorite))
-        } else {
-            binding.likeButton.setImageDrawable(getDrawable(R.drawable.like_button_icon))
-        }
+        val drawable = if (isTrackFavorite == true) R.drawable.like_button_favorite else R.drawable.like_button_icon
+        binding.likeButton.setImageDrawable(getDrawable(drawable))
     }
 
     companion object {

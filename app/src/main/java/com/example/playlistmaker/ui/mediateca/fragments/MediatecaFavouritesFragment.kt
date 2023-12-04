@@ -44,7 +44,7 @@ class MediatecaFavouritesFragment : Fragment() {
 
         Log.d("MediatecaFavoritesFragment", "OnViewCreated")
 
-        adapter = TrackAdapter(viewModel.liveDataFavoriteTracks.value!!)
+        adapter = TrackAdapter(viewModel.liveDataFavoritesStatus.value?.favoriteTracks!!)
         adapter?.listener = createAdapterListener()
         binding.favoriteTracksRecyclerView.adapter = adapter
         binding.favoriteTracksRecyclerView.layoutManager = LinearLayoutManager(
@@ -87,15 +87,19 @@ class MediatecaFavouritesFragment : Fragment() {
     private fun render(favoriteStatus: FavoriteStatus?) {
         when(favoriteStatus) {
             is FavoriteStatus.Content -> {
-                binding.emptyMediatecaImage.isVisible = false
-                binding.emptyMediatecaMessage.isVisible = false
-                binding.favoriteTracksRecyclerView.isVisible = true
+                with(binding) {
+                    emptyMediatecaImage.isVisible = false
+                    emptyMediatecaMessage.isVisible = false
+                    favoriteTracksRecyclerView.isVisible = true
+                }
                 adapter?.notifyDataSetChanged()
             }
             is FavoriteStatus.Empty, null -> {
-                binding.emptyMediatecaImage.isVisible = true
-                binding.emptyMediatecaMessage.isVisible = true
-                binding.favoriteTracksRecyclerView.isVisible = false
+                with(binding) {
+                    emptyMediatecaImage.isVisible = true
+                    emptyMediatecaMessage.isVisible = true
+                    favoriteTracksRecyclerView.isVisible = false
+                }
             }
         }
     }

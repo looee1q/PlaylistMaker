@@ -1,13 +1,13 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.domain.db.use_cases.implementations.AddTrackToDBUseCaseImpl
-import com.example.playlistmaker.domain.db.use_cases.implementations.GetTracksIDsFromDBUseCaseImpl
-import com.example.playlistmaker.domain.db.use_cases.implementations.RemoveTrackFromDBUseCaseImpl
-import com.example.playlistmaker.domain.db.use_cases.implementations.ShowAllTracksFromDBUseCaseImpl
-import com.example.playlistmaker.domain.db.use_cases.interfaces.AddTrackToDBUseCase
-import com.example.playlistmaker.domain.db.use_cases.interfaces.GetTracksIDsFromDBUseCase
-import com.example.playlistmaker.domain.db.use_cases.interfaces.RemoveTrackFromDBUseCase
-import com.example.playlistmaker.domain.db.use_cases.interfaces.ShowAllTracksFromDBUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.implementations.AddTrackToFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.favorites.use_cases.implementations.GetFavoritesIDsUseCaseImpl
+import com.example.playlistmaker.domain.favorites.use_cases.implementations.RemoveTrackFromFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.favorites.use_cases.implementations.ShowAllFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.ShowAllFavoritesUseCase
 import com.example.playlistmaker.domain.player.use_cases.implementations.DestroyPlayerUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayerStateUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
@@ -121,20 +121,20 @@ val domainModule = module {
 
     // modules for UseCases which are interacted with DB
 
-    factory<AddTrackToDBUseCase> {
-        AddTrackToDBUseCaseImpl(get())
+    factory<AddTrackToFavoritesUseCase> {
+        AddTrackToFavoritesUseCaseImpl(get())
     }
 
-    factory<RemoveTrackFromDBUseCase> {
-        RemoveTrackFromDBUseCaseImpl(get())
+    factory<RemoveTrackFromFavoritesUseCase> {
+        RemoveTrackFromFavoritesUseCaseImpl(get())
     }
 
-    factory<ShowAllTracksFromDBUseCase> {
-        ShowAllTracksFromDBUseCaseImpl(get())
+    factory<ShowAllFavoritesUseCase> {
+        ShowAllFavoritesUseCaseImpl(get())
     }
 
-    factory<GetTracksIDsFromDBUseCase> {
-        GetTracksIDsFromDBUseCaseImpl(get())
+    factory<GetFavoritesIDsUseCase> {
+        GetFavoritesIDsUseCaseImpl(get())
     }
 
 }
