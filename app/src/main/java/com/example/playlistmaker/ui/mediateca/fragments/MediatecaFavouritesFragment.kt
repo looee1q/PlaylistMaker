@@ -44,7 +44,7 @@ class MediatecaFavouritesFragment : Fragment() {
 
         Log.d("MediatecaFavoritesFragment", "OnViewCreated")
 
-        adapter = TrackAdapter(viewModel.liveDataFavoritesStatus.value?.favoriteTracks!!)
+        adapter = TrackAdapter(viewModel.liveDataFavoriteTracks.value!!)
         adapter?.listener = createAdapterListener()
         binding.favoriteTracksRecyclerView.adapter = adapter
         binding.favoriteTracksRecyclerView.layoutManager = LinearLayoutManager(

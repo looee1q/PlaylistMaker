@@ -22,7 +22,7 @@ class FavouritesViewModel(
     private val mutableLiveDataFavoriteTracks = MutableLiveData<List<TrackRepresentation>>(tracks)
     val liveDataFavoriteTracks: LiveData<List<TrackRepresentation>> = mutableLiveDataFavoriteTracks
 
-    private val mutableLiveDataFavoritesStatus = MutableLiveData<FavoriteStatus>(FavoriteStatus.Empty(tracks))
+    private val mutableLiveDataFavoritesStatus = MutableLiveData<FavoriteStatus>()
     val liveDataFavoritesStatus: LiveData<FavoriteStatus> = mutableLiveDataFavoritesStatus
 
     private val mutableLiveDataIsClickOnTrackAllowed = MutableLiveData<Boolean>(true)
@@ -36,10 +36,10 @@ class FavouritesViewModel(
                     it.map { Mapper.mapTrackToTrackRepresentation(it) }
                 )
                 if (tracks.isEmpty()) {
-                    mutableLiveDataFavoritesStatus.postValue(FavoriteStatus.Empty(tracks))
+                    mutableLiveDataFavoritesStatus.postValue(FavoriteStatus.Empty)
                 } else {
                     mutableLiveDataFavoritesStatus.postValue(FavoriteStatus.Content(tracks))
-                    //mutableLiveDataFavoriteTracks.postValue(tracks)
+                    mutableLiveDataFavoriteTracks.postValue(tracks)
                 }
                 Log.d("FavoritesViewModel", "Favorites tracks are ${it.map { it.trackName }}")
             }
