@@ -28,8 +28,8 @@ class SearchViewModel(
     val liveDataStatus: LiveData<ITunesServerResponseStatus> = mutableLiveDataStatus
 
     private val tracks = mutableListOf<TrackRepresentation>()
-    private val mutableLiveDataTracks = MutableLiveData<MutableList<TrackRepresentation>>(tracks)
-    val liveDataTracks: LiveData<MutableList<TrackRepresentation>> = mutableLiveDataTracks
+    private val mutableLiveDataTracks = MutableLiveData<List<TrackRepresentation>>(tracks)
+    val liveDataTracks: LiveData<List<TrackRepresentation>> = mutableLiveDataTracks
 
     private val historyTrackList = getHistoryTrackListFromStorageUseCase.execute().map { Mapper.mapTrackToTrackRepresentation(it) }.toMutableList()
     private val mutableLiveDataHistoryTrackList = MutableLiveData<MutableList<TrackRepresentation>>(historyTrackList)

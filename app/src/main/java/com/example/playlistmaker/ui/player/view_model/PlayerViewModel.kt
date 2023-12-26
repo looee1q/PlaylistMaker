@@ -1,12 +1,13 @@
 package com.example.playlistmaker.ui.player.view_model
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.domain.player.use_cases.interfaces.PreparePlayerUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.SetOnCompletionListenerUseCase
@@ -18,6 +19,8 @@ import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayerSta
 import com.example.playlistmaker.domain.player.use_cases.interfaces.DestroyPlayerUseCase
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.models.TrackRepresentation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -30,7 +33,10 @@ class PlayerViewModel(
     private val playbackControlUseCase: PlaybackControlUseCase,
     private val getPlayingTrackTimeUseCase: GetPlayingTrackTimeUseCase,
     private val getPlayerStateUseCase: GetPlayerStateUseCase,
-    private val destroyPlayerUseCase: DestroyPlayerUseCase
+    private val destroyPlayerUseCase: DestroyPlayerUseCase,
+    private val addTrackToFavoritesUseCase: AddTrackToFavoritesUseCase,
+    private val removeTrackFromFavoritesUseCase: RemoveTrackFromFavoritesUseCase,
+    private val getTracksIDsFromDBUseCase: GetFavoritesIDsUseCase
 ) : ViewModel() {
 
     private val mutableLiveDataPlayerState = MutableLiveData<PlayerState>().also {
@@ -42,6 +48,11 @@ class PlayerViewModel(
         it.value = getPlayingTrackTimeUseCase.execute()
     }
     val liveDataTrackPlaybackProgress: LiveData<Int> = mutableLiveDataTrackPlaybackProgress
+
+    private val mutableLiveDataIsTrackFavorite = MutableLiveData<Boolean>().also {
+        setMutableLiveDataIsTrackFavorite()
+    }
+    val liveDataIsTrackFavorite: LiveData<Boolean> = mutableLiveDataIsTrackFavorite
 
     init {
         preparePlayerUseCase.execute(track = Mapper.mapTrackRepresentationToTrack(track)) {
@@ -75,6 +86,39 @@ class PlayerViewModel(
                 mutableLiveDataTrackPlaybackProgress.value = getPlayingTrackTimeUseCase.execute()
                 Log.d("CURRENT_TIME", "${mutableLiveDataTrackPlaybackProgress.value}")
             }
+        }
+    }
+
+    fun changeTrackFavoriteStatus() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            if (mutableLiveDataIsTrackFavorite.value == true) {
+                Log.d("PlayerViewModel", "Removing the track from the DB in thread ${Thread.currentThread().name}")
+                mutableLiveDataIsTrackFavorite.postValue(false)
+                removeTrackFromFavoritesUseCase.execute(
+                    track = Mapper.mapTrackRepresentationToTrack(track)
+                )
+            } else {
+                mutableLiveDataIsTrackFavorite.postValue(true)
+                Log.d("PlayerViewModel", "Adding the track to the DB in thread ${Thread.currentThread().name}")
+                addTrackToFavoritesUseCase.execute(
+                    track = Mapper.mapTrackRepresentationToTrack(track)
+                )
+            }
+        }
+    }
+
+    private fun setMutableLiveDataIsTrackFavorite() {
+
+        val tracksIDsFromDB = mutableListOf<Long>()
+
+        viewModelScope.async(Dispatchers.IO) {
+            getTracksIDsFromDBUseCase.execute().collect {
+                tracksIDsFromDB.addAll(it)
+            }
+            val isTheTrackInDB = tracksIDsFromDB.contains(track.trackId)
+            mutableLiveDataIsTrackFavorite.postValue(isTheTrackInDB)
         }
     }
 

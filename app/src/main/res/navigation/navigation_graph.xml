@@ -15,7 +15,11 @@
         android:id="@+id/mediatecaFragment"
         android:name="com.example.playlistmaker.ui.mediateca.fragments.MediatecaFragment"
         android:label="fragment_mediateca"
-        tools:layout="@layout/fragment_mediateca" />
+        tools:layout="@layout/fragment_mediateca" >
+        <action
+            android:id="@+id/action_mediatecaFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
+    </fragment>
 
     <fragment
         android:id="@+id/searchFragment"

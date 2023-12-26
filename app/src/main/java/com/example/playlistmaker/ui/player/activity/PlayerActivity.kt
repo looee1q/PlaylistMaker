@@ -53,6 +53,14 @@ class PlayerActivity: AppCompatActivity() {
             playerViewModel.startTimeUpdater()
         }
 
+        playerViewModel.liveDataIsTrackFavorite.observe(this) {
+            setLikeButtonState(it)
+        }
+
+        binding.likeButton.setOnClickListener {
+            playerViewModel.changeTrackFavoriteStatus()
+        }
+
     }
 
     override fun onPause() {
@@ -108,6 +116,11 @@ class PlayerActivity: AppCompatActivity() {
             }
             PlayerState.DEFAULT, null -> {}
         }
+    }
+
+    private fun setLikeButtonState(isTrackFavorite: Boolean?) {
+        val drawable = if (isTrackFavorite == true) R.drawable.like_button_favorite else R.drawable.like_button_icon
+        binding.likeButton.setImageDrawable(getDrawable(drawable))
     }
 
     companion object {

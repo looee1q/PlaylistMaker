@@ -1,5 +1,13 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.domain.favorites.use_cases.implementations.AddTrackToFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.favorites.use_cases.implementations.GetFavoritesIDsUseCaseImpl
+import com.example.playlistmaker.domain.favorites.use_cases.implementations.RemoveTrackFromFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.favorites.use_cases.implementations.ShowAllFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
+import com.example.playlistmaker.domain.favorites.use_cases.interfaces.ShowAllFavoritesUseCase
 import com.example.playlistmaker.domain.player.use_cases.implementations.DestroyPlayerUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayerStateUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
@@ -109,6 +117,24 @@ val domainModule = module {
 
     factory<SetOnCompletionListenerUseCase> {
         SetOnCompletionListenerUseCaseImpl(get())
+    }
+
+    // modules for UseCases which are interacted with DB
+
+    factory<AddTrackToFavoritesUseCase> {
+        AddTrackToFavoritesUseCaseImpl(get())
+    }
+
+    factory<RemoveTrackFromFavoritesUseCase> {
+        RemoveTrackFromFavoritesUseCaseImpl(get())
+    }
+
+    factory<ShowAllFavoritesUseCase> {
+        ShowAllFavoritesUseCaseImpl(get())
+    }
+
+    factory<GetFavoritesIDsUseCase> {
+        GetFavoritesIDsUseCaseImpl(get())
     }
 
 }
