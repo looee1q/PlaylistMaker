@@ -18,7 +18,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.root_fragment_container) as NavHostFragment
-        val navController = navHostFragment.navController
+        val navController = navHostFragment.navController.also {
+            it.addOnDestinationChangedListener { controller, destination, arguments ->
+                binding.bottomNavigationView.isVisible = when (destination.id) {
+                    R.id.playlistCreatorFragment -> false
+                    else -> true
+                }
+            }
+        }
 
         binding.bottomNavigationView.setupWithNavController(navController)
     }
