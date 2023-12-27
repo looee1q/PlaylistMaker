@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_day_black_night">
+    android:background="@color/white_day_black_night"
+    tools:context="com.example.playlistmaker.ui.mediateca.fragments.PlaylistCreatorFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_16dp_boundary"
@@ -44,29 +45,60 @@
         android:layout_marginTop="42dp"
         android:layout_marginHorizontal="8dp"
         app:layout_constraintTop_toBottomOf="@id/new_playlist"
+        app:layout_constraintBottom_toTopOf="@id/playlist_name_text_input_layout"
         app:layout_constraintStart_toStartOf="@id/left_16dp_boundary"
         app:layout_constraintEnd_toEndOf="@id/right_16dp_boundary"
-        app:layout_constraintDimensionRatio="1:1"/>
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintDimensionRatio="W,1:1"/>
 
-    <EditText
-        android:id="@+id/playlist_name_edit_text"
-        style="@style/NewPlaylistNameAndDescriptionEditText"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/playlist_name_text_input_layout"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
         android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@id/playlist_cover"
+        app:layout_constraintBottom_toTopOf="@id/playlist_description_text_input_layout"
         app:layout_constraintStart_toStartOf="@id/left_16dp_boundary"
         app:layout_constraintEnd_toEndOf="@id/right_16dp_boundary"
         android:hint="@string/playlist_name"
-        android:background="@drawable/continuous_outline"/>
+        android:textColorHint="@color/black_day_white_night"
+        app:boxStrokeWidth="0dp">
 
-    <EditText
-        android:id="@+id/playlist_description_edit_text"
-        style="@style/NewPlaylistNameAndDescriptionEditText"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/playlist_name_edit_text"
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/NewPlaylistNameAndDescriptionEditText"
+            android:background="@drawable/continuous_outline_shape"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/playlist_description_text_input_layout"
+        style="@style/EditTextPlaylist"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginVertical="16dp"
+        app:layout_constraintTop_toBottomOf="@id/playlist_name_text_input_layout"
+        app:layout_constraintBottom_toTopOf="@+id/create_new_playlist_button"
         app:layout_constraintStart_toStartOf="@id/left_16dp_boundary"
         app:layout_constraintEnd_toEndOf="@id/right_16dp_boundary"
         android:hint="@string/playlist_description"
-        android:background="@drawable/continuous_outline"/>
+        android:textColorHint="@color/black_day_white_night"
+
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:inputType="text"
+            android:textSize="16sp"
+            android:textColor="@color/black_day_white_night"
+            android:fontFamily="@font/ys_display_regular"
+            android:textFontWeight="400"
+            android:maxLines="1"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/create_new_playlist_button"
@@ -86,6 +118,5 @@
         app:layout_constraintStart_toStartOf="@id/left_16dp_boundary"
         app:layout_constraintEnd_toEndOf="@id/right_16dp_boundary"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

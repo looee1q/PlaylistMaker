@@ -13,4 +13,12 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="EditTextPlaylist" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <!-- Необходимо понять, как изменить colorPrimary!!!. -->
+        <item name="colorControlActivated">#ff0000</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+    </style>
+
 </resources>

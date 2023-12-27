@@ -35,7 +35,7 @@ class PlayerActivity: AppCompatActivity() {
         track = Json.decodeFromString<TrackRepresentation>(intent.extras?.getString(TRACK)!!)
         bind(track)
 
-        binding.backToSearchActivityButton.setOnClickListener {
+        binding.backArrowButton.setOnClickListener {
             finish()
         }
 
