@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.domain.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
-import com.example.playlistmaker.domain.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
-import com.example.playlistmaker.domain.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.domain.player.use_cases.interfaces.PreparePlayerUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.SetOnCompletionListenerUseCase

@@ -4,7 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.playlistmaker.data.db.FavoriteTracksDB
-import com.example.playlistmaker.data.db.FavoriteTracksRepositoryImpl
+import com.example.playlistmaker.data.mediateca.FavoriteTracksRepositoryImpl
+import com.example.playlistmaker.data.mediateca.PlaylistsRepositoryImpl
 import com.example.playlistmaker.data.player.MediaPlayerImpl
 import com.example.playlistmaker.data.search.dao.HistoryTrackListDAOImpl
 import com.example.playlistmaker.data.search.dao.SharedPrefTrackListStorage
@@ -14,7 +15,8 @@ import com.example.playlistmaker.data.settings.SharedPrefThemeStorage
 import com.example.playlistmaker.data.settings.ThemeRepositoryImpl
 import com.example.playlistmaker.data.settings.ThemeStorage
 import com.example.playlistmaker.data.sharing.ExternalNavigatorImpl
-import com.example.playlistmaker.domain.favorites.FavoriteTracksRepository
+import com.example.playlistmaker.domain.mediateca.favorites.FavoriteTracksRepository
+import com.example.playlistmaker.domain.mediateca.playlists.PlaylistsRepository
 import com.example.playlistmaker.domain.player.PlayerRepository
 import com.example.playlistmaker.domain.search.api.MusicApi
 import com.example.playlistmaker.domain.search.dao.HistoryTrackListDAO
@@ -82,5 +84,9 @@ val dataModule = module {
 
     single<FavoriteTracksRepository> {
         FavoriteTracksRepositoryImpl(get())
+    }
+
+    single<PlaylistsRepository> {
+        PlaylistsRepositoryImpl(get())
     }
 }

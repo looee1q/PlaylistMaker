@@ -1,13 +1,19 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.domain.favorites.use_cases.implementations.AddTrackToFavoritesUseCaseImpl
-import com.example.playlistmaker.domain.favorites.use_cases.implementations.GetFavoritesIDsUseCaseImpl
-import com.example.playlistmaker.domain.favorites.use_cases.implementations.RemoveTrackFromFavoritesUseCaseImpl
-import com.example.playlistmaker.domain.favorites.use_cases.implementations.ShowAllFavoritesUseCaseImpl
-import com.example.playlistmaker.domain.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
-import com.example.playlistmaker.domain.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
-import com.example.playlistmaker.domain.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
-import com.example.playlistmaker.domain.favorites.use_cases.interfaces.ShowAllFavoritesUseCase
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.implementations.AddTrackToFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.implementations.GetFavoritesIDsUseCaseImpl
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.implementations.RemoveTrackFromFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.implementations.ShowAllFavoritesUseCaseImpl
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
+import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.ShowAllFavoritesUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.AddPlaylistUseCaseImpl
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.ShowPlaylistsUseCaseImpl
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.UpdatePlaylistUseCaseImpl
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.AddPlaylistUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.ShowPlaylistsUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.UpdatePlaylistUseCase
 import com.example.playlistmaker.domain.player.use_cases.implementations.DestroyPlayerUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayerStateUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
@@ -119,7 +125,7 @@ val domainModule = module {
         SetOnCompletionListenerUseCaseImpl(get())
     }
 
-    // modules for UseCases which are interacted with DB
+    // modules for UseCases which are interacted with favorite tracks using DB
 
     factory<AddTrackToFavoritesUseCase> {
         AddTrackToFavoritesUseCaseImpl(get())
@@ -135,6 +141,20 @@ val domainModule = module {
 
     factory<GetFavoritesIDsUseCase> {
         GetFavoritesIDsUseCaseImpl(get())
+    }
+
+    // modules for UseCases which are interacted with playlists using DB
+
+    factory<AddPlaylistUseCase> {
+        AddPlaylistUseCaseImpl(get())
+    }
+
+    factory<UpdatePlaylistUseCase> {
+        UpdatePlaylistUseCaseImpl(get())
+    }
+
+    factory<ShowPlaylistsUseCase> {
+        ShowPlaylistsUseCaseImpl(get())
     }
 
 }

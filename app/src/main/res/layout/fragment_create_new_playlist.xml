@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_day_black_night"
-    tools:context="com.example.playlistmaker.ui.mediateca.fragments.PlaylistCreatorFragment">
+    tools:context="com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistCreatorFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_16dp_boundary"

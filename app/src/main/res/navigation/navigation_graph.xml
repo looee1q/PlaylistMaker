@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/mediatecaFragment"
-        android:name="com.example.playlistmaker.ui.mediateca.fragments.MediatecaFragment"
+        android:name="com.example.playlistmaker.ui.mediateca.root_fragment.MediatecaFragment"
         android:label="fragment_mediateca"
         tools:layout="@layout/fragment_mediateca" >
         <action
@@ -41,7 +41,7 @@
         tools:layout="@layout/activity_player" />
     <fragment
         android:id="@+id/playlistCreatorFragment"
-        android:name="com.example.playlistmaker.ui.mediateca.fragments.PlaylistCreatorFragment"
+        android:name="com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistCreatorFragment"
         android:label="fragment_create_new_playlist"
         tools:layout="@layout/fragment_create_new_playlist" />
 
