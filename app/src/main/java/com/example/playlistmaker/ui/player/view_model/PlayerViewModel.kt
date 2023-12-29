@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.AddTrackToFavoritesUseCase
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.ShowPlaylistsUseCase
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.domain.player.use_cases.interfaces.PreparePlayerUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.SetOnCompletionListenerUseCase
@@ -18,6 +20,7 @@ import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayingTr
 import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayerStateUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.DestroyPlayerUseCase
 import com.example.playlistmaker.ui.mapper.Mapper
+import com.example.playlistmaker.ui.mediateca.model.Status
 import com.example.playlistmaker.ui.models.TrackRepresentation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -36,7 +39,8 @@ class PlayerViewModel(
     private val destroyPlayerUseCase: DestroyPlayerUseCase,
     private val addTrackToFavoritesUseCase: AddTrackToFavoritesUseCase,
     private val removeTrackFromFavoritesUseCase: RemoveTrackFromFavoritesUseCase,
-    private val getTracksIDsFromDBUseCase: GetFavoritesIDsUseCase
+    private val getTracksIDsFromDBUseCase: GetFavoritesIDsUseCase,
+    private val showPlaylistsUseCase: ShowPlaylistsUseCase
 ) : ViewModel() {
 
     private val mutableLiveDataPlayerState = MutableLiveData<PlayerState>().also {
@@ -53,6 +57,11 @@ class PlayerViewModel(
         setMutableLiveDataIsTrackFavorite()
     }
     val liveDataIsTrackFavorite: LiveData<Boolean> = mutableLiveDataIsTrackFavorite
+
+    private val playlists = mutableListOf<Playlist>()
+
+    private val mutableLiveDataPlaylists = MutableLiveData<List<Playlist>>(playlists)
+    val liveDataPlaylists: LiveData<List<Playlist>> = mutableLiveDataPlaylists
 
     init {
         preparePlayerUseCase.execute(track = Mapper.mapTrackRepresentationToTrack(track)) {
@@ -119,6 +128,18 @@ class PlayerViewModel(
             }
             val isTheTrackInDB = tracksIDsFromDB.contains(track.trackId)
             mutableLiveDataIsTrackFavorite.postValue(isTheTrackInDB)
+        }
+    }
+
+    fun showPlaylists() {
+        playlists.clear()
+        viewModelScope.launch(Dispatchers.IO) {
+            showPlaylistsUseCase.execute().collect {
+                playlists.addAll(it)
+                if (playlists.isNotEmpty()) {
+                    mutableLiveDataPlaylists.postValue(playlists)
+                }
+            }
         }
     }
 

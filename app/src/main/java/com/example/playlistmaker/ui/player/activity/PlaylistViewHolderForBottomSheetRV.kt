@@ -1,16 +1,18 @@
-package com.example.playlistmaker.ui.mediateca.playlists.fragment
+package com.example.playlistmaker.ui.player.activity
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.PlaylistFullUnitBinding
+import com.example.playlistmaker.databinding.PlaylistSmallUnitBinding
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.roundedCorners
 import com.example.playlistmaker.showNumberOfTracksInCorrectDeclension
 
-class PlaylistViewHolder(private val binding: PlaylistFullUnitBinding) : ViewHolder(binding.root) {
+class PlaylistViewHolderForBottomSheetRV(
+    private val binding: PlaylistSmallUnitBinding
+) : ViewHolder(binding.root) {
 
     fun bind(playlist: Playlist) {
         binding.apply {
@@ -30,6 +32,7 @@ class PlaylistViewHolder(private val binding: PlaylistFullUnitBinding) : ViewHol
     }
 
     companion object {
-        private const val RADIUS_OF_PLAYLIST_COVER_CORNERS: Float = 8f
+        private const val RADIUS_OF_PLAYLIST_COVER_CORNERS: Float = 2f
     }
+
 }

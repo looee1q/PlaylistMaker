@@ -44,7 +44,8 @@ val viewModelModule = module {
             destroyPlayerUseCase = get(),
             addTrackToFavoritesUseCase = get(),
             removeTrackFromFavoritesUseCase = get(),
-            getTracksIDsFromDBUseCase = get()
+            getTracksIDsFromDBUseCase = get(),
+            showPlaylistsUseCase = get()
         )
     }
 

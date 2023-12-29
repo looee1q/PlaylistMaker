@@ -1,10 +1,14 @@
 package com.example.playlistmaker.ui.player.activity
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
@@ -12,7 +16,9 @@ import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.roundedCorners
+import com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistsAdapter
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -24,6 +30,9 @@ class PlayerActivity: AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private lateinit var track: TrackRepresentation
 
+    private lateinit var adapter: PlaylistsAdapterForBottomSheetRV
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+
     private val playerViewModel: PlayerViewModel by viewModel { parametersOf(track) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +43,14 @@ class PlayerActivity: AppCompatActivity() {
 
         track = Json.decodeFromString<TrackRepresentation>(intent.extras?.getString(TRACK)!!)
         bind(track)
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).also {
+            it.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        adapter = PlaylistsAdapterForBottomSheetRV(playerViewModel.liveDataPlaylists.value!!)
+        binding.recyclerViewPlaylists.adapter = adapter
+        binding.recyclerViewPlaylists.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         binding.backArrowButton.setOnClickListener {
             finish()
@@ -59,6 +76,21 @@ class PlayerActivity: AppCompatActivity() {
 
         binding.likeButton.setOnClickListener {
             playerViewModel.changeTrackFavoriteStatus()
+        }
+
+        binding.addToPlaylistButton.setOnClickListener {
+            playerViewModel.showPlaylists()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        playerViewModel.liveDataPlaylists.observe(this) {
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+        binding.createNewPlaylistButton.setOnClickListener {
+
         }
 
     }
