@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -37,8 +38,6 @@ class PlaylistCreatorFragment : Fragment() {
 
     private val dialog by lazy { createConfirmPlaylistCreationDialog() }
 
-    private var photoUriToSave: Uri? = null
-
     private val photoLauncher = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()) { photoUri ->
         if (photoUri != null) {
@@ -46,7 +45,6 @@ class PlaylistCreatorFragment : Fragment() {
                 .load(photoUri)
                 .transform(CenterCrop(), roundedCorners(RADIUS_OF_PLAYLIST_COVER_CORNERS, resources))
                 .into(binding.playlistCover)
-            photoUriToSave = photoUri
             viewModel.setUri(photoUri)
         } else {
             Log.d("PhotoLauncher", "No cover selected")
@@ -84,25 +82,25 @@ class PlaylistCreatorFragment : Fragment() {
 
         binding.createNewPlaylistButton.setOnClickListener {
             val playlistName = binding.playlistNameTextInputEditText.text.toString()
-            Toast.makeText(requireContext(), "Плейлист $playlistName создан", Toast.LENGTH_SHORT).show()
-            photoUriToSave?.let { saveCoverToExternalStorage(it) }
+            Toast.makeText(requireContext(), resources.getString(R.string.playlist_created).format(playlistName), Toast.LENGTH_SHORT).show()
+            viewModel.liveDataPlaylistUri.value?.let { saveCoverToExternalStorage(it) }
 
             viewModel.createPlaylist(
                 title = binding.playlistNameTextInputEditText.text.toString(),
                 description = binding.playlistDescriptionTextInputEditText.text.toString(),
-                coverUri = photoUriToSave
+                coverUri = viewModel.liveDataPlaylistUri.value
             )
 
             findNavController().navigateUp()
         }
 
         binding.backArrowButton.setOnClickListener {
-            dialog.show()
+            closeFragment()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback( object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                dialog.show()
+                closeFragment()
             }
         })
     }
@@ -137,10 +135,22 @@ class PlaylistCreatorFragment : Fragment() {
         val filePath = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "PlaylistsCovers")
         if (!filePath.exists()) filePath.mkdirs()
         val coverFile = File(filePath, "cover_${filePath.listFiles().size + 1}.jpg")
+        viewModel.setUri(coverFile.toUri())
         val inputStream = requireContext().contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(coverFile)
         BitmapFactory.decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+    }
+
+    private fun closeFragment() {
+        if (binding.playlistDescriptionTextInputEditText.text?.isNotBlank() == true
+            || binding.playlistNameTextInputEditText.text?.isNotBlank() == true
+            || viewModel.liveDataPlaylistUri.value != null
+        ) {
+            dialog.show()
+        } else {
+            findNavController().navigateUp()
+        }
     }
 
     companion object {

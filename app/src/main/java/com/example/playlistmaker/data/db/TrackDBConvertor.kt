@@ -56,7 +56,6 @@ object TrackDBConvertor {
             description = playlistEntity.description,
             coverUri = playlistEntity.coverUri.toUri(),
             tracksId = Json.decodeFromString(playlistEntity.tracksId),
-            size = playlistEntity.size
         )
     }
 

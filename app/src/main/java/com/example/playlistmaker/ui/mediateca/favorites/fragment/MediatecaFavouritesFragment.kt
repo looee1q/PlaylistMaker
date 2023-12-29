@@ -42,7 +42,7 @@ class MediatecaFavouritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("MediatecaFavoritesFragment", "OnViewCreated")
+        Log.d("MediatecaFavoritesFragment", "onViewCreated")
 
         adapter = TrackAdapter(viewModel.liveDataFavoriteTracks.value!!)
         adapter?.listener = createAdapterListener()
@@ -64,9 +64,24 @@ class MediatecaFavouritesFragment : Fragment() {
         viewModel.showFavorites()
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.d("MediatecaFavoritesFragment", "onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("MediatecaFavoritesFragment", "onStop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("MediatecaFavoritesFragment", "onDestroy")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("MediatecaFavoritesFragment", "onViewDestroyed")
+        Log.d("MediatecaFavoritesFragment", "onDestroyView")
         _binding = null
         adapter = null
     }

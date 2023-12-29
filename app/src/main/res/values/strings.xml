@@ -37,6 +37,6 @@
     <string name="finish">Завершить</string>
     <string name="cancel">Отмена</string>
     <string name="required">*Обязательное поле</string>
-
+    <string name="playlist_created">Плейлист %1$s создан</string>
 
 </resources>
