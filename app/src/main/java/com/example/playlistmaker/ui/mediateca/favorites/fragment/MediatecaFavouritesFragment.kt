@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.mediateca.favorites.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -34,15 +35,14 @@ class MediatecaFavouritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d("MediatecaFavoritesFragment", "onCreateView")
+        Log.d("LifecycleFragment", "onCreateView || MediatecaFavoritesFragment")
         _binding = FragmentMediatecaFavouritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        Log.d("MediatecaFavoritesFragment", "onViewCreated")
+        Log.d("LifecycleFragment", "onViewCreated || MediatecaFavoritesFragment")
 
         adapter = TrackAdapter(viewModel.liveDataFavoriteTracks.value!!)
         adapter?.listener = createAdapterListener()
@@ -60,28 +60,13 @@ class MediatecaFavouritesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("MediatecaFavoritesFragment", "onResume")
+        Log.d("LifecycleFragment", "onResume || MediatecaFavoritesFragment")
         viewModel.showFavorites()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("MediatecaFavoritesFragment", "onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("MediatecaFavoritesFragment", "onStop")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("MediatecaFavoritesFragment", "onDestroy")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("MediatecaFavoritesFragment", "onDestroyView")
+        Log.d("LifecycleFragment", "onDestroyView || MediatecaFavoritesFragment")
         _binding = null
         adapter = null
     }
@@ -124,4 +109,41 @@ class MediatecaFavouritesFragment : Fragment() {
             return MediatecaFavouritesFragment()
         }
     }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("LifecycleFragment", "onAttach || MediatecaFavoritesFragment")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("LifecycleFragment", "onCreate || MediatecaFavoritesFragment")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("LifecycleFragment", "onStart || MediatecaFavoritesFragment")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("LifecycleFragment", "onPause || MediatecaFavoritesFragment")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("LifecycleFragment", "onStop || MediatecaFavoritesFragment")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("LifecycleFragment", "onDestroy || MediatecaFavoritesFragment")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d("LifecycleFragment", "onDetach || MediatecaFavoritesFragment")
+    }
+
 }

@@ -1,13 +1,12 @@
 package com.example.playlistmaker.ui.player.activity
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
-import androidx.navigation.Navigation
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -16,7 +15,7 @@ import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.roundedCorners
-import com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistsAdapter
+import com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistCreatorFragment
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.serialization.json.Json
@@ -37,6 +36,7 @@ class PlayerActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("Lifecycle","onCreate || PlayerActivity")
 
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -46,6 +46,20 @@ class PlayerActivity: AppCompatActivity() {
 
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).also {
             it.state = BottomSheetBehavior.STATE_HIDDEN
+
+            it.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            binding.playerRootLayout.background.setTint(getColor(R.color.white_day_black_night))
+                        }
+                        else -> {
+                            binding.playerRootLayout.background.setTint(getColor(R.color.semi_transparent_black))
+                        }
+                    }
+                }
+                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+            })
         }
 
         adapter = PlaylistsAdapterForBottomSheetRV(playerViewModel.liveDataPlaylists.value!!)
@@ -79,24 +93,34 @@ class PlayerActivity: AppCompatActivity() {
         }
 
         binding.addToPlaylistButton.setOnClickListener {
-            playerViewModel.showPlaylists()
+            playerViewModel.getPlaylists()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         playerViewModel.liveDataPlaylists.observe(this) {
             if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                Log.d("PlayerActivity", "List of playlists ${playerViewModel!!.liveDataPlaylists.value?.map { it.title }}")
                 adapter.notifyDataSetChanged()
             }
         }
 
         binding.createNewPlaylistButton.setOnClickListener {
+            val bundle = Bundle().also {
+                it.putBoolean("FROM_PLAYER_ACTIVITY", true)
+            }
 
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.player_fragment_container, PlaylistCreatorFragment::class.java, bundle)
+                .setReorderingAllowed(true)
+                .addToBackStack(null)
+                .commit()
         }
 
     }
 
     override fun onPause() {
         super.onPause()
+        Log.d("Lifecycle","onPause || PlayerActivity")
         playerViewModel.pausePlayer()
     }
 
@@ -155,6 +179,18 @@ class PlayerActivity: AppCompatActivity() {
         binding.likeButton.setImageDrawable(getDrawable(drawable))
     }
 
+    //Костыль!!! Удалить при рефакторинге на SingleActivity
+    fun showPlaylists(showPlayerLayout: Boolean = true) {
+        binding.playerRootLayout.isVisible = showPlayerLayout
+        binding.bottomSheet.isVisible = showPlayerLayout
+        if (showPlayerLayout) {
+            binding.playerRootLayout.background.setTint(getColor(R.color.semi_transparent_black))
+        } else {
+            binding.playerRootLayout.background.setTint(getColor(R.color.white_day_black_night))
+            playerViewModel.pausePlayer()
+        }
+    }
+
     companion object {
 
         private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
@@ -164,6 +200,27 @@ class PlayerActivity: AppCompatActivity() {
         fun createArgs(encodedTrack: String) : Bundle {
             return bundleOf(TRACK to encodedTrack)
         }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("Lifecycle","onStart || PlayerActivity")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("Lifecycle","onResume || PlayerActivity")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("Lifecycle","onStop || PlayerActivity")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("Lifecycle","onDestroy || PlayerActivity")
     }
 
 }

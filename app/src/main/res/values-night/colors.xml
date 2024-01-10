@@ -18,4 +18,6 @@
     <color name="settings_activity_icon_color">#FFFFFF</color>
     <color name="true_black_day_true_white_night">#FFFFFF</color>
     <color name="grey2_day_true_white_night">#FFFFFF</color>
+    <color name="switch_toggle_color">#3772E7</color>
+    <color name="switch_background_bar_color">#9FBBF3</color>
 </resources>

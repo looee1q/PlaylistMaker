@@ -14,20 +14,10 @@ class PlaylistCreatorViewModel(
     private val addPlaylistUseCase: AddPlaylistUseCase
 ) : ViewModel() {
 
-/*    private lateinit var playlistTitle: String
-    private var playlistDescription: String? = null
-    private var playlistUri: Uri? = null*/
-
-    private val mutableLiveDataPlaylistTitle = MutableLiveData<String>()
-    val liveDataPlaylistTitle: LiveData<String> = mutableLiveDataPlaylistTitle
-
-    private val mutableLiveDataPlaylistDescription = MutableLiveData<String?>(null)
-    val liveDataPlaylistDescription: LiveData<String?> = mutableLiveDataPlaylistDescription
-
     private val mutableLiveDataPlaylistUri = MutableLiveData<Uri?>(null)
     val liveDataPlaylistUri: LiveData<Uri?> = mutableLiveDataPlaylistUri
 
-    fun createPlaylist(title: String, description: String? = null, coverUri: Uri? = null) {
+    fun createPlaylist(title: String, description: String? = null, coverUri: Uri? = liveDataPlaylistUri.value) {
         viewModelScope.launch(Dispatchers.IO) {
             addPlaylistUseCase.execute(
                 Playlist(
@@ -39,15 +29,7 @@ class PlaylistCreatorViewModel(
         }
     }
 
-    fun setTitle(title: String) {
-        mutableLiveDataPlaylistTitle.postValue(title)
-    }
-
-    fun setDescription(description: String) {
-        mutableLiveDataPlaylistDescription.postValue(description)
-    }
-
     fun setUri(uri: Uri) {
-        mutableLiveDataPlaylistUri.postValue(uri)
+        mutableLiveDataPlaylistUri.value = uri
     }
 }

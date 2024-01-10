@@ -20,7 +20,6 @@ import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayingTr
 import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayerStateUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.DestroyPlayerUseCase
 import com.example.playlistmaker.ui.mapper.Mapper
-import com.example.playlistmaker.ui.mediateca.model.Status
 import com.example.playlistmaker.ui.models.TrackRepresentation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -131,7 +130,7 @@ class PlayerViewModel(
         }
     }
 
-    fun showPlaylists() {
+    fun getPlaylists() {
         playlists.clear()
         viewModelScope.launch(Dispatchers.IO) {
             showPlaylistsUseCase.execute().collect {

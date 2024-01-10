@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.mediateca.playlists.fragment
 
+import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -24,7 +25,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreateNewPlaylistBinding
 import com.example.playlistmaker.roundedCorners
 import com.example.playlistmaker.ui.mediateca.playlists.view_model.PlaylistCreatorViewModel
+import com.example.playlistmaker.ui.player.activity.PlayerActivity
+import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -36,7 +40,18 @@ class PlaylistCreatorFragment : Fragment() {
 
     private val viewModel: PlaylistCreatorViewModel by viewModel()
 
+    private val playerActivityViewModel by activityViewModel<PlayerViewModel>()
+
     private val dialog by lazy { createConfirmPlaylistCreationDialog() }
+
+    private var isTransactionFromActivity: Boolean? = null
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            Log.d("BACK_PRESSED_DISPATCHER", "FROM_PLAYLIST_CREATOR_FRAGMENT")
+            closeFragment()
+        }
+    }
 
     private val photoLauncher = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()) { photoUri ->
@@ -51,22 +66,21 @@ class PlaylistCreatorFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("PlaylistCreatorFragment","onCreate")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("LifecycleFragment","onCreateView || PlaylistCreatorFragment")
         _binding = FragmentCreateNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("LifecycleFragment","onViewCreated || PlaylistCreatorFragment")
+
+        isTransactionFromActivity = arguments?.getBoolean("FROM_PLAYER_ACTIVITY")
 
         viewModel.liveDataPlaylistUri.value?.let {
             binding.playlistCover.setImageURI(it)
@@ -87,44 +101,41 @@ class PlaylistCreatorFragment : Fragment() {
 
             viewModel.createPlaylist(
                 title = binding.playlistNameTextInputEditText.text.toString(),
-                description = binding.playlistDescriptionTextInputEditText.text.toString(),
-                coverUri = viewModel.liveDataPlaylistUri.value
+                description = binding.playlistDescriptionTextInputEditText.text.toString()
             )
 
-            findNavController().navigateUp()
+            goBackNavigation()
         }
 
         binding.backArrowButton.setOnClickListener {
             closeFragment()
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback( object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                closeFragment()
-            }
-        })
+        activity?.onBackPressedDispatcher?.addCallback(onBackPressedCallback)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d("LifecycleFragment","onDestroyView || PlaylistCreatorFragment")
+        onBackPressedCallback.remove()
         _binding = null
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("PlaylistCreatorFragment","onDestroy")
+        if (isTransactionFromActivity == true) {      //Костыль!!! Удалить при рефакторинге на SingleActivity
+            playerActivityViewModel.getPlaylists()
+            (requireActivity() as? PlayerActivity)?.showPlaylists()
+        }
     }
 
     private fun createConfirmPlaylistCreationDialog(): MaterialAlertDialogBuilder {
         val dialogListener = DialogInterface.OnClickListener { _, which ->
             when (which) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    findNavController().navigateUp()
+                    goBackNavigation()
                 }
                 DialogInterface.BUTTON_NEUTRAL -> null
             }
         }
-        return MaterialAlertDialogBuilder(requireContext())
+        return MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
             .setTitle(resources.getString(R.string.finish_playlist_creation))
             .setMessage(resources.getString(R.string.all_unsaved_data_will_be_lost))
             .setPositiveButton(resources.getString(R.string.finish), dialogListener)
@@ -134,8 +145,10 @@ class PlaylistCreatorFragment : Fragment() {
     private fun saveCoverToExternalStorage(uri: Uri) {
         val filePath = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "PlaylistsCovers")
         if (!filePath.exists()) filePath.mkdirs()
+
         val coverFile = File(filePath, "cover_${filePath.listFiles().size + 1}.jpg")
         viewModel.setUri(coverFile.toUri())
+
         val inputStream = requireContext().contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(coverFile)
         BitmapFactory.decodeStream(inputStream)
@@ -149,7 +162,19 @@ class PlaylistCreatorFragment : Fragment() {
         ) {
             dialog.show()
         } else {
+            goBackNavigation()
+        }
+    }
+
+    private fun goBackNavigation() {
+        if (isTransactionFromActivity == true) {
+            playerActivityViewModel.getPlaylists()
+            parentFragmentManager.popBackStack()
+            Log.d("THE_WAY_OUT", "FROM ACTIVITY")
+        }
+        else {
             findNavController().navigateUp()
+            Log.d("THE_WAY_OUT", "FROM FRAGMENT")
         }
     }
 
@@ -157,5 +182,47 @@ class PlaylistCreatorFragment : Fragment() {
         private const val RADIUS_OF_PLAYLIST_COVER_CORNERS: Float = 8f
     }
 
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("LifecycleFragment", "onAttach || PlaylistCreatorFragment")
+        (requireActivity() as? PlayerActivity)?.showPlaylists(false)  //Костыль!!! Удалить при рефакторинге на SingleActivity
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("LifecycleFragment","onCreate || PlaylistCreatorFragment")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("LifecycleFragment","onStart || PlaylistCreatorFragment")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("LifecycleFragment","onResume || PlaylistCreatorFragment")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("LifecycleFragment","onPause || PlaylistCreatorFragment")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("LifecycleFragment","onStop || PlaylistCreatorFragment")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("LifecycleFragment","onDestroy || PlaylistCreatorFragment")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d("LifecycleFragment","onDetach || PlaylistCreatorFragment")
+    }
 }
 

@@ -143,4 +143,8 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="DialogTheme" parent="MaterialAlertDialog.Material3">
+        <item name="colorPrimary">@color/blue</item>
+    </style>
+
 </resources>
