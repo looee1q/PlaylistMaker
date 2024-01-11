@@ -3,6 +3,7 @@ package com.example.playlistmaker.ui.player.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -13,10 +14,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.roundedCorners
 import com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistCreatorFragment
+import com.example.playlistmaker.ui.player.model.TrackPlaylistRelationship
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.serialization.json.Json
@@ -64,8 +67,16 @@ class PlayerActivity: AppCompatActivity() {
         }
 
         adapter = PlaylistsAdapterForBottomSheetRV(playerViewModel.liveDataPlaylists.value!!)
+        adapter.listener = {
+            playerViewModel.addTrackToPlaylist(it)
+            showTrackAddingToPlaylistResult(playerViewModel.liveDataTrackPlaylistRelationship.value!!, it)
+        }
         binding.recyclerViewPlaylists.adapter = adapter
         binding.recyclerViewPlaylists.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        playerViewModel.liveDataTrackPlaylistRelationship.observe(this) {
+            Log.d("PlayerActivity", "observing liveDataTrackPlaylistRelationship. Its value is $it")
+        }
 
         binding.backArrowButton.setOnClickListener {
             finish()
@@ -189,6 +200,25 @@ class PlayerActivity: AppCompatActivity() {
     private fun setLikeButtonState(isTrackFavorite: Boolean?) {
         val drawable = if (isTrackFavorite == true) R.drawable.like_button_favorite else R.drawable.like_button_icon
         binding.likeButton.setImageDrawable(getDrawable(drawable))
+    }
+
+    private fun showTrackAddingToPlaylistResult(trackPlaylistRelationship: TrackPlaylistRelationship, playlist: Playlist) {
+        if (trackPlaylistRelationship == TrackPlaylistRelationship.TRACK_IS_ALREADY_IN_PLAYLIST) {
+            Toast.makeText(
+                this,
+                resources.getString(R.string.track_is_already_in_playlist).format(playlist.title),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                this,
+                resources.getString(R.string.track_is_added_to_playlist).format(playlist.title),
+                Toast.LENGTH_SHORT
+            ).show()
+
+            playerViewModel.getPlaylists()
+            adapter.notifyDataSetChanged()
+        }
     }
 
     //Костыль!!! Удалить при рефакторинге на SingleActivity

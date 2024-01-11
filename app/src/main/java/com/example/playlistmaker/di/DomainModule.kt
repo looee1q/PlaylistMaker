@@ -9,9 +9,11 @@ import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.ShowAllFavoritesUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.AddPlaylistUseCaseImpl
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.AddTrackToPlaylistsTracksStorageUseCaseImpl
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.ShowPlaylistsUseCaseImpl
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.UpdatePlaylistUseCaseImpl
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.AddPlaylistUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.AddTrackToPlaylistsTracksStorageUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.ShowPlaylistsUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.UpdatePlaylistUseCase
 import com.example.playlistmaker.domain.player.use_cases.implementations.DestroyPlayerUseCaseImpl
@@ -155,6 +157,10 @@ val domainModule = module {
 
     factory<ShowPlaylistsUseCase> {
         ShowPlaylistsUseCaseImpl(get())
+    }
+
+    factory<AddTrackToPlaylistsTracksStorageUseCase> {
+        AddTrackToPlaylistsTracksStorageUseCaseImpl(get())
     }
 
 }

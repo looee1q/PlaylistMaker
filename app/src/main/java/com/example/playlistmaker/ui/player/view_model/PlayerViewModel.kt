@@ -9,7 +9,9 @@ import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.AddTrackToPlaylistsTracksStorageUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.ShowPlaylistsUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.UpdatePlaylistUseCase
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.domain.player.use_cases.interfaces.PreparePlayerUseCase
 import com.example.playlistmaker.domain.player.use_cases.interfaces.SetOnCompletionListenerUseCase
@@ -21,6 +23,7 @@ import com.example.playlistmaker.domain.player.use_cases.interfaces.GetPlayerSta
 import com.example.playlistmaker.domain.player.use_cases.interfaces.DestroyPlayerUseCase
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.models.TrackRepresentation
+import com.example.playlistmaker.ui.player.model.TrackPlaylistRelationship
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -39,7 +42,9 @@ class PlayerViewModel(
     private val addTrackToFavoritesUseCase: AddTrackToFavoritesUseCase,
     private val removeTrackFromFavoritesUseCase: RemoveTrackFromFavoritesUseCase,
     private val getTracksIDsFromDBUseCase: GetFavoritesIDsUseCase,
-    private val showPlaylistsUseCase: ShowPlaylistsUseCase
+    private val showPlaylistsUseCase: ShowPlaylistsUseCase,
+    private val addTrackToPlaylistUseCase: AddTrackToPlaylistsTracksStorageUseCase,
+    private val updatePlaylistUseCase: UpdatePlaylistUseCase
 ) : ViewModel() {
 
     private val mutableLiveDataPlayerState = MutableLiveData<PlayerState>().also {
@@ -61,6 +66,9 @@ class PlayerViewModel(
 
     private val mutableLiveDataPlaylists = MutableLiveData<List<Playlist>>(playlists)
     val liveDataPlaylists: LiveData<List<Playlist>> = mutableLiveDataPlaylists
+
+    private val mutableLiveDataTrackPlaylistRelationship = MutableLiveData<TrackPlaylistRelationship>(TrackPlaylistRelationship.TRACK_PRESENCE_IS_UNKNOWN)
+    val liveDataTrackPlaylistRelationship: LiveData<TrackPlaylistRelationship> = mutableLiveDataTrackPlaylistRelationship
 
     init {
         preparePlayerUseCase.execute(track = Mapper.mapTrackRepresentationToTrack(track)) {
@@ -139,6 +147,21 @@ class PlayerViewModel(
                     mutableLiveDataPlaylists.postValue(playlists)
                 }
             }
+        }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist) {
+        if (playlist.tracksId.contains(track.trackId)) {
+            mutableLiveDataTrackPlaylistRelationship.value = TrackPlaylistRelationship.TRACK_IS_ALREADY_IN_PLAYLIST
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                addTrackToPlaylistUseCase.execute(track = Mapper.mapTrackRepresentationToTrack(track))
+                updatePlaylistUseCase.execute(
+                    playlist = playlist,
+                    track = Mapper.mapTrackRepresentationToTrack(track)
+                )
+            }
+            mutableLiveDataTrackPlaylistRelationship.postValue(TrackPlaylistRelationship.TRACK_IS_ADDED_TO_PLAYLIST)
         }
     }
 

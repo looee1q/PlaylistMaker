@@ -3,7 +3,7 @@ package com.example.playlistmaker.data.db.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "user_playlist")
+@Entity(tableName = "user_playlists")
 data class PlaylistEntity(
     val title: String,
     val description: String,

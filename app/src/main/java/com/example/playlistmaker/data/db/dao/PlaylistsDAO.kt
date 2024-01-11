@@ -12,7 +12,7 @@ interface PlaylistsDAO {
     @Insert(entity = PlaylistEntity::class)
     fun addPlaylist(playlistEntity: PlaylistEntity)
 
-    @Query("SELECT * FROM user_playlist")
+    @Query("SELECT * FROM user_playlists")
     fun showPlaylists(): List<PlaylistEntity>
 
     @Update(entity = PlaylistEntity::class)

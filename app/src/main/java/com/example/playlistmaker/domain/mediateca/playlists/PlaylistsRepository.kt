@@ -1,6 +1,7 @@
 package com.example.playlistmaker.domain.mediateca.playlists
 
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
+import com.example.playlistmaker.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRepository {
@@ -9,5 +10,7 @@ interface PlaylistsRepository {
 
     fun showPlaylists(): Flow<List<Playlist>>
 
-    suspend fun updatePlaylist(playlist: Playlist)
+    suspend fun updatePlaylist(playlist: Playlist, track: Track)
+
+    suspend fun addTrackToPlaylistsTracksStorage(track: Track)
 }

@@ -9,4 +9,5 @@ data class Playlist(
     val tracksId: List<Long> = emptyList(),
 ) {
     val size: Int get() = tracksId.size
+    var id = -1
 }

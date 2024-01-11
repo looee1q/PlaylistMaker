@@ -3,7 +3,7 @@ package com.example.playlistmaker.di
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
-import com.example.playlistmaker.data.db.FavoriteTracksDB
+import com.example.playlistmaker.data.db.AppDB
 import com.example.playlistmaker.data.mediateca.FavoriteTracksRepositoryImpl
 import com.example.playlistmaker.data.mediateca.PlaylistsRepositoryImpl
 import com.example.playlistmaker.data.player.MediaPlayerImpl
@@ -78,7 +78,7 @@ val dataModule = module {
     // modules for RoomDB (favoriteTracks)
 
     single {
-        Room.databaseBuilder(androidContext(), FavoriteTracksDB::class.java, "database.db")
+        Room.databaseBuilder(androidContext(), AppDB::class.java, "database.db")
             .build()
     }
 
