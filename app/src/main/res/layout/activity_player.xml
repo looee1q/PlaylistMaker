@@ -244,6 +244,12 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/semi_transparent_black"
+        android:visibility="gone"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"

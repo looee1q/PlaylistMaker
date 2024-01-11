@@ -3,6 +3,7 @@ package com.example.playlistmaker.ui.player.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
@@ -51,10 +52,10 @@ class PlayerActivity: AppCompatActivity() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
                         BottomSheetBehavior.STATE_HIDDEN -> {
-                            binding.playerRootLayout.background.setTint(getColor(R.color.white_day_black_night))
+                            binding.overlay.isVisible = false
                         }
                         else -> {
-                            binding.playerRootLayout.background.setTint(getColor(R.color.semi_transparent_black))
+                            binding.overlay.isVisible = true
                         }
                     }
                 }
@@ -115,6 +116,17 @@ class PlayerActivity: AppCompatActivity() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                } else {
+                    this@PlayerActivity.finish()
+                }
+            }
+
+        })
 
     }
 
@@ -183,10 +195,8 @@ class PlayerActivity: AppCompatActivity() {
     fun showPlaylists(showPlayerLayout: Boolean = true) {
         binding.playerRootLayout.isVisible = showPlayerLayout
         binding.bottomSheet.isVisible = showPlayerLayout
-        if (showPlayerLayout) {
-            binding.playerRootLayout.background.setTint(getColor(R.color.semi_transparent_black))
-        } else {
-            binding.playerRootLayout.background.setTint(getColor(R.color.white_day_black_night))
+        binding.overlay.isVisible = showPlayerLayout
+        if (!showPlayerLayout) {
             playerViewModel.pausePlayer()
         }
     }
