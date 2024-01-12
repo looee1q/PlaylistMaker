@@ -215,9 +215,7 @@ class PlayerActivity: AppCompatActivity() {
                 resources.getString(R.string.track_is_added_to_playlist).format(playlist.title),
                 Toast.LENGTH_SHORT
             ).show()
-
-            playerViewModel.getPlaylists()
-            adapter.notifyDataSetChanged()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
