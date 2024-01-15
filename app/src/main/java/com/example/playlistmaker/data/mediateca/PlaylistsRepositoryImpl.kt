@@ -33,7 +33,10 @@ class PlaylistsRepositoryImpl(
             it.add(track.trackId)
         }
 
-        val playlistWithUpdatedTracksId = DBConvertor.updateTracksIdInPlaylist(playlist, updatedPlaylistTracksId)
+        val playlistWithUpdatedTracksId = playlist.copy(
+            tracksId = updatedPlaylistTracksId
+        )
+
         Log.d("Playlist_repository_impl", "Im going to update playlist")
         appDB.playlistsDAO().updatePlaylist(
             DBConvertor.convertPlaylistToPlaylistEntity(playlistWithUpdatedTracksId)

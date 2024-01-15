@@ -85,24 +85,12 @@ object DBConvertor {
 
     fun convertPlaylistEntityToPlaylist(playlistEntity: PlaylistEntity): Playlist {
         return Playlist(
+            id = playlistEntity.id,
             title = playlistEntity.title,
             description = playlistEntity.description,
             coverUri = playlistEntity.coverUri.toUri(),
             tracksId = Json.decodeFromString(playlistEntity.tracksId),
-        ).also {
-            it.id = playlistEntity.id
-        }
-    }
-
-    fun updateTracksIdInPlaylist(playlist: Playlist, updatedTracksId: List<Long>): Playlist {
-        return Playlist(
-            title = playlist.title,
-            description = playlist.description,
-            coverUri = playlist.coverUri,
-            tracksId = updatedTracksId,
-        ).also {
-            if (playlist.id != -1) it.id = playlist.id
-        }
+        )
     }
 
 }
