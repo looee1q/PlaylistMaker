@@ -8,7 +8,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistFullUnitBinding
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.roundedCorners
-import com.example.playlistmaker.showNumberOfTracksInCorrectDeclension
 
 class PlaylistViewHolder(private val binding: PlaylistFullUnitBinding) : ViewHolder(binding.root) {
 
@@ -25,7 +24,7 @@ class PlaylistViewHolder(private val binding: PlaylistFullUnitBinding) : ViewHol
                 )
                 .into(cover)
             title.text = playlist.title
-            size.text = showNumberOfTracksInCorrectDeclension(playlist.size)
+            size.text = itemView.context.resources.getQuantityString(R.plurals.track_plurals, playlist.size, playlist.size)
         }
     }
 
