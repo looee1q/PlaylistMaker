@@ -21,9 +21,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreateNewPlaylistBinding
-import com.example.playlistmaker.roundedCorners
 import com.example.playlistmaker.ui.mediateca.playlists.view_model.PlaylistCreatorViewModel
 import com.example.playlistmaker.ui.player.activity.PlayerActivity
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
@@ -58,7 +58,10 @@ class PlaylistCreatorFragment : Fragment() {
         if (photoUri != null) {
             Glide.with(this)
                 .load(photoUri)
-                .transform(CenterCrop(), roundedCorners(RADIUS_OF_PLAYLIST_COVER_CORNERS, resources))
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(requireActivity().resources.getDimensionPixelSize(R.dimen.rounded_corners_for_big_covers))
+                )
                 .into(binding.playlistCover)
             viewModel.setUri(photoUri)
         } else {
@@ -80,7 +83,7 @@ class PlaylistCreatorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d("LifecycleFragment","onViewCreated || PlaylistCreatorFragment")
 
-        isTransactionFromActivity = arguments?.getBoolean("FROM_PLAYER_ACTIVITY")
+        isTransactionFromActivity = arguments?.getBoolean(PlayerActivity.FROM_PLAYER_ACTIVITY)
 
         viewModel.liveDataPlaylistUri.value?.let {
             binding.playlistCover.setImageURI(it)
@@ -177,11 +180,6 @@ class PlaylistCreatorFragment : Fragment() {
             Log.d("THE_WAY_OUT", "FROM FRAGMENT")
         }
     }
-
-    companion object {
-        private const val RADIUS_OF_PLAYLIST_COVER_CORNERS: Float = 8f
-    }
-
 
 
     override fun onAttach(context: Context) {

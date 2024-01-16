@@ -73,7 +73,6 @@ class MediatecaPlaylistsFragment : Fragment() {
                     playlistsNotFoundMessage.isVisible = false
                     recyclerView.isVisible = true
                 }
-                //adapter?.notifyDataSetChanged()
             }
             is Status.Empty, null -> {
                 with(binding) {

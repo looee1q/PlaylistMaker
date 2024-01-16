@@ -11,13 +11,14 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.ui.models.TrackRepresentation
-import com.example.playlistmaker.roundedCorners
 import com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistCreatorFragment
 import com.example.playlistmaker.ui.player.model.TrackPlaylistRelationship
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
@@ -74,10 +75,6 @@ class PlayerActivity: AppCompatActivity() {
         binding.recyclerViewPlaylists.adapter = adapter
         binding.recyclerViewPlaylists.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        playerViewModel.liveDataTrackPlaylistRelationship.observe(this) {
-            Log.d("PlayerActivity", "observing liveDataTrackPlaylistRelationship. Its value is $it")
-        }
-
         binding.backArrowButton.setOnClickListener {
             finish()
         }
@@ -118,7 +115,7 @@ class PlayerActivity: AppCompatActivity() {
 
         binding.createNewPlaylistButton.setOnClickListener {
             val bundle = Bundle().also {
-                it.putBoolean("FROM_PLAYER_ACTIVITY", true)
+                it.putBoolean(FROM_PLAYER_ACTIVITY, true)
             }
 
             supportFragmentManager.beginTransaction()
@@ -153,10 +150,12 @@ class PlayerActivity: AppCompatActivity() {
             Glide.with(this@PlayerActivity)
                 .load(track.artworkUrl512)
                 .apply(
-                    RequestOptions()
-                        .placeholder(R.drawable.track_icon_mock))
-                .centerCrop()
-                .transform(roundedCorners(RADIUS_OF_TRACK_COVER_TRACK_CORNER, resources))
+                    RequestOptions().placeholder(R.drawable.track_icon_mock)
+                )
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(resources.getDimensionPixelSize(R.dimen.rounded_corners_for_big_covers))
+                )
                 .into(binding.trackCover)
 
             trackNameTitle.text = track.trackName
@@ -231,9 +230,9 @@ class PlayerActivity: AppCompatActivity() {
 
     companion object {
 
-        private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
-
         const val TRACK = "TRACK"
+
+        const val FROM_PLAYER_ACTIVITY = "FROM_PLAYER_ACTIVITY"
 
         fun createArgs(encodedTrack: String) : Bundle {
             return bundleOf(TRACK to encodedTrack)
