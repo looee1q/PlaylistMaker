@@ -46,6 +46,7 @@
             android:textFontWeight="400"
             android:maxLines="1"
             android:textColor="@color/black_day_black_night"
+            android:textCursorDrawable="@drawable/cursor"
             android:background="@null"
             android:saveEnabled="false"
             android:imeOptions="actionDone"
@@ -98,7 +99,7 @@
 
         <Button
             android:id="@+id/clear_history_track_list_button"
-            style="@style/UpdateIfEmptyButton"
+            style="@style/Button1"
             android:text="@string/clear_history"
             android:layout_marginBottom="14dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -126,7 +127,7 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="@color/progress_bar_tint"
+            android:indeterminateTint="@color/blue"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -159,7 +160,7 @@
 
         <Button
             android:id="@+id/reload_search_button"
-            style="@style/UpdateIfEmptyButton"
+            style="@style/Button1"
             android:text="@string/reload"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"

@@ -29,6 +29,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
+                app:trackTint="@color/switch_background_bar_color"
+                app:thumbTint="@color/switch_toggle_color"
                 android:layout_marginEnd="18dp"/>
         </FrameLayout>
 

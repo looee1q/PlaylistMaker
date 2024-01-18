@@ -39,13 +39,11 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        Log.d("SearchFragment", "onCreateView in SearchFragment")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("SearchFragment", "onViewCreated in SearchFragment")
 
         viewModel.liveDataStatus.observe(viewLifecycleOwner) {
             Log.d("CURRENT_STATUS", "$it in SearchFragment")
@@ -119,11 +117,6 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.d("SearchFragment", "onPause in SearchFragment")
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -133,7 +126,7 @@ class SearchFragment : Fragment() {
         return { track: TrackRepresentation ->
             if (viewModel.liveDataIsClickOnTrackAllowed.value!!) {
                 viewModel.clickOnTrackDebounce()
-                Log.d("SearchFragment", "Зафиксировано нажатие на Track!")
+
                 findNavController().navigate(
                     R.id.action_searchFragment_to_playerActivity,
                     PlayerActivity.createArgs(Json.encodeToString(track))
@@ -142,7 +135,6 @@ class SearchFragment : Fragment() {
                 viewModel.fillHistoryTrackListUp(track)
                 viewModel.writeHistoryTrackListToStorage()
                 historyTrackListAdapter.notifyDataSetChanged()
-                Log.d("historyTrackList","${track.trackName} with Id ${track.trackId} has been added to historyTrackList")
             }
         }
     }
@@ -204,7 +196,5 @@ class SearchFragment : Fragment() {
         binding.errorMessage.visibility = View.GONE
         binding.reloadSearchButton.visibility = View.GONE
     }
-
-
 
 }

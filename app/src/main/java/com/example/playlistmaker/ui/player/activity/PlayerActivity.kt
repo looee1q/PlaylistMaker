@@ -3,16 +3,26 @@ package com.example.playlistmaker.ui.player.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.domain.player.PlayerState
 import com.example.playlistmaker.ui.models.TrackRepresentation
-import com.example.playlistmaker.roundedCorners
+import com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistCreatorFragment
+import com.example.playlistmaker.ui.player.model.TrackPlaylistRelationship
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -24,10 +34,14 @@ class PlayerActivity: AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private lateinit var track: TrackRepresentation
 
+    private lateinit var adapter: PlaylistsAdapterForBottomSheetRV
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+
     private val playerViewModel: PlayerViewModel by viewModel { parametersOf(track) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("Lifecycle","onCreate || PlayerActivity")
 
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -35,7 +49,33 @@ class PlayerActivity: AppCompatActivity() {
         track = Json.decodeFromString<TrackRepresentation>(intent.extras?.getString(TRACK)!!)
         bind(track)
 
-        binding.backToSearchActivityButton.setOnClickListener {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).also {
+            it.state = BottomSheetBehavior.STATE_HIDDEN
+
+            it.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            binding.overlay.isVisible = false
+                        }
+                        else -> {
+                            binding.overlay.isVisible = true
+                        }
+                    }
+                }
+                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+            })
+        }
+
+        adapter = PlaylistsAdapterForBottomSheetRV(playerViewModel.liveDataPlaylists.value!!)
+        adapter.listener = {
+            playerViewModel.addTrackToPlaylist(it)
+            showTrackAddingToPlaylistResult(playerViewModel.liveDataTrackPlaylistRelationship.value!!, it)
+        }
+        binding.recyclerViewPlaylists.adapter = adapter
+        binding.recyclerViewPlaylists.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        binding.backArrowButton.setOnClickListener {
             finish()
         }
 
@@ -61,10 +101,46 @@ class PlayerActivity: AppCompatActivity() {
             playerViewModel.changeTrackFavoriteStatus()
         }
 
+        binding.addToPlaylistButton.setOnClickListener {
+            playerViewModel.getPlaylists()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        playerViewModel.liveDataPlaylists.observe(this) {
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                Log.d("PlayerActivity", "List of playlists ${playerViewModel!!.liveDataPlaylists.value?.map { it.title }}")
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+        binding.createNewPlaylistButton.setOnClickListener {
+            val bundle = Bundle().also {
+                it.putBoolean(FROM_PLAYER_ACTIVITY, true)
+            }
+
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.player_fragment_container, PlaylistCreatorFragment::class.java, bundle)
+                .setReorderingAllowed(true)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                } else {
+                    this@PlayerActivity.finish()
+                }
+            }
+
+        })
+
     }
 
     override fun onPause() {
         super.onPause()
+        Log.d("Lifecycle","onPause || PlayerActivity")
         playerViewModel.pausePlayer()
     }
 
@@ -74,10 +150,12 @@ class PlayerActivity: AppCompatActivity() {
             Glide.with(this@PlayerActivity)
                 .load(track.artworkUrl512)
                 .apply(
-                    RequestOptions()
-                        .placeholder(R.drawable.track_icon_mock))
-                .centerCrop()
-                .transform(roundedCorners(RADIUS_OF_TRACK_COVER_TRACK_CORNER, resources))
+                    RequestOptions().placeholder(R.drawable.track_icon_mock)
+                )
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(resources.getDimensionPixelSize(R.dimen.rounded_corners_for_big_covers))
+                )
                 .into(binding.trackCover)
 
             trackNameTitle.text = track.trackName
@@ -123,15 +201,63 @@ class PlayerActivity: AppCompatActivity() {
         binding.likeButton.setImageDrawable(getDrawable(drawable))
     }
 
+    private fun showTrackAddingToPlaylistResult(trackPlaylistRelationship: TrackPlaylistRelationship, playlist: Playlist) {
+        if (trackPlaylistRelationship == TrackPlaylistRelationship.TRACK_IS_ALREADY_IN_PLAYLIST) {
+            Toast.makeText(
+                this,
+                resources.getString(R.string.track_is_already_in_playlist).format(playlist.title),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                this,
+                resources.getString(R.string.track_is_added_to_playlist).format(playlist.title),
+                Toast.LENGTH_SHORT
+            ).show()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
+
+    //Костыль!!! Удалить при рефакторинге на SingleActivity
+    fun showPlaylists(showPlayerLayout: Boolean = true) {
+        binding.playerRootLayout.isVisible = showPlayerLayout
+        binding.bottomSheet.isVisible = showPlayerLayout
+        binding.overlay.isVisible = showPlayerLayout
+        if (!showPlayerLayout) {
+            playerViewModel.pausePlayer()
+        }
+    }
+
     companion object {
 
-        private const val RADIUS_OF_TRACK_COVER_TRACK_CORNER: Float = 8f
-
         const val TRACK = "TRACK"
+
+        const val FROM_PLAYER_ACTIVITY = "FROM_PLAYER_ACTIVITY"
 
         fun createArgs(encodedTrack: String) : Bundle {
             return bundleOf(TRACK to encodedTrack)
         }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("Lifecycle","onStart || PlayerActivity")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("Lifecycle","onResume || PlayerActivity")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("Lifecycle","onStop || PlayerActivity")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("Lifecycle","onDestroy || PlayerActivity")
     }
 
 }

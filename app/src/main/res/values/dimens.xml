@@ -10,4 +10,6 @@
     <dimen name="track_name_size">16sp</dimen>
     <dimen name="artist_name_size">11sp</dimen>
     <dimen name="track_icon_side_size">45dp</dimen>
+    <dimen name="rounded_corners_for_big_covers">8dp</dimen>
+    <dimen name="rounded_corners_for_small_covers">2dp</dimen>
 </resources>

@@ -13,4 +13,14 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="TextInputLayoutPlaylistCreatorFragment" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeColor">@color/box_stroke_color</item>
+        <item name="android:textColorHint">@color/black_day_white_night</item>
+        <item name="hintTextColor">@color/box_stroke_color</item>
+        <item name="helperTextTextColor">@color/grey2_day_grey2_night</item>
+    </style>
+
 </resources>
