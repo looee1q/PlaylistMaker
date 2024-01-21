@@ -12,4 +12,5 @@
     <dimen name="track_icon_side_size">45dp</dimen>
     <dimen name="rounded_corners_for_big_covers">8dp</dimen>
     <dimen name="rounded_corners_for_small_covers">2dp</dimen>
+    <dimen name="peek_height_for_bottom_sheet_in_playlist">268dp</dimen>
 </resources>

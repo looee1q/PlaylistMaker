@@ -15,6 +15,7 @@ import com.example.playlistmaker.databinding.FragmentMediatecaPlaylistsBinding
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.ui.mediateca.model.Status
 import com.example.playlistmaker.ui.mediateca.playlists.view_model.PlaylistsViewModel
+import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediatecaPlaylistsFragment : Fragment() {
@@ -49,6 +50,12 @@ class MediatecaPlaylistsFragment : Fragment() {
         viewModel.showPlaylists()
 
         _adapter = PlaylistsAdapter(viewModel.liveDataPlaylists.value!!)
+        adapter.listener = {
+            findNavController().navigate(
+                R.id.action_mediatecaFragment_to_playlistFragment,
+                PlaylistFragment.createArgs(playlistId = it.id)
+            )
+        }
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
@@ -72,6 +79,7 @@ class MediatecaPlaylistsFragment : Fragment() {
                     playlistsNotFoundImage.isVisible = false
                     playlistsNotFoundMessage.isVisible = false
                     recyclerView.isVisible = true
+                    adapter.notifyDataSetChanged()
                 }
             }
             is Status.Empty, null -> {

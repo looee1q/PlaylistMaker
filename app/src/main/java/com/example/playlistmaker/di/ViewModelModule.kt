@@ -2,6 +2,7 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.ui.mediateca.favorites.view_model.FavouritesViewModel
 import com.example.playlistmaker.ui.mediateca.playlists.view_model.PlaylistCreatorViewModel
+import com.example.playlistmaker.ui.mediateca.playlists.view_model.PlaylistViewModel
 import com.example.playlistmaker.ui.mediateca.playlists.view_model.PlaylistsViewModel
 import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
@@ -68,6 +69,14 @@ val viewModelModule = module {
     viewModel<PlaylistCreatorViewModel> {
         PlaylistCreatorViewModel(
             addPlaylistUseCase = get()
+        )
+    }
+
+    viewModel<PlaylistViewModel>() { (playlistId: Int) ->
+        PlaylistViewModel(
+            playlistId = playlistId,
+            getPlaylistByIdUseCase = get(),
+            getAllTracksFromPlaylistUseCase = get()
         )
     }
 

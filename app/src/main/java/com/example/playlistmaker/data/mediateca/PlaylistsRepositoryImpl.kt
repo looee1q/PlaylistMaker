@@ -37,7 +37,6 @@ class PlaylistsRepositoryImpl(
             tracksId = updatedPlaylistTracksId
         )
 
-        Log.d("Playlist_repository_impl", "Im going to update playlist")
         appDB.playlistsDAO().updatePlaylist(
             DBConvertor.convertPlaylistToPlaylistEntity(playlistWithUpdatedTracksId)
         )
@@ -48,4 +47,19 @@ class PlaylistsRepositoryImpl(
             DBConvertor.convertTrackToPlaylistTrackEntity(track)
         )
     }
+
+    override suspend fun getPlaylist(playlistId: Int): Playlist {
+        return DBConvertor.convertPlaylistEntityToPlaylist(
+            appDB.playlistsDAO().getPlaylist(playlistId)
+        )
+    }
+
+    override fun getAllTracksFromPlaylist(tracksId: List<Long>): Flow<List<Track>> = flow {
+        val tracks = appDB.playlistsTracksDAO().getAllPlaylistsTracks().map {
+            DBConvertor.convertTrackEntityToTrack(it)
+        }.filter { tracksId.contains(it.trackId)  }
+
+        emit(tracks)
+    }
+
 }

@@ -8,6 +8,8 @@ import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 
 class PlaylistsAdapter(private val playlists: List<Playlist>) : Adapter<PlaylistViewHolder>() {
 
+    var listener: (Playlist) -> Unit = { }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return PlaylistViewHolder(PlaylistFullUnitBinding.inflate(layoutInflater, parent, false))
@@ -17,5 +19,8 @@ class PlaylistsAdapter(private val playlists: List<Playlist>) : Adapter<Playlist
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         holder.bind(playlists[position])
+        holder.itemView.setOnClickListener {
+            listener.invoke(playlists[position])
+        }
     }
 }
