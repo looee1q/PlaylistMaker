@@ -14,6 +14,8 @@ interface PlaylistsRepository {
 
     suspend fun addTrackToPlaylistsTracksStorage(track: Track)
 
+    suspend fun removeTrackFromPlaylistsTracksStorage(track: Track)
+
     suspend fun getPlaylist(playlistId: Int): Playlist
 
     fun getAllTracksFromPlaylist(tracksId: List<Long>): Flow<List<Track>>

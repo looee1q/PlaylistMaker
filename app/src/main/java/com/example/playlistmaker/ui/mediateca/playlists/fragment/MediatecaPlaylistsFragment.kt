@@ -47,8 +47,6 @@ class MediatecaPlaylistsFragment : Fragment() {
             )
         }
 
-        viewModel.showPlaylists()
-
         _adapter = PlaylistsAdapter(viewModel.liveDataPlaylists.value!!)
         adapter.listener = {
             findNavController().navigate(
@@ -65,6 +63,12 @@ class MediatecaPlaylistsFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("LifecycleFragment", "onResume || MediatecaPlaylistsFragment")
+        viewModel.showPlaylists()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d("LifecycleFragment", "onDestroyView || MediatecaPlaylistsFragment")
@@ -79,6 +83,7 @@ class MediatecaPlaylistsFragment : Fragment() {
                     playlistsNotFoundImage.isVisible = false
                     playlistsNotFoundMessage.isVisible = false
                     recyclerView.isVisible = true
+                    Log.d("MediatecaPlaylistsFragment","адаптер делает notifyDataSetChanged()")
                     adapter.notifyDataSetChanged()
                 }
             }
@@ -112,11 +117,6 @@ class MediatecaPlaylistsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Log.d("LifecycleFragment", "onStart || MediatecaPlaylistsFragment")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("LifecycleFragment", "onResume || MediatecaPlaylistsFragment")
     }
 
     override fun onPause() {

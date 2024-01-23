@@ -157,6 +157,10 @@ val domainModule = module {
         AddTrackToPlaylistsTracksStorageUseCaseImpl(get())
     }
 
+    factory<RemoveTrackFromPlaylistsTracksStorageUseCase> {
+        RemoveTrackFromPlaylistsTracksStorageUseCaseImpl(get())
+    }
+
     factory<GetPlaylistByIdUseCase> {
         GetPlaylistByIdUseCaseImpl(get())
     }

@@ -43,7 +43,7 @@ class PlayerViewModel(
     private val removeTrackFromFavoritesUseCase: RemoveTrackFromFavoritesUseCase,
     private val getTracksIDsFromDBUseCase: GetFavoritesIDsUseCase,
     private val showPlaylistsUseCase: ShowPlaylistsUseCase,
-    private val addTrackToPlaylistUseCase: AddTrackToPlaylistsTracksStorageUseCase,
+    private val addTrackToPlaylistsTracksStorage: AddTrackToPlaylistsTracksStorageUseCase,
     private val updatePlaylistUseCase: UpdatePlaylistUseCase
 ) : ViewModel() {
 
@@ -155,7 +155,7 @@ class PlayerViewModel(
             mutableLiveDataTrackPlaylistRelationship.value = TrackPlaylistRelationship.TRACK_IS_ALREADY_IN_PLAYLIST
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                addTrackToPlaylistUseCase.execute(track = Mapper.mapTrackRepresentationToTrack(track))
+                addTrackToPlaylistsTracksStorage.execute(track = Mapper.mapTrackRepresentationToTrack(track))
                 updatePlaylistUseCase.execute(
                     playlist = playlist,
                     track = Mapper.mapTrackRepresentationToTrack(track)

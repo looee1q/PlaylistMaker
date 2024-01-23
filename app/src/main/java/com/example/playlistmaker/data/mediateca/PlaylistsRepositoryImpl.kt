@@ -29,8 +29,16 @@ class PlaylistsRepositoryImpl(
 
     override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
 
-        val updatedPlaylistTracksId = playlist.tracksId.toMutableList().also {
-            it.add(track.trackId)
+        val updatedPlaylistTracksId = if (playlist.tracksId.contains(track.trackId)) {
+            Log.d("PlaylistRepositoryImpl","Удаляю трек ${track.trackName} из плейлиста")
+            playlist.tracksId.toMutableList().also {
+                it.remove(track.trackId)
+            }
+        } else {
+            Log.d("PlaylistRepositoryImpl","Добавляю трек ${track.trackName} в плейлист")
+            playlist.tracksId.toMutableList().also {
+                it.add(track.trackId)
+            }
         }
 
         val playlistWithUpdatedTracksId = playlist.copy(
@@ -44,6 +52,12 @@ class PlaylistsRepositoryImpl(
 
     override suspend fun addTrackToPlaylistsTracksStorage(track: Track) {
         appDB.playlistsTracksDAO().addTrackToDB(
+            DBConvertor.convertTrackToPlaylistTrackEntity(track)
+        )
+    }
+
+    override suspend fun removeTrackFromPlaylistsTracksStorage(track: Track) {
+        appDB.playlistsTracksDAO().removeTrackFromDB(
             DBConvertor.convertTrackToPlaylistTrackEntity(track)
         )
     }
