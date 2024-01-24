@@ -21,7 +21,8 @@ class PlaylistViewModel(
     private val getAllTracksFromPlaylistUseCase: GetAllTracksFromPlaylistUseCase,
     private val updatePlaylistUseCase: UpdatePlaylistUseCase,
     private val showPlaylistsUseCase: ShowPlaylistsUseCase,
-    private val removeTrackFromPlaylistsTracksStorageUseCase: RemoveTrackFromPlaylistsTracksStorageUseCase
+    private val removeTrackFromPlaylistsTracksStorageUseCase: RemoveTrackFromPlaylistsTracksStorageUseCase,
+    private val sharePlaylistUseCase: SharePlaylistUseCase
 ) : ViewModel() {
 
     private val mutableLiveDataPlaylist = MutableLiveData<PlaylistInfo>()
@@ -99,6 +100,9 @@ class PlaylistViewModel(
         }
     }
 
+    fun sharePlaylist(playlistMessage: String) {
+        sharePlaylistUseCase.execute(playlistMessage)
+    }
 
     private fun convertTrackTimeToMillis(trackTime: String): Long {
         val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())

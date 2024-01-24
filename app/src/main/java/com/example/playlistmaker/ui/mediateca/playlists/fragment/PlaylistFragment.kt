@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
@@ -22,6 +24,7 @@ import com.example.playlistmaker.ui.mediateca.playlists.view_model.PlaylistViewM
 import com.example.playlistmaker.ui.models.TrackRepresentation
 import com.example.playlistmaker.ui.player.activity.PlayerActivity
 import com.example.playlistmaker.ui.search.fragment.TrackAdapter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -68,20 +71,44 @@ class PlaylistFragment : Fragment() {
         binding.recyclerViewTracks.adapter = adapter
         binding.recyclerViewTracks.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                findNavController().navigateUp()
-            }
-        })
-
         binding.backArrowButton.setOnClickListener {
             findNavController().navigateUp()
         }
 
         viewModel.liveDataPlaylist.observe(viewLifecycleOwner) {
             render(it)
+            renderPlaylistInfoForBottomSheet(it)
             Log.d("PlaylistFragment","Tracks from PlaylistInfo ${it.tracks.map{it.trackName}}")
-            //Log.d("PlaylistFragment","Adapter Track List 2: ${_adapter?.trackList?.map{it.trackName}}")
+        }
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu).also {
+            it.state = BottomSheetBehavior.STATE_HIDDEN
+
+            it.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_COLLAPSED, BottomSheetBehavior.STATE_EXPANDED -> {
+                            binding.bottomSheetTracks.isVisible = false
+                        }
+                        else -> {
+                            binding.bottomSheetTracks.isVisible = true
+                        }
+                    }
+                }
+                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+            })
+        }
+
+        binding.moreIcon.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.shareIcon.setOnClickListener {
+            sendPlaylistMessage()
+        }
+
+        binding.share.setOnClickListener {
+            sendPlaylistMessage()
         }
 
     }
@@ -155,6 +182,58 @@ class PlaylistFragment : Fragment() {
         playlistTracks.clear()
         playlistTracks.addAll(playlistInfo.tracks)
         adapter?.notifyDataSetChanged()
+    }
+
+    private fun renderPlaylistInfoForBottomSheet(playlistInfo: PlaylistInfo) {
+
+        val playlist = playlistInfo.playlist
+
+        binding.playlistBriefInfo.apply {
+            Glide.with(this@PlaylistFragment)
+                .load(playlist.coverUri)
+                .apply(
+                    RequestOptions().placeholder(R.drawable.track_icon_mock)
+                )
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(resources.getDimensionPixelSize(R.dimen.rounded_corners_for_big_covers))
+                )
+                .into(cover)
+            title.text = playlist.title
+            size.text = resources.getQuantityString(R.plurals.track_plurals, playlist.size, playlist.size)
+        }
+    }
+
+    private fun formMessage(playlistInfo: PlaylistInfo): String {
+
+        val playlist = playlistInfo.playlist
+
+        val message = StringBuilder().apply {
+            appendLine(playlist.title)
+            if (playlist.description?.isNotBlank() == true) appendLine(playlist.description)
+            appendLine(resources.getQuantityString(R.plurals.track_plurals, playlist.size, playlist.size))
+        }
+
+        playlistInfo.tracks.forEach {
+            message.appendLine(
+                resources.getString(R.string.track_form_for_message)
+                    .format(playlistInfo.tracks.indexOf(it) + 1, it.artistName, it.trackName, it.trackTime)
+            )
+        }
+
+        return message.toString()
+    }
+
+    private fun sendPlaylistMessage() {
+        viewModel.liveDataPlaylist.value?.let {
+            if (it.tracks.isEmpty()) {
+                Toast.makeText(requireContext(), "В этом плейлисте нет списка треков, которым можно поделиться", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.sharePlaylist(
+                    formMessage(it)
+                )
+            }
+        }
     }
 
     companion object {

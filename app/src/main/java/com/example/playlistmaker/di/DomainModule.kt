@@ -169,4 +169,11 @@ val domainModule = module {
         GetAllTracksFromPlaylistUseCaseImpl(get())
     }
 
+    //modules for other mediateca UseCases
+
+    factory<SharePlaylistUseCase> {
+        SharePlaylistUseCaseImpl(get())
+    }
+
+
 }

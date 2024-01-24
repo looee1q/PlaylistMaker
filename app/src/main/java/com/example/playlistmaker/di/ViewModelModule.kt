@@ -79,7 +79,8 @@ val viewModelModule = module {
             getAllTracksFromPlaylistUseCase = get(),
             updatePlaylistUseCase = get(),
             showPlaylistsUseCase = get(),
-            removeTrackFromPlaylistsTracksStorageUseCase = get()
+            removeTrackFromPlaylistsTracksStorageUseCase = get(),
+            sharePlaylistUseCase = get()
         )
     }
 
