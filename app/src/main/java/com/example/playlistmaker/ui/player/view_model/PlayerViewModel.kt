@@ -9,7 +9,7 @@ import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.AddTrackToPlaylistsTracksStorageUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.AddTrackToPlaylistUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.ShowPlaylistsUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.UpdatePlaylistUseCase
 import com.example.playlistmaker.domain.player.PlayerState
@@ -43,8 +43,7 @@ class PlayerViewModel(
     private val removeTrackFromFavoritesUseCase: RemoveTrackFromFavoritesUseCase,
     private val getTracksIDsFromDBUseCase: GetFavoritesIDsUseCase,
     private val showPlaylistsUseCase: ShowPlaylistsUseCase,
-    private val addTrackToPlaylistsTracksStorage: AddTrackToPlaylistsTracksStorageUseCase,
-    private val updatePlaylistUseCase: UpdatePlaylistUseCase
+    private val addTrackToPlaylistUseCase: AddTrackToPlaylistUseCase
 ) : ViewModel() {
 
     private val mutableLiveDataPlayerState = MutableLiveData<PlayerState>().also {
@@ -155,8 +154,7 @@ class PlayerViewModel(
             mutableLiveDataTrackPlaylistRelationship.value = TrackPlaylistRelationship.TRACK_IS_ALREADY_IN_PLAYLIST
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                addTrackToPlaylistsTracksStorage.execute(track = Mapper.mapTrackRepresentationToTrack(track))
-                updatePlaylistUseCase.execute(
+                addTrackToPlaylistUseCase.execute(
                     playlist = playlist,
                     track = Mapper.mapTrackRepresentationToTrack(track)
                 )

@@ -47,8 +47,7 @@ val viewModelModule = module {
             removeTrackFromFavoritesUseCase = get(),
             getTracksIDsFromDBUseCase = get(),
             showPlaylistsUseCase = get(),
-            addTrackToPlaylistsTracksStorage = get(),
-            updatePlaylistUseCase = get()
+            addTrackToPlaylistUseCase = get()
         )
     }
 
@@ -77,9 +76,7 @@ val viewModelModule = module {
             playlistId = playlistId,
             getPlaylistByIdUseCase = get(),
             getAllTracksFromPlaylistUseCase = get(),
-            updatePlaylistUseCase = get(),
-            showPlaylistsUseCase = get(),
-            removeTrackFromPlaylistsTracksStorageUseCase = get(),
+            removeTrackFromPlaylistUseCase = get(),
             sharePlaylistUseCase = get()
         )
     }

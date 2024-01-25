@@ -7,6 +7,8 @@ import com.example.playlistmaker.data.db.entities.PlaylistEntity
 import com.example.playlistmaker.domain.mediateca.playlists.PlaylistsRepository
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.ui.mapper.Mapper
+import com.example.playlistmaker.ui.models.TrackRepresentation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -25,6 +27,16 @@ class PlaylistsRepositoryImpl(
             DBConvertor.convertPlaylistEntityToPlaylist(it)
         }
         emit(playlists)
+    }
+
+    override suspend fun removeTrackFromPlaylist(track: Track, playlist: Playlist) {
+        removeTrackFromPlaylistsTracks(track, playlist)
+        updatePlaylist(playlist, track)
+    }
+
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        addTrackToPlaylistsTracksStorage(track)
+        updatePlaylist(playlist, track)
     }
 
     override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
@@ -50,13 +62,31 @@ class PlaylistsRepositoryImpl(
         )
     }
 
-    override suspend fun addTrackToPlaylistsTracksStorage(track: Track) {
+    private suspend fun addTrackToPlaylistsTracksStorage(track: Track) {
+        Log.d("PlaylistRepositoryImpl","Добавляю трек ${track.trackName} в хранилище")
         appDB.playlistsTracksDAO().addTrackToDB(
             DBConvertor.convertTrackToPlaylistTrackEntity(track)
         )
     }
 
-    override suspend fun removeTrackFromPlaylistsTracksStorage(track: Track) {
+    private suspend fun removeTrackFromPlaylistsTracks(track: Track, playlist: Playlist) {
+        Log.d("PlaylistRepositoryImpl","Удаляю трек ${track.trackName} из хранилища")
+        showPlaylists().collect{
+            var somePlaylistsContainTrack = false
+
+            it.forEach {
+                if (it.tracksId.contains(track.trackId) && it.id != playlist.id) {
+                    somePlaylistsContainTrack = true
+                }
+            }
+
+            if(!somePlaylistsContainTrack) {
+                removeTrackFromPlaylistsTracksStorage(track)
+            }
+        }
+    }
+
+    private suspend fun removeTrackFromPlaylistsTracksStorage(track: Track) {
         appDB.playlistsTracksDAO().removeTrackFromDB(
             DBConvertor.convertTrackToPlaylistTrackEntity(track)
         )

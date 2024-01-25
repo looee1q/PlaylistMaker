@@ -19,9 +19,7 @@ class PlaylistViewModel(
     private val playlistId: Int,
     private val getPlaylistByIdUseCase: GetPlaylistByIdUseCase,
     private val getAllTracksFromPlaylistUseCase: GetAllTracksFromPlaylistUseCase,
-    private val updatePlaylistUseCase: UpdatePlaylistUseCase,
-    private val showPlaylistsUseCase: ShowPlaylistsUseCase,
-    private val removeTrackFromPlaylistsTracksStorageUseCase: RemoveTrackFromPlaylistsTracksStorageUseCase,
+    private val removeTrackFromPlaylistUseCase: RemoveTrackFromPlaylistUseCase,
     private val sharePlaylistUseCase: SharePlaylistUseCase
 ) : ViewModel() {
 
@@ -58,35 +56,11 @@ class PlaylistViewModel(
 
     fun deleteTrack(trackRepresentation: TrackRepresentation) {
         viewModelScope.launch(Dispatchers.IO) {
-            removeTrackFromPlaylist(trackRepresentation)
-            removeTrackFromPlaylistsTracks(trackRepresentation)
+            removeTrackFromPlaylistUseCase.execute(
+                track = Mapper.mapTrackRepresentationToTrack(trackRepresentation),
+                playlist = liveDataPlaylist.value?.playlist!!
+            )
             getPlaylistInfo()
-        }
-    }
-
-    private suspend fun removeTrackFromPlaylist(trackRepresentation: TrackRepresentation) {
-        updatePlaylistUseCase.execute(
-            playlist = liveDataPlaylist.value?.playlist!!,
-            track = Mapper.mapTrackRepresentationToTrack(trackRepresentation)
-        )
-    }
-
-    private suspend fun removeTrackFromPlaylistsTracks(trackRepresentation: TrackRepresentation) {
-
-        showPlaylistsUseCase.execute().collect {
-            var somePlaylistsContainTrack = false
-
-            it.forEach {
-                if (it.tracksId.contains(trackRepresentation.trackId)) {
-                    somePlaylistsContainTrack = true
-                }
-            }
-
-            if(!somePlaylistsContainTrack) {
-                removeTrackFromPlaylistsTracksStorageUseCase.execute(
-                    track = Mapper.mapTrackRepresentationToTrack(trackRepresentation)
-                )
-            }
         }
     }
 
