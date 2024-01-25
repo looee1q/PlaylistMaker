@@ -4,7 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.*
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.GetPlaylistByIdUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.GetAllTracksFromPlaylistUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.RemoveTrackFromPlaylistUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.SharePlaylistUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.DeletePlaylistUseCase
 import com.example.playlistmaker.ui.mapper.Mapper
 import com.example.playlistmaker.ui.mediateca.playlists.model.PlaylistInfo
 import com.example.playlistmaker.ui.models.TrackRepresentation
@@ -20,7 +24,8 @@ class PlaylistViewModel(
     private val getPlaylistByIdUseCase: GetPlaylistByIdUseCase,
     private val getAllTracksFromPlaylistUseCase: GetAllTracksFromPlaylistUseCase,
     private val removeTrackFromPlaylistUseCase: RemoveTrackFromPlaylistUseCase,
-    private val sharePlaylistUseCase: SharePlaylistUseCase
+    private val sharePlaylistUseCase: SharePlaylistUseCase,
+    private val deletePlaylistUseCase: DeletePlaylistUseCase
 ) : ViewModel() {
 
     private val mutableLiveDataPlaylist = MutableLiveData<PlaylistInfo>()
@@ -51,6 +56,14 @@ class PlaylistViewModel(
                     )
                 )
             }
+        }
+    }
+
+    fun deletePlaylist() {
+        viewModelScope.launch(Dispatchers.IO) {
+            deletePlaylistUseCase.execute(
+                playlist = liveDataPlaylist.value?.playlist!!
+            )
         }
     }
 

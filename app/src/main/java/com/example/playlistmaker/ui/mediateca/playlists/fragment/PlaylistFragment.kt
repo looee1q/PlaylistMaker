@@ -45,8 +45,6 @@ class PlaylistFragment : Fragment() {
 
     private val playlistTracks: MutableList<TrackRepresentation> = mutableListOf()
 
-    private var deleteTrackDialog: MaterialAlertDialogBuilder? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -94,6 +92,7 @@ class PlaylistFragment : Fragment() {
                             binding.bottomSheetTracks.isVisible = true
                         }
                     }
+                    binding.overlay.isVisible = !(newState == BottomSheetBehavior.STATE_HIDDEN)
                 }
                 override fun onSlide(bottomSheet: View, slideOffset: Float) { }
             })
@@ -109,6 +108,11 @@ class PlaylistFragment : Fragment() {
 
         binding.share.setOnClickListener {
             sendPlaylistMessage()
+        }
+
+        binding.delete.setOnClickListener {
+            val deletePlaylistDialog = createConfirmPlaylistRemovalDialog()
+            deletePlaylistDialog?.show()
         }
 
     }
@@ -134,7 +138,7 @@ class PlaylistFragment : Fragment() {
 
     private fun createLongClickAdapterListener(): (TrackRepresentation) -> Unit {
         return { trackRepresentation: TrackRepresentation ->
-            deleteTrackDialog = createConfirmTrackRemovalDialog(trackRepresentation)
+            val deleteTrackDialog = createConfirmTrackRemovalDialog(trackRepresentation)
             deleteTrackDialog?.show()
         }
     }
@@ -149,6 +153,22 @@ class PlaylistFragment : Fragment() {
         }
         return MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
             .setTitle(resources.getString(R.string.do_you_want_to_delete_track))
+            .setPositiveButton(resources.getString(R.string.yes), dialogListener)
+            .setNegativeButton(resources.getString(R.string.no), dialogListener)
+    }
+
+    private fun createConfirmPlaylistRemovalDialog(): MaterialAlertDialogBuilder {
+        val dialogListener = DialogInterface.OnClickListener { _, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    viewModel.deletePlaylist()
+                    findNavController().navigateUp()
+                }
+            }
+        }
+        return MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
+            .setTitle(resources.getString(R.string.delete_playlist))
+            .setMessage(resources.getString(R.string.do_you_want_to_delete_playlist))
             .setPositiveButton(resources.getString(R.string.yes), dialogListener)
             .setNegativeButton(resources.getString(R.string.no), dialogListener)
     }

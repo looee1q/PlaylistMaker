@@ -47,6 +47,7 @@
     <string name="share">Поделиться</string>
     <string name="edit_information">Редактировать информацию</string>
     <string name="delete_playlist">Удалить плейлист</string>
+    <string name="do_you_want_to_delete_playlist">Хотите удалить плейлист?</string>
     <string name="track_form_for_message">%1$d. %2$s - %3$s (%4$s)</string>
     <plurals name="track_plurals">
         <item quantity="zero">%1$d треков</item>

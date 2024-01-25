@@ -8,6 +8,8 @@ interface PlaylistsRepository {
 
     suspend fun createPlaylist(playlist: Playlist)
 
+    suspend fun deletePlaylist(playlist: Playlist)
+
     fun showPlaylists(): Flow<List<Playlist>>
 
     suspend fun updatePlaylist(playlist: Playlist, track: Track)

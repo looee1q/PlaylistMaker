@@ -12,6 +12,8 @@ interface PlaylistsTracksDAO {
 
     @Delete(entity = PlaylistTrackEntity::class)
     fun removeTrackFromDB(track: PlaylistTrackEntity)
+    @Query("DELETE FROM playlists_tracks WHERE trackId = :trackId")
+    fun removeTrackFromDB(trackId: Long)
 
     @Query("SELECT * FROM playlists_tracks")
     fun getAllPlaylistsTracks(): List<TrackEntity>

@@ -145,6 +145,10 @@ val domainModule = module {
         AddPlaylistUseCaseImpl(get())
     }
 
+    factory<DeletePlaylistUseCase> {
+        DeletePlaylistUseCaseImpl(get())
+    }
+
     factory<UpdatePlaylistUseCase> {
         UpdatePlaylistUseCaseImpl(get())
     }
