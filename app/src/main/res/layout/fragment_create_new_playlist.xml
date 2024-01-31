@@ -90,6 +90,7 @@
             android:id="@+id/playlist_description_text_input_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
             style="@style/TextInputEditTextPlaylistCreatorFragment"/>
     </com.google.android.material.textfield.TextInputLayout>
 

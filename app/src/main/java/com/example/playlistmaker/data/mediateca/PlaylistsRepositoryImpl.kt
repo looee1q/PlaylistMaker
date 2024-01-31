@@ -1,5 +1,10 @@
 package com.example.playlistmaker.data.mediateca
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Environment
+import androidx.core.net.toUri
 import com.example.playlistmaker.data.db.AppDB
 import com.example.playlistmaker.data.db.DBConvertor
 import com.example.playlistmaker.domain.mediateca.playlists.PlaylistsRepository
@@ -7,9 +12,12 @@ import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.io.File
+import java.io.FileOutputStream
 
 class PlaylistsRepositoryImpl(
-    private val appDB: AppDB
+    private val appDB: AppDB,
+    private val context: Context
 ) : PlaylistsRepository {
 
     override suspend fun createPlaylist(playlist: Playlist) {
@@ -25,6 +33,9 @@ class PlaylistsRepositoryImpl(
         playlist.tracksId.forEach {
             removeTrackFromPlaylistsTracks(it, playlist)
         }
+/*        playlist.coverUri?.let {
+            File(it.path).delete()
+        }*/
     }
 
     override fun showPlaylists(): Flow<List<Playlist>> = flow {
@@ -65,6 +76,12 @@ class PlaylistsRepositoryImpl(
         )
     }
 
+    override suspend fun updatePlaylist(playlistWithUpdatedData: Playlist) {
+        appDB.playlistsDAO().updatePlaylist(
+            DBConvertor.convertPlaylistToPlaylistEntity(playlistWithUpdatedData)
+        )
+    }
+
     private suspend fun addTrackToPlaylistsTracksStorage(track: Track) {
         appDB.playlistsTracksDAO().addTrackToDB(
             DBConvertor.convertTrackToPlaylistTrackEntity(track)
@@ -102,6 +119,36 @@ class PlaylistsRepositoryImpl(
         }.filter { tracksId.contains(it.trackId)  }
 
         emit(tracks)
+    }
+
+    override suspend fun saveCoverToExternalStorage(uri: String): String {
+        val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "PlaylistsCovers")
+        if (!filePath.exists()) filePath.mkdirs()
+
+        var numberOfSavedCover = if(filePath.listFiles().isEmpty()) {
+            1
+        } else {
+            filePath.listFiles().last().path
+                .substringAfterLast("cover_")
+                .substringBefore(".jpg")
+                .toInt() + 1
+        }
+
+        var coverFile = File(filePath, "cover_$numberOfSavedCover.jpg")
+
+        while (coverFile.exists()) {
+            numberOfSavedCover++
+            coverFile = File(filePath, "cover_$numberOfSavedCover.jpg")
+        }
+
+        val uriToSaveInExternalStorage = coverFile.toUri()
+
+        val inputStream = context.contentResolver.openInputStream(uri.toUri())
+        val outputStream = FileOutputStream(coverFile)
+        BitmapFactory.decodeStream(inputStream)
+            .compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+
+        return uriToSaveInExternalStorage.toString()
     }
 
 }

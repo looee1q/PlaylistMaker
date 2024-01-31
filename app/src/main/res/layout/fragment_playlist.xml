@@ -156,6 +156,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
+        <TextView
+            android:id="@+id/there_is_no_tracks_in_playlist"
+            style="@style/NothingFoundText"
+            android:layout_marginTop="48dp"
+            android:text="@string/no_tracks_in_playlist"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_tracks"
             android:layout_width="0dp"

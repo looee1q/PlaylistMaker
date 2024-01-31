@@ -6,4 +6,6 @@ import com.example.playlistmaker.domain.model.Track
 interface UpdatePlaylistUseCase {
 
     suspend fun execute(playlist: Playlist, track: Track)
+
+    suspend fun execute(playlistWithUpdatedData: Playlist)
 }

@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.mediateca.playlists.fragment
 
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
@@ -7,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -50,6 +50,7 @@ class PlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("LifecycleFragment", "onCreateView || PlaylistFragment")
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
 /*        val screenHeight = binding.coordinator.height
         Log.d("PlaylistFragment","screenHeight is $screenHeight")
@@ -60,23 +61,28 @@ class PlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.d("LifecycleFragment", "onViewCreated || PlaylistFragment")
         playlistId = arguments?.getInt(PLAYLIST_ID)!!
 
         _adapter = TrackAdapter(playlistTracks)
         adapter.listener = createAdapterListener()
         adapter.longClickListener = createLongClickAdapterListener()
         binding.recyclerViewTracks.adapter = adapter
-        binding.recyclerViewTracks.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.recyclerViewTracks.layoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.VERTICAL, true
+        ).also { it.stackFromEnd = true }
 
         binding.backArrowButton.setOnClickListener {
             findNavController().navigateUp()
         }
 
+        viewModel.getPlaylistInfo()
+
         viewModel.liveDataPlaylist.observe(viewLifecycleOwner) {
             render(it)
             renderPlaylistInfoForBottomSheet(it)
             Log.d("PlaylistFragment","Tracks from PlaylistInfo ${it.tracks.map{it.trackName}}")
+            Log.d("PlaylistFragment","Cover URI from PlaylistInfo ${it.playlist.coverUri}")
         }
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu).also {
@@ -112,7 +118,14 @@ class PlaylistFragment : Fragment() {
 
         binding.delete.setOnClickListener {
             val deletePlaylistDialog = createConfirmPlaylistRemovalDialog()
-            deletePlaylistDialog?.show()
+            deletePlaylistDialog.show()
+        }
+
+        binding.edit.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_playlistEditorFragment,
+                createArgs(playlistId)
+            )
         }
 
     }
@@ -139,7 +152,7 @@ class PlaylistFragment : Fragment() {
     private fun createLongClickAdapterListener(): (TrackRepresentation) -> Unit {
         return { trackRepresentation: TrackRepresentation ->
             val deleteTrackDialog = createConfirmTrackRemovalDialog(trackRepresentation)
-            deleteTrackDialog?.show()
+            deleteTrackDialog.show()
         }
     }
 
@@ -191,7 +204,6 @@ class PlaylistFragment : Fragment() {
         binding.apply {
             playlistTitle.text = playlist.title
             if (!playlist.description.isNullOrBlank()) {
-                Log.d("PlaylistFragment", "playlist description is ${playlist.description}")
                 playlistDescription.text = playlist.description
                 playlistDescription.isVisible = true
             }
@@ -202,6 +214,8 @@ class PlaylistFragment : Fragment() {
         playlistTracks.clear()
         playlistTracks.addAll(playlistInfo.tracks)
         adapter?.notifyDataSetChanged()
+
+        binding.thereIsNoTracksInPlaylist.isVisible = playlistInfo.tracks.isEmpty()
     }
 
     private fun renderPlaylistInfoForBottomSheet(playlistInfo: PlaylistInfo) {
@@ -261,6 +275,47 @@ class PlaylistFragment : Fragment() {
         const val PLAYLIST_ID = "PLAYLIST_ID"
 
         fun createArgs(playlistId: Int) = bundleOf(PLAYLIST_ID to playlistId)
+    }
+
+    //-------  УДАЛИТЬ КОД НИЖЕ ЧЕРТЫ  ------------------------------------------------------------
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("LifecycleFragment", "onAttach || PlaylistFragment")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("LifecycleFragment","onCreate || PlaylistFragment")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("LifecycleFragment","onStart || PlaylistFragment")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("LifecycleFragment","onResume || PlaylistFragment")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("LifecycleFragment","onPause || PlaylistFragment")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("LifecycleFragment","onStop || PlaylistFragment")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("LifecycleFragment","onDestroy || PlaylistFragment")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d("LifecycleFragment","onDetach || PlaylistFragment")
     }
 
 }

@@ -8,11 +8,15 @@ interface PlaylistsRepository {
 
     suspend fun createPlaylist(playlist: Playlist)
 
+    suspend fun saveCoverToExternalStorage(uri: String): String
+
     suspend fun deletePlaylist(playlist: Playlist)
 
     fun showPlaylists(): Flow<List<Playlist>>
 
     suspend fun updatePlaylist(playlist: Playlist, track: Track)
+
+    suspend fun updatePlaylist(playlistWithUpdatedData: Playlist)
 
     suspend fun addTrackToPlaylist(track: Track, playlist: Playlist)
 

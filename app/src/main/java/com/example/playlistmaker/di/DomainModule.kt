@@ -179,5 +179,9 @@ val domainModule = module {
         SharePlaylistUseCaseImpl(get())
     }
 
+    factory<SaveCoverToExternalStorageUseCase> {
+        SaveCoverToExternalStorageUseCaseImpl(get())
+    }
+
 
 }

@@ -55,6 +55,14 @@
         <action
             android:id="@+id/action_playlistFragment_to_playerActivity"
             app:destination="@id/playerActivity" />
+        <action
+            android:id="@+id/action_playlistFragment_to_playlistEditorFragment"
+            app:destination="@id/playlistEditorFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/playlistEditorFragment"
+        android:name="com.example.playlistmaker.ui.mediateca.playlists.fragment.PlaylistEditorFragment"
+        android:label="PlaylistEditorFragment"
+        tools:layout="@layout/fragment_create_new_playlist"/>
 
 </navigation>

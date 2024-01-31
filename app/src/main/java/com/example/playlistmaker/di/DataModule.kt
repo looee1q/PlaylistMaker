@@ -91,7 +91,7 @@ val dataModule = module {
     }
 
     single<PlaylistsRepository> {
-        PlaylistsRepositoryImpl(get())
+        PlaylistsRepositoryImpl(get(), get())
     }
 
     single<ExternalNavigatorRepository> {

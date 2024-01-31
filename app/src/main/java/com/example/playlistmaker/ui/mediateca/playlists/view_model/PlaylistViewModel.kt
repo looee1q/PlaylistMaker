@@ -34,11 +34,7 @@ class PlaylistViewModel(
     private val mutableLiveDataIsClickOnTrackAllowed = MutableLiveData<Boolean>(true)
     val liveDataIsClickOnTrackAllowed: LiveData<Boolean> = mutableLiveDataIsClickOnTrackAllowed
 
-    init {
-        getPlaylistInfo()
-    }
-
-    private fun getPlaylistInfo() {
+    fun getPlaylistInfo() {
         viewModelScope.launch(Dispatchers.IO) {
 
             val playlist = getPlaylistByIdUseCase.execute(playlistId)
