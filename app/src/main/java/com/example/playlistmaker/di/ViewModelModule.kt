@@ -88,7 +88,8 @@ val viewModelModule = module {
             playlistId = playlistId,
             getPlaylistByIdUseCase = get(),
             updatePlaylistUseCase = get(),
-            saveCoverToExternalStorageUseCase = get()
+            saveCoverToExternalStorageUseCase = get(),
+            deleteCoverFromExternalStorageUseCase = get()
         )
     }
 

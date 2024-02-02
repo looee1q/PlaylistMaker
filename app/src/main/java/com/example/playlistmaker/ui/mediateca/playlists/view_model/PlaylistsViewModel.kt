@@ -1,5 +1,7 @@
 package com.example.playlistmaker.ui.mediateca.playlists.view_model
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,6 +25,8 @@ class PlaylistsViewModel(
     private val mutableLiveDataPlaylistsStatus = MutableLiveData<Status<List<Playlist>>>()
     val liveDataPlaylistsStatus: LiveData<Status<List<Playlist>>> = mutableLiveDataPlaylistsStatus
 
+    private val handler = Handler(Looper.getMainLooper())
+
     fun showPlaylists() {
         playlists.clear()
         viewModelScope.launch(Dispatchers.IO) {
@@ -37,6 +41,16 @@ class PlaylistsViewModel(
                 Log.d("FavoritesViewModel", "Playlists are ${it.map { it.title }}")
             }
         }
+    }
+
+    fun showPlaylistsWithDelay() {
+        handler.postDelayed(
+            Runnable {
+                showPlaylists()
+                Log.d("FavoritesViewModel", "Запрашиваю плейлисты с задержкой в 100 millis")
+            },
+            100
+        )
     }
 
 }

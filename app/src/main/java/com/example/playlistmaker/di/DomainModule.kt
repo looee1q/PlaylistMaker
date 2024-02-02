@@ -183,5 +183,8 @@ val domainModule = module {
         SaveCoverToExternalStorageUseCaseImpl(get())
     }
 
+    factory<DeleteCoverFromExternalStorageUseCase> {
+        DeleteCoverFromExternalStorageUseCaseImpl(get())
+    }
 
 }

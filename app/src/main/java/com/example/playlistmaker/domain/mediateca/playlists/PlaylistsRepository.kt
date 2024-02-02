@@ -10,6 +10,8 @@ interface PlaylistsRepository {
 
     suspend fun saveCoverToExternalStorage(uri: String): String
 
+    suspend fun deleteCoverFromExternalStorage(uri: String)
+
     suspend fun deletePlaylist(playlist: Playlist)
 
     fun showPlaylists(): Flow<List<Playlist>>

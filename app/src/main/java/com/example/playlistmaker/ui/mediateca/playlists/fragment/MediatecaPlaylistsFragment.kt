@@ -15,7 +15,6 @@ import com.example.playlistmaker.databinding.FragmentMediatecaPlaylistsBinding
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.ui.mediateca.model.Status
 import com.example.playlistmaker.ui.mediateca.playlists.view_model.PlaylistsViewModel
-import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediatecaPlaylistsFragment : Fragment() {
@@ -40,7 +39,7 @@ class MediatecaPlaylistsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.d("LifecycleFragment", "onViewCreated || MediatecaPlaylistsFragment")
         binding.createNewPlaylist.setOnClickListener {
             findNavController().navigate(
                 R.id.action_mediatecaFragment_to_playlistCreatorFragment
@@ -58,6 +57,7 @@ class MediatecaPlaylistsFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
         viewModel.liveDataPlaylistsStatus.observe(viewLifecycleOwner) {
+            Log.d("MediatecaPlaylistsFragment","наблюдаю за liveDataPlaylistsStatus")
             render(it)
         }
 
@@ -67,6 +67,7 @@ class MediatecaPlaylistsFragment : Fragment() {
         super.onResume()
         Log.d("LifecycleFragment", "onResume || MediatecaPlaylistsFragment")
         viewModel.showPlaylists()
+        //viewModel.showPlaylistsWithDelay()
     }
 
     override fun onDestroyView() {

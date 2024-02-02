@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.DeleteCoverFromExternalStorageUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.GetPlaylistByIdUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.SaveCoverToExternalStorageUseCase
 import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.UpdatePlaylistUseCase
@@ -18,7 +19,8 @@ class PlaylistEditorViewModel(
     private val playlistId: Int,
     private val getPlaylistByIdUseCase: GetPlaylistByIdUseCase,
     private val updatePlaylistUseCase: UpdatePlaylistUseCase,
-    private val saveCoverToExternalStorageUseCase: SaveCoverToExternalStorageUseCase
+    private val saveCoverToExternalStorageUseCase: SaveCoverToExternalStorageUseCase,
+    private val deleteCoverFromExternalStorageUseCase: DeleteCoverFromExternalStorageUseCase
 ): ViewModel() {
 
     private val mutableLiveDataPlaylist = MutableLiveData<Playlist>()
@@ -73,8 +75,10 @@ class PlaylistEditorViewModel(
                 setNewPlaylistUri(
                     saveCoverToExternalStorageUseCase.execute(liveDataPlaylist.value?.coverUri.toString()).toUri()
                 )
+                liveDataPlaylistBeforeEditing.value?.coverUri?.let {
+                    deleteCoverFromExternalStorageUseCase.execute(it.toString())
+                }
             }
-            //File(viewModel.liveDataPlaylistBeforeEditing.value?.coverUri?.path!!).delete()
         }
     }
 

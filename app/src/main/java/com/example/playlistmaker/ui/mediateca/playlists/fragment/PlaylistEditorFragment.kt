@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreateNewPlaylistBinding
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
@@ -136,6 +137,7 @@ class PlaylistEditorFragment : Fragment() {
 
         Glide.with(this)
             .load(playlist.coverUri)
+            .signature(ObjectKey(playlist.id))
             .apply(
                 RequestOptions().placeholder(R.drawable.track_icon_mock)
             )
