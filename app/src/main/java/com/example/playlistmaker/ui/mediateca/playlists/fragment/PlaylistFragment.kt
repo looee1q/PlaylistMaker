@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -46,6 +47,8 @@ class PlaylistFragment : Fragment() {
 
     private val playlistTracks: MutableList<TrackRepresentation> = mutableListOf()
 
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,10 +56,6 @@ class PlaylistFragment : Fragment() {
     ): View? {
         Log.d("LifecycleFragment", "onCreateView || PlaylistFragment")
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
-/*        val screenHeight = binding.coordinator.height
-        Log.d("PlaylistFragment","screenHeight is $screenHeight")
-        val b = BottomSheetBehavior.from(binding.bottomSheet)
-        b.peekHeight = resources.getDimension(R.dimen.peek_height_for_bottom_sheet_in_playlist).toInt()*/
         return binding.root
     }
 
@@ -82,28 +81,26 @@ class PlaylistFragment : Fragment() {
         viewModel.liveDataPlaylist.observe(viewLifecycleOwner) {
             render(it)
             renderPlaylistInfoForBottomSheet(it)
-            Log.d("PlaylistFragment","Tracks from PlaylistInfo ${it.tracks.map{it.trackName}}")
-            Log.d("PlaylistFragment","Cover URI from PlaylistInfo ${it.playlist.coverUri}")
         }
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu).also {
-            it.state = BottomSheetBehavior.STATE_HIDDEN
-
-            it.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    when (newState) {
-                        BottomSheetBehavior.STATE_COLLAPSED, BottomSheetBehavior.STATE_EXPANDED -> {
-                            binding.bottomSheetTracks.isVisible = false
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu).also {
+                it.state = BottomSheetBehavior.STATE_HIDDEN
+                Log.d("PlaylistFragment", "bottomSheetBehavior is $it")
+                it.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        when (newState) {
+                            BottomSheetBehavior.STATE_COLLAPSED, BottomSheetBehavior.STATE_EXPANDED -> {
+                                binding.bottomSheetTracks.isVisible = false
+                            }
+                            else -> {
+                                binding.bottomSheetTracks.isVisible = true
+                            }
                         }
-                        else -> {
-                            binding.bottomSheetTracks.isVisible = true
-                        }
+                        binding.overlay.isVisible = !(newState == BottomSheetBehavior.STATE_HIDDEN)
                     }
-                    binding.overlay.isVisible = !(newState == BottomSheetBehavior.STATE_HIDDEN)
-                }
-                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
-            })
-        }
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+                })
+            }
 
         binding.moreIcon.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -131,7 +128,14 @@ class PlaylistFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("LifecycleFragment","onResume || PlaylistFragment")
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
     override fun onDestroyView() {
+        Log.d("LifecycleFragment","onDestroyView || PlaylistFragment")
         super.onDestroyView()
         _binding = null
         _adapter = null
@@ -294,11 +298,6 @@ class PlaylistFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Log.d("LifecycleFragment","onStart || PlaylistFragment")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("LifecycleFragment","onResume || PlaylistFragment")
     }
 
     override fun onPause() {

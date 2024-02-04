@@ -67,7 +67,6 @@ class MediatecaPlaylistsFragment : Fragment() {
         super.onResume()
         Log.d("LifecycleFragment", "onResume || MediatecaPlaylistsFragment")
         viewModel.showPlaylists()
-        //viewModel.showPlaylistsWithDelay()
     }
 
     override fun onDestroyView() {

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
-import android.util.Log
 import androidx.core.net.toUri
 import com.example.playlistmaker.data.db.AppDB
 import com.example.playlistmaker.data.db.DBConvertor
@@ -13,6 +12,7 @@ import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
 import com.example.playlistmaker.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
 
@@ -22,11 +22,9 @@ class PlaylistsRepositoryImpl(
 ) : PlaylistsRepository {
 
     override suspend fun createPlaylist(playlist: Playlist) {
-        Log.d("PlaylistRepositoryImpl","Буду создавать новый плейлист!")
         appDB.playlistsDAO().addPlaylist(
             DBConvertor.convertPlaylistToPlaylistEntity(playlist)
         )
-        Log.d("PlaylistRepositoryImpl","Создал новый плейлист!")
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
@@ -41,12 +39,8 @@ class PlaylistsRepositoryImpl(
         }
     }
 
-    override fun showPlaylists(): Flow<List<Playlist>> = flow {
-        val playlists = appDB.playlistsDAO().showPlaylists().map {
-            DBConvertor.convertPlaylistEntityToPlaylist(it)
-        }
-        emit(playlists)
-        Log.d("PlaylistRepositoryImpl","Эмичу плейлисты!")
+    override fun showPlaylists(): Flow<List<Playlist>> {
+        return appDB.playlistsDAO().showPlaylists().map { it.map { DBConvertor.convertPlaylistEntityToPlaylist(it) } }
     }
 
     override suspend fun removeTrackFromPlaylist(track: Track, playlist: Playlist) {
@@ -105,7 +99,7 @@ class PlaylistsRepositoryImpl(
                 }
             }
 
-            if(!somePlaylistsContainTrack) {
+            if (!somePlaylistsContainTrack) {
                 appDB.playlistsTracksDAO().removeTrackFromDB(trackId)
             }
         }
@@ -126,10 +120,11 @@ class PlaylistsRepositoryImpl(
     }
 
     override suspend fun saveCoverToExternalStorage(uri: String): String {
+
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "PlaylistsCovers")
         if (!filePath.exists()) filePath.mkdirs()
 
-        var numberOfSavedCover = if(filePath.listFiles().isEmpty()) {
+        var numberOfSavedCover = if (filePath.listFiles().isEmpty()) {
             1
         } else {
             filePath.listFiles().last().path
