@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.playlistmaker.data.db.AppDB
+import com.example.playlistmaker.data.mediateca.ExternalNavigatorRepositoryImpl
 import com.example.playlistmaker.data.mediateca.FavoriteTracksRepositoryImpl
 import com.example.playlistmaker.data.mediateca.PlaylistsRepositoryImpl
 import com.example.playlistmaker.data.player.MediaPlayerImpl
@@ -16,6 +17,7 @@ import com.example.playlistmaker.data.settings.ThemeRepositoryImpl
 import com.example.playlistmaker.data.settings.ThemeStorage
 import com.example.playlistmaker.data.sharing.ExternalNavigatorImpl
 import com.example.playlistmaker.domain.mediateca.favorites.FavoriteTracksRepository
+import com.example.playlistmaker.domain.mediateca.playlists.ExternalNavigatorRepository
 import com.example.playlistmaker.domain.mediateca.playlists.PlaylistsRepository
 import com.example.playlistmaker.domain.player.PlayerRepository
 import com.example.playlistmaker.domain.search.api.MusicApi
@@ -75,18 +77,24 @@ val dataModule = module {
         MediaPlayerImpl()
     }
 
-    // modules for RoomDB (favoriteTracks)
+    // modules for RoomDB
 
     single {
         Room.databaseBuilder(androidContext(), AppDB::class.java, "database.db")
             .build()
     }
 
+    //modules for mediateca
+
     single<FavoriteTracksRepository> {
         FavoriteTracksRepositoryImpl(get())
     }
 
     single<PlaylistsRepository> {
-        PlaylistsRepositoryImpl(get())
+        PlaylistsRepositoryImpl(get(), get())
+    }
+
+    single<ExternalNavigatorRepository> {
+        ExternalNavigatorRepositoryImpl(get())
     }
 }

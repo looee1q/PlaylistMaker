@@ -15,4 +15,10 @@ data class TrackRepresentation(
 ) {
     val artworkUrl512: String
         get() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+
+    val artworkUrl60: String
+        get() = artworkUrl100.replaceAfterLast('/', "60x60bb.jpg")
+
+    fun changeCoverResolutionTo60(trackRepresentation: TrackRepresentation): TrackRepresentation =
+        trackRepresentation.copy(artworkUrl100 = trackRepresentation.artworkUrl60)
 }

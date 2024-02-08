@@ -39,23 +39,34 @@ class MediatecaPlaylistsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.d("LifecycleFragment", "onViewCreated || MediatecaPlaylistsFragment")
         binding.createNewPlaylist.setOnClickListener {
             findNavController().navigate(
                 R.id.action_mediatecaFragment_to_playlistCreatorFragment
             )
         }
 
-        viewModel.showPlaylists()
-
         _adapter = PlaylistsAdapter(viewModel.liveDataPlaylists.value!!)
+        adapter.listener = {
+            findNavController().navigate(
+                R.id.action_mediatecaFragment_to_playlistFragment,
+                PlaylistFragment.createArgs(playlistId = it.id)
+            )
+        }
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
         viewModel.liveDataPlaylistsStatus.observe(viewLifecycleOwner) {
+            Log.d("MediatecaPlaylistsFragment","наблюдаю за liveDataPlaylistsStatus")
             render(it)
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("LifecycleFragment", "onResume || MediatecaPlaylistsFragment")
+        viewModel.showPlaylists()
     }
 
     override fun onDestroyView() {
@@ -72,6 +83,8 @@ class MediatecaPlaylistsFragment : Fragment() {
                     playlistsNotFoundImage.isVisible = false
                     playlistsNotFoundMessage.isVisible = false
                     recyclerView.isVisible = true
+                    Log.d("MediatecaPlaylistsFragment","адаптер делает notifyDataSetChanged()")
+                    adapter.notifyDataSetChanged()
                 }
             }
             is Status.Empty, null -> {
@@ -104,11 +117,6 @@ class MediatecaPlaylistsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Log.d("LifecycleFragment", "onStart || MediatecaPlaylistsFragment")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("LifecycleFragment", "onResume || MediatecaPlaylistsFragment")
     }
 
     override fun onPause() {

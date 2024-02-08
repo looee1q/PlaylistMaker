@@ -1,10 +1,8 @@
 package com.example.playlistmaker.data.db.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.example.playlistmaker.data.db.entities.PlaylistEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlaylistsDAO {
@@ -12,9 +10,18 @@ interface PlaylistsDAO {
     @Insert(entity = PlaylistEntity::class)
     fun addPlaylist(playlistEntity: PlaylistEntity)
 
+    @Delete(entity = PlaylistEntity::class)
+    fun deletePlaylist(playlistEntity: PlaylistEntity)
+
     @Query("SELECT * FROM user_playlists")
-    fun showPlaylists(): List<PlaylistEntity>
+    fun showPlaylists(): Flow<List<PlaylistEntity>>
+
+    @Query("SELECT * FROM user_playlists")
+    fun getPlaylistsInstantaneously(): List<PlaylistEntity>
 
     @Update(entity = PlaylistEntity::class)
     fun updatePlaylist(playlistEntity: PlaylistEntity)
+
+    @Query("SELECT * FROM user_playlists WHERE id = :playlistId")
+    fun getPlaylist(playlistId: Int) : PlaylistEntity
 }

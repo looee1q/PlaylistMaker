@@ -1,10 +1,8 @@
 package com.example.playlistmaker.data.db.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.*
 import com.example.playlistmaker.data.db.entities.PlaylistTrackEntity
+import com.example.playlistmaker.data.db.entities.TrackEntity
 
 @Dao
 interface PlaylistsTracksDAO {
@@ -14,4 +12,9 @@ interface PlaylistsTracksDAO {
 
     @Delete(entity = PlaylistTrackEntity::class)
     fun removeTrackFromDB(track: PlaylistTrackEntity)
+    @Query("DELETE FROM playlists_tracks WHERE trackId = :trackId")
+    fun removeTrackFromDB(trackId: Long)
+
+    @Query("SELECT * FROM playlists_tracks")
+    fun getAllPlaylistsTracks(): List<TrackEntity>
 }

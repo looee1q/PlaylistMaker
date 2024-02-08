@@ -2,11 +2,7 @@ package com.example.playlistmaker.ui.mediateca.playlists.fragment
 
 import android.content.Context
 import android.content.DialogInterface
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -30,8 +25,6 @@ import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.io.FileOutputStream
 
 class PlaylistCreatorFragment : Fragment() {
 
@@ -100,11 +93,10 @@ class PlaylistCreatorFragment : Fragment() {
         binding.createNewPlaylistButton.setOnClickListener {
             val playlistName = binding.playlistNameTextInputEditText.text.toString()
             Toast.makeText(requireContext(), resources.getString(R.string.playlist_created).format(playlistName), Toast.LENGTH_SHORT).show()
-            viewModel.liveDataPlaylistUri.value?.let { saveCoverToExternalStorage(it) }
-
+            Log.d("PlaylistCreatorFragment", "Нажал на кнопку создания плейлиста")
             viewModel.createPlaylist(
                 title = binding.playlistNameTextInputEditText.text.toString(),
-                description = binding.playlistDescriptionTextInputEditText.text.toString()
+                description = binding.playlistDescriptionTextInputEditText.text.toString(),
             )
 
             goBackNavigation()
@@ -135,7 +127,6 @@ class PlaylistCreatorFragment : Fragment() {
                 DialogInterface.BUTTON_POSITIVE -> {
                     goBackNavigation()
                 }
-                DialogInterface.BUTTON_NEUTRAL -> null
             }
         }
         return MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
@@ -143,19 +134,6 @@ class PlaylistCreatorFragment : Fragment() {
             .setMessage(resources.getString(R.string.all_unsaved_data_will_be_lost))
             .setPositiveButton(resources.getString(R.string.finish), dialogListener)
             .setNeutralButton(resources.getString(R.string.cancel), dialogListener)
-    }
-
-    private fun saveCoverToExternalStorage(uri: Uri) {
-        val filePath = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "PlaylistsCovers")
-        if (!filePath.exists()) filePath.mkdirs()
-
-        val coverFile = File(filePath, "cover_${filePath.listFiles().size + 1}.jpg")
-        viewModel.setUri(coverFile.toUri())
-
-        val inputStream = requireContext().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(coverFile)
-        BitmapFactory.decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
     }
 
     private fun closeFragment() {
@@ -181,12 +159,13 @@ class PlaylistCreatorFragment : Fragment() {
         }
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Log.d("LifecycleFragment", "onAttach || PlaylistCreatorFragment")
         (requireActivity() as? PlayerActivity)?.showPlaylists(false)  //Костыль!!! Удалить при рефакторинге на SingleActivity
     }
+
+    //-------  УДАЛИТЬ КОД НИЖЕ ЧЕРТЫ  ------------------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.mediateca.playlists.view_model
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,9 +23,9 @@ class PlaylistsViewModel(
     val liveDataPlaylistsStatus: LiveData<Status<List<Playlist>>> = mutableLiveDataPlaylistsStatus
 
     fun showPlaylists() {
-        playlists.clear()
         viewModelScope.launch(Dispatchers.IO) {
             showPlaylistsUseCase.execute().collect {
+                playlists.clear()
                 playlists.addAll(it)
                 if (playlists.isEmpty()) {
                     mutableLiveDataPlaylistsStatus.postValue(Status.Empty())
@@ -34,7 +33,6 @@ class PlaylistsViewModel(
                     mutableLiveDataPlaylistsStatus.postValue(Status.Content(playlists))
                     mutableLiveDataPlaylists.postValue(playlists)
                 }
-                Log.d("FavoritesViewModel", "Playlists are ${it.map { it.title }}")
             }
         }
     }

@@ -9,7 +9,8 @@ import com.example.playlistmaker.ui.models.TrackRepresentation
 
 class TrackAdapter(private val trackList: List<TrackRepresentation>): RecyclerView.Adapter<TrackViewHolder>() {
 
-    var listener: (TrackRepresentation) -> Unit = {Log.d("Listener", "Пустышка")}
+    var listener: (TrackRepresentation) -> Unit = { }
+    var longClickListener: (TrackRepresentation) -> Unit = { }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = ActivityTrackUnitBinding.inflate(layoutInflater, parent, false)
@@ -19,10 +20,17 @@ class TrackAdapter(private val trackList: List<TrackRepresentation>): RecyclerVi
     override fun getItemCount() = trackList.size
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
+
         holder.bind(trackList[position])
+
         holder.itemView.setOnClickListener {
-            Log.d("Listener", "Разбудил")
             listener.invoke(trackList[position])
         }
+
+        holder.itemView.setOnLongClickListener {
+            longClickListener.invoke(trackList[position])
+            true
+        }
     }
+
 }

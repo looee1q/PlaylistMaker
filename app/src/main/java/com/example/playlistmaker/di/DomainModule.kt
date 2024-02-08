@@ -8,14 +8,8 @@ import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.GetFavoritesIDsUseCase
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.RemoveTrackFromFavoritesUseCase
 import com.example.playlistmaker.domain.mediateca.favorites.use_cases.interfaces.ShowAllFavoritesUseCase
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.AddPlaylistUseCaseImpl
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.AddTrackToPlaylistsTracksStorageUseCaseImpl
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.ShowPlaylistsUseCaseImpl
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.UpdatePlaylistUseCaseImpl
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.AddPlaylistUseCase
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.AddTrackToPlaylistsTracksStorageUseCase
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.ShowPlaylistsUseCase
-import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.UpdatePlaylistUseCase
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.implementations.*
+import com.example.playlistmaker.domain.mediateca.playlists.use_cases.interfaces.*
 import com.example.playlistmaker.domain.player.use_cases.implementations.DestroyPlayerUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayerStateUseCaseImpl
 import com.example.playlistmaker.domain.player.use_cases.implementations.GetPlayingTrackTimeUseCaseImpl
@@ -151,6 +145,10 @@ val domainModule = module {
         AddPlaylistUseCaseImpl(get())
     }
 
+    factory<DeletePlaylistUseCase> {
+        DeletePlaylistUseCaseImpl(get())
+    }
+
     factory<UpdatePlaylistUseCase> {
         UpdatePlaylistUseCaseImpl(get())
     }
@@ -159,8 +157,34 @@ val domainModule = module {
         ShowPlaylistsUseCaseImpl(get())
     }
 
-    factory<AddTrackToPlaylistsTracksStorageUseCase> {
-        AddTrackToPlaylistsTracksStorageUseCaseImpl(get())
+    factory<AddTrackToPlaylistUseCase> {
+        AddTrackToPlaylistUseCaseImpl(get())
+    }
+
+    factory<RemoveTrackFromPlaylistUseCase> {
+        RemoveTrackFromPlaylistUseCaseImpl(get())
+    }
+
+    factory<GetPlaylistByIdUseCase> {
+        GetPlaylistByIdUseCaseImpl(get())
+    }
+
+    factory<GetAllTracksFromPlaylistUseCase> {
+        GetAllTracksFromPlaylistUseCaseImpl(get())
+    }
+
+    //modules for other mediateca UseCases
+
+    factory<SharePlaylistUseCase> {
+        SharePlaylistUseCaseImpl(get())
+    }
+
+    factory<SaveCoverToExternalStorageUseCase> {
+        SaveCoverToExternalStorageUseCaseImpl(get())
+    }
+
+    factory<DeleteCoverFromExternalStorageUseCase> {
+        DeleteCoverFromExternalStorageUseCaseImpl(get())
     }
 
 }
