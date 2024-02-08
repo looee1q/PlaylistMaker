@@ -1,12 +1,10 @@
 package com.example.playlistmaker.ui.player.activity
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistSmallUnitBinding
 import com.example.playlistmaker.domain.mediateca.playlists.model.Playlist
-import com.example.playlistmaker.ui.models.TrackRepresentation
 
 class PlaylistsAdapterForBottomSheetRV(
     private val playlists: List<Playlist>

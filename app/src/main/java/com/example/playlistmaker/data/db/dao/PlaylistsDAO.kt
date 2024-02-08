@@ -16,6 +16,9 @@ interface PlaylistsDAO {
     @Query("SELECT * FROM user_playlists")
     fun showPlaylists(): Flow<List<PlaylistEntity>>
 
+    @Query("SELECT * FROM user_playlists")
+    fun getPlaylistsInstantaneously(): List<PlaylistEntity>
+
     @Update(entity = PlaylistEntity::class)
     fun updatePlaylist(playlistEntity: PlaylistEntity)
 

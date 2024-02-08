@@ -138,9 +138,9 @@ class PlayerViewModel(
     }
 
     fun getPlaylists() {
-        playlists.clear()
         viewModelScope.launch(Dispatchers.IO) {
             showPlaylistsUseCase.execute().collect {
+                playlists.clear()
                 playlists.addAll(it)
                 if (playlists.isNotEmpty()) {
                     mutableLiveDataPlaylists.postValue(playlists)

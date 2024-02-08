@@ -218,7 +218,7 @@ class PlaylistFragment : Fragment() {
         }
 
         playlistTracks.clear()
-        playlistTracks.addAll(playlistInfo.tracks)
+        playlistTracks.addAll(playlistInfo.tracks.map { it.changeCoverResolutionTo60(it) })
         adapter?.notifyDataSetChanged()
 
         binding.thereIsNoTracksInPlaylist.isVisible = playlistInfo.tracks.isEmpty()
